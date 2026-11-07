@@ -1,0 +1,265 @@
+source: official Debian bookworm mirrors via apt-get (debian:bookworm container)
+date: 2026-11-07T17:20:09Z
+debian_version: 12.15
+glibc: ldd (Debian GLIBC 2.36-9+deb12u14) 2.36
+
+== ./libbsd0_0.11.7-2_amd64.deb
+Package: libbsd0
+Version: 0.11.7-2
+Architecture: amd64
+
+== ./libdrm-amdgpu1_2.4.114-1+b1_amd64.deb
+Package: libdrm-amdgpu1
+Version: 2.4.114-1+b1
+Architecture: amd64
+
+== ./libdrm-common_2.4.114-1_all.deb
+Package: libdrm-common
+Version: 2.4.114-1
+Architecture: all
+
+== ./libdrm-intel1_2.4.114-1+b1_amd64.deb
+Package: libdrm-intel1
+Version: 2.4.114-1+b1
+Architecture: amd64
+
+== ./libdrm-nouveau2_2.4.114-1+b1_amd64.deb
+Package: libdrm-nouveau2
+Version: 2.4.114-1+b1
+Architecture: amd64
+
+== ./libdrm-radeon1_2.4.114-1+b1_amd64.deb
+Package: libdrm-radeon1
+Version: 2.4.114-1+b1
+Architecture: amd64
+
+== ./libdrm2_2.4.114-1+b1_amd64.deb
+Package: libdrm2
+Version: 2.4.114-1+b1
+Architecture: amd64
+
+== ./libedit2_3.1-20221030-2_amd64.deb
+Package: libedit2
+Version: 3.1-20221030-2
+Architecture: amd64
+
+== ./libegl-mesa0_22.3.6-1+deb12u2_amd64.deb
+Package: libegl-mesa0
+Version: 22.3.6-1+deb12u2
+Architecture: amd64
+
+== ./libegl1_1.6.0-1_amd64.deb
+Package: libegl1
+Version: 1.6.0-1
+Architecture: amd64
+
+== ./libelf1_0.188-2.1_amd64.deb
+Package: libelf1
+Version: 0.188-2.1
+Architecture: amd64
+
+== ./libgbm1_22.3.6-1+deb12u2_amd64.deb
+Package: libgbm1
+Version: 22.3.6-1+deb12u2
+Architecture: amd64
+
+== ./libgl1-mesa-dri_22.3.6-1+deb12u2_amd64.deb
+Package: libgl1-mesa-dri
+Version: 22.3.6-1+deb12u2
+Architecture: amd64
+
+== ./libgl1_1.6.0-1_amd64.deb
+Package: libgl1
+Version: 1.6.0-1
+Architecture: amd64
+
+== ./libglapi-mesa_22.3.6-1+deb12u2_amd64.deb
+Package: libglapi-mesa
+Version: 22.3.6-1+deb12u2
+Architecture: amd64
+
+== ./libglvnd0_1.6.0-1_amd64.deb
+Package: libglvnd0
+Version: 1.6.0-1
+Architecture: amd64
+
+== ./libglx-mesa0_22.3.6-1+deb12u2_amd64.deb
+Package: libglx-mesa0
+Version: 22.3.6-1+deb12u2
+Architecture: amd64
+
+== ./libglx0_1.6.0-1_amd64.deb
+Package: libglx0
+Version: 1.6.0-1
+Architecture: amd64
+
+== ./libice6_2%3a1.0.10-1_amd64.deb
+Package: libice6
+Version: 2:1.0.10-1
+Architecture: amd64
+
+== ./libicu72_72.1-3+deb12u1_amd64.deb
+Package: libicu72
+Version: 72.1-3+deb12u1
+Architecture: amd64
+
+== ./libllvm15_1%3a15.0.6-4+b1_amd64.deb
+Package: libllvm15
+Version: 1:15.0.6-4+b1
+Architecture: amd64
+
+== ./libpciaccess0_0.17-2_amd64.deb
+Package: libpciaccess0
+Version: 0.17-2
+Architecture: amd64
+
+== ./libsensors-config_1%3a3.6.0-7.1_all.deb
+Package: libsensors-config
+Version: 1:3.6.0-7.1
+Architecture: all
+
+== ./libsensors5_1%3a3.6.0-7.1_amd64.deb
+Package: libsensors5
+Version: 1:3.6.0-7.1
+Architecture: amd64
+
+== ./libsm6_2%3a1.2.3-1_amd64.deb
+Package: libsm6
+Version: 2:1.2.3-1
+Architecture: amd64
+
+== ./libwayland-client0_1.21.0-1_amd64.deb
+Package: libwayland-client0
+Version: 1.21.0-1
+Architecture: amd64
+
+== ./libwayland-server0_1.21.0-1_amd64.deb
+Package: libwayland-server0
+Version: 1.21.0-1
+Architecture: amd64
+
+== ./libx11-6_2%3a1.8.4-2+deb12u2_amd64.deb
+Package: libx11-6
+Version: 2:1.8.4-2+deb12u2
+Architecture: amd64
+
+== ./libx11-data_2%3a1.8.4-2+deb12u2_all.deb
+Package: libx11-data
+Version: 2:1.8.4-2+deb12u2
+Architecture: all
+
+== ./libx11-xcb1_2%3a1.8.4-2+deb12u2_amd64.deb
+Package: libx11-xcb1
+Version: 2:1.8.4-2+deb12u2
+Architecture: amd64
+
+== ./libxau6_1%3a1.0.9-1_amd64.deb
+Package: libxau6
+Version: 1:1.0.9-1
+Architecture: amd64
+
+== ./libxcb-dri2-0_1.15-1_amd64.deb
+Package: libxcb-dri2-0
+Version: 1.15-1
+Architecture: amd64
+
+== ./libxcb-dri3-0_1.15-1_amd64.deb
+Package: libxcb-dri3-0
+Version: 1.15-1
+Architecture: amd64
+
+== ./libxcb-glx0_1.15-1_amd64.deb
+Package: libxcb-glx0
+Version: 1.15-1
+Architecture: amd64
+
+== ./libxcb-present0_1.15-1_amd64.deb
+Package: libxcb-present0
+Version: 1.15-1
+Architecture: amd64
+
+== ./libxcb-randr0_1.15-1_amd64.deb
+Package: libxcb-randr0
+Version: 1.15-1
+Architecture: amd64
+
+== ./libxcb-shm0_1.15-1_amd64.deb
+Package: libxcb-shm0
+Version: 1.15-1
+Architecture: amd64
+
+== ./libxcb-sync1_1.15-1_amd64.deb
+Package: libxcb-sync1
+Version: 1.15-1
+Architecture: amd64
+
+== ./libxcb-xfixes0_1.15-1_amd64.deb
+Package: libxcb-xfixes0
+Version: 1.15-1
+Architecture: amd64
+
+== ./libxcb1_1.15-1_amd64.deb
+Package: libxcb1
+Version: 1.15-1
+Architecture: amd64
+
+== ./libxdmcp6_1%3a1.1.2-3_amd64.deb
+Package: libxdmcp6
+Version: 1:1.1.2-3
+Architecture: amd64
+
+== ./libxext6_2%3a1.3.4-1+b1_amd64.deb
+Package: libxext6
+Version: 2:1.3.4-1+b1
+Architecture: amd64
+
+== ./libxfixes3_1%3a6.0.0-2_amd64.deb
+Package: libxfixes3
+Version: 1:6.0.0-2
+Architecture: amd64
+
+== ./libxi6_2%3a1.8-1+b1_amd64.deb
+Package: libxi6
+Version: 2:1.8-1+b1
+Architecture: amd64
+
+== ./libxkbcommon0_1.5.0-1_amd64.deb
+Package: libxkbcommon0
+Version: 1.5.0-1
+Architecture: amd64
+
+== ./libxml2_2.9.14+dfsg-1.3~deb12u6_amd64.deb
+Package: libxml2
+Version: 2.9.14+dfsg-1.3~deb12u6
+Architecture: amd64
+
+== ./libxrender1_1%3a0.9.10-1.1_amd64.deb
+Package: libxrender1
+Version: 1:0.9.10-1.1
+Architecture: amd64
+
+== ./libxshmfence1_1.3-1_amd64.deb
+Package: libxshmfence1
+Version: 1.3-1
+Architecture: amd64
+
+== ./libxxf86vm1_1%3a1.1.4-1+b2_amd64.deb
+Package: libxxf86vm1
+Version: 1:1.1.4-1+b2
+Architecture: amd64
+
+== ./libz3-4_4.8.12-3.1_amd64.deb
+Package: libz3-4
+Version: 4.8.12-3.1
+Architecture: amd64
+
+== ./x11-common_1%3a7.7+23_all.deb
+Package: x11-common
+Version: 1:7.7+23
+Architecture: all
+
+== ./xkb-data_2.35.1-1_all.deb
+Package: xkb-data
+Version: 2.35.1-1
+Architecture: all
+
