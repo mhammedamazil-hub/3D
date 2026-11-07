@@ -1,0 +1,14 @@
+# Pinned, installed and tested in this sandbox on 2026-11-07
+# (Debian 12 bookworm, Python 3.11.2). Exact `pip freeze` of the working venv.
+# Blender as a Python module; the 4.2 LTS line matches the production skill.
+bpy==4.2.23
+certifi==2026.10.23
+charset-normalizer==3.5.2
+Cython==3.3.1
+idna==3.20
+imageio-ffmpeg==0.8.1
+numpy==2.4.6
+pillow==13.0.0
+requests==2.34.2
+urllib3==2.8.0
+zstandard==0.25.0

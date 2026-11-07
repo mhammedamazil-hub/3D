@@ -1,0 +1,10 @@
+#!/bin/sh
+# Run Python (with bpy) inside the prepared environment:
+#   scripts/blender-py scripts/env_doctor.py
+#   scripts/blender-py -c "import bpy; print(bpy.app.version_string)"
+set -eu
+HERE=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+BLENDER_REPO_ROOT=$(CDPATH= cd -- "$HERE/.." && pwd)
+export BLENDER_REPO_ROOT
+. "$HERE/env.sh"
+exec "$BLENDER_REPO_ROOT/.venv/bin/python" "$@"
