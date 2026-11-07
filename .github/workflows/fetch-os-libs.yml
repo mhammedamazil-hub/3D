@@ -1,0 +1,55 @@
+name: Fetch Blender OS libraries
+
+# The Agent sandbox can reach github.com / pypi.org only, not Debian mirrors.
+# This job runs in a debian:bookworm container (same OS/glibc as the sandbox),
+# downloads the official .deb packages Blender's PyPI `bpy` module needs,
+# records SHA-256 provenance, and pushes them to the branch it was dispatched
+# from so the sandbox can `git pull` them. The sandbox then extracts them into
+# vendor/ (gitignored) and removes them from tracking again.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch-libs:
+    runs-on: ubuntu-latest
+    container: debian:bookworm
+    steps:
+      - name: Download official Debian bookworm packages and push to branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -eu
+          apt-get update
+          apt-get install -y --no-install-recommends git ca-certificates
+          rm -f /etc/apt/apt.conf.d/docker-clean
+          git clone --depth 1 --branch "$GITHUB_REF_NAME" \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" repo
+          cd repo
+          mkdir -p vendor/debs
+          # X/GL libraries required by bpy 4.2.x + full software-GL (llvmpipe)
+          # stack so Eevee/OpenGL can also work headless without a GPU.
+          apt-get install --download-only --no-install-recommends -y \
+            libxrender1 libxxf86vm1 libxfixes3 libxi6 libxkbcommon0 \
+            libsm6 libice6 libgl1 libglx-mesa0 libgl1-mesa-dri \
+            libegl1 libegl-mesa0
+          cp /var/cache/apt/archives/*.deb vendor/debs/
+          cd vendor/debs
+          sha256sum ./*.deb > SHA256SUMS
+          {
+            echo "source: official Debian bookworm mirrors via apt-get (debian:bookworm container)"
+            echo "date: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "debian_version: $(cat /etc/debian_version)"
+            echo "glibc: $(ldd --version | head -1)"
+            echo
+            dpkg-deb -f ./*.deb Package Version Architecture
+          } > PROVENANCE.txt
+          cd ../..
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add vendor/debs
+          git commit -m "ci: fetch Debian bookworm X/GL .debs for bpy (temporary transport)"
+          git push origin HEAD:"$GITHUB_REF_NAME"

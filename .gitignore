@@ -1,0 +1,17 @@
+# Local Python/Blender environment (rebuild with scripts/setup_sandbox.sh)
+.venv/
+__pycache__/
+*.pyc
+
+# Vendored OS libraries + downloaded .debs (persist in workspace, not in Git;
+# re-fetch with the "Fetch Blender OS libraries" workflow if missing)
+vendor/
+
+# Render outputs and scratch (regenerable)
+output/
+review/
+*.blend1
+*.blend2
+
+# OS noise
+.DS_Store
