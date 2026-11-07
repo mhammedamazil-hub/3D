@@ -1,0 +1,6 @@
+Request file for the "Fetch Blender OS libraries" workflow.
+Push a change to this file (e.g. update the timestamp below) to make GitHub
+Actions download fresh Debian bookworm X/GL .debs onto the pushed branch.
+After the bot commit lands: git pull, then run scripts/setup_sandbox.sh.
+
+last-request: 2026-11-07T17:20:00Z

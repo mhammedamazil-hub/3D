@@ -9,6 +9,13 @@ name: Fetch Blender OS libraries
 
 on:
   workflow_dispatch:
+  # workflow_dispatch requires the file on the default branch; the push trigger
+  # lets session branches run it. Re-run by touching scripts/os-libs-request.txt.
+  # Pushes made with GITHUB_TOKEN do not re-trigger workflows (no loop).
+  push:
+    paths:
+      - '.github/workflows/fetch-os-libs.yml'
+      - 'scripts/os-libs-request.txt'
 
 permissions:
   contents: write
