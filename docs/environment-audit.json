@@ -1,0 +1,47 @@
+{
+  "utc": "2026-11-07T17:21:33Z",
+  "platform": "Linux-6.1.158+-x86_64-with-glibc2.36",
+  "python": "3.11.2",
+  "cpu_count": 2,
+  "blender": {
+    "version": "4.2.23 LTS",
+    "background": true,
+    "module": "PyPI bpy"
+  },
+  "ram_total_gib": 3.85,
+  "disk_free_gib": 17.38,
+  "cycles_devices": [
+    [
+      "Intel Xeon Processor @ 2.60GHz",
+      "CPU"
+    ]
+  ],
+  "cycles_still": {
+    "ok": true,
+    "path": "review/env_smoke_cycles.png",
+    "seconds": 1.77,
+    "size": [
+      320,
+      180
+    ],
+    "samples": 24,
+    "sha256": "9f31142261bd1a9a7be336c6c9df59e6d314110463aa456ea3e7fa81b322556c"
+  },
+  "native_anim": {
+    "ok": true,
+    "frames_rendered": 24,
+    "render_seconds": 6.68,
+    "seconds_per_frame": 0.28,
+    "mp4": "review/env_anim_test.mp4",
+    "decoded_frames": 24,
+    "ffmpeg": "n9.0.2-17-g2a571b6068-20260930",
+    "mp4_bytes": 10067
+  },
+  "eevee_headless": {
+    "ok": true,
+    "path": "review/env_smoke_eevee.png",
+    "seconds": 21.79,
+    "note": "software OpenGL (llvmpipe); preview use only, no GPU present"
+  },
+  "technical": "PASS"
+}

@@ -1,11 +1,15 @@
 #!/bin/sh
-# Source this file (`. scripts/env.sh`) or use it via scripts/blender-py.
+# Source from the repo root (`. scripts/env.sh`) or use scripts/blender-py.
 # Points the dynamic loader at the vendored Debian bookworm X/GL libraries
 # (extracted by scripts/install_vendor_libs.sh) and caps math-library threads
 # for this 2-vCPU sandbox.
-REPO_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-# When sourced from another script, $0 may not be this file; allow override.
-if [ -n "${BLENDER_REPO_ROOT:-}" ]; then REPO_ROOT="$BLENDER_REPO_ROOT"; fi
+if [ -n "${BLENDER_REPO_ROOT:-}" ]; then
+  REPO_ROOT="$BLENDER_REPO_ROOT"
+elif [ -f "$PWD/scripts/env.sh" ]; then
+  REPO_ROOT="$PWD"
+else
+  REPO_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+fi
 
 VENDOR_LIB="$REPO_ROOT/vendor/runtime/usr/lib/x86_64-linux-gnu"
 export LD_LIBRARY_PATH="$VENDOR_LIB${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
