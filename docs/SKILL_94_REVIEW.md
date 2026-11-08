@@ -1,112 +1,112 @@
-# 94-skill review — Monsoon Light, Kerala
+# 94-skill review v2 — Kerala photoreal revision
 
-Every one of the 94 actual `SKILL.md` documents in the pinned library was reviewed. Relevant skills were applied; incompatible styles/genres became explicit QA or exclusion checks; character/simulation skills were recorded as not applicable. This is not a claim that all 94 styles were mixed into the hero image.
+Every one of the 94 pinned SKILL.md documents was rechecked for the photoreal revision. Relevant skills were applied; incompatible genres/styles remained explicit QA/exclusion checks; character/sim skills stayed N/A. This is not a claim that 94 styles were mixed into one image.
 
-## Counts
+## v2 counts
 
-- QA / exclusion lens: 51
+- Applied: 27
+- Compatibility check: 6
 - Not applicable: 9
-- Applied: 30
-- Compatibility check: 4
+- QA / exclusion lens: 52
 
-## Matrix
+## v2 matrix
 
-| Skill | Mode | Concrete use / decision |
+| Skill | v2 mode | Concrete v2 decision |
 |---|---|---|
-| `analog-found-footage-horror` | QA / exclusion lens | Rejected tape damage/handheld shake; stable documentary-like camera. |
-| `animation` | Not applicable | Static still requested; frame range 1; no unbaked animation caches. |
-| `anime-style` | QA / exclusion lens | Rejected cel value steps; continuous PBR shading retained. |
-| `apocalypse-worlds` | QA / exclusion lens | Rejected collapse/scavenger language; house is old but maintained and inhabited. |
-| `archviz` | Applied | Metric house: 2.08 m door, 2.70 m walls; stable perspective; plausible dielectric water. |
-| `asset-optimization` | Applied | Non-realized GN instances; 282,720 unique mesh triangles; 25 materials; build manifest recorded. |
-| `biome-worlds` | Applied | Humid tropical palette, monsoon water, localized damp/moss, bounded distant mist. |
-| `blender-director` | Applied | Brief and reference analysis written before modeling; COL_ hierarchy; staged visual tests. |
-| `blender-modeler` | Applied | Named SM_ meshes; live bevel/solidify/GN modifiers; separate house/terrain/vegetation collections. |
-| `body-horror-style` | QA / exclusion lens | Rejected mutation/flesh material language. |
-| `brutalist-mood` | QA / exclusion lens | Rejected monumental concrete; modest domestic scale retained. |
-| `camera-cinematography` | Applied | 39 mm hero leading-line composition; deep focus; separate house and foreground detail cameras. |
-| `cartoon-style` | QA / exclusion lens | Used silhouette-first check, rejected exaggerated cartoon proportions. |
-| `character-archetypes` | Not applicable | No characters in brief; hidden 1.70 m scale proxy only. |
-| `character-artist` | Not applicable | No character hero; scale proxy only. |
-| `chibi-style` | QA / exclusion lens | Rejected cute oversized proportions. |
-| `cloth-sim` | Not applicable | No garments or cloth simulation; no raw unstable caches. |
-| `collision-proxy` | Applied | Separate UCX-style convex house proxy exported as GLB, kept out of frozen hero render scene. |
-| `comic-book-style` | QA / exclusion lens | Rejected ink contours/halftone; natural tonal gradation retained. |
-| `compositing` | Applied | Reversible compositor glare node; AgX view transform; exposure documented. |
-| `cosmic-eldritch-horror` | QA / exclusion lens | Rejected impossible scale/void pressure; believable landscape scale. |
-| `cozy-wholesome-mood` | Applied | Warm inhabited veranda props, safe eye-level route, gentle daylight rather than threat lighting. |
-| `creature-artist` | Not applicable | No creature hero; distant birds are simple subordinate meshes. |
-| `dark-gritty-mood` | QA / exclusion lens | Used wear-as-story check but rejected low-key industrial melancholy. |
-| `dream-surreal-mood` | QA / exclusion lens | Rejected bent logic/scale play; physical geography retained. |
-| `dream-weirdcore-style` | QA / exclusion lens | Rejected nostalgic wrongness/UI overlays. |
-| `environment-artist` | Applied | Modular house kit, paddy plots, bunds, tree belt and three depth layers; one hero focal point. |
-| `export-pipeline` | Applied | House GLB export + clean Blender reimport PASS; bbox 13.66×11.36×5.88 m; separate collision GLB. Engine import not claimed; bpy shutdown segfault after successful report noted. |
-| `fantasy-worlds` | QA / exclusion lens | Used material-honesty check; no magic emissive or fantasy heraldry. |
-| `folk-horror-style` | QA / exclusion lens | Pastoral fields retained, but ritual dread and closed-community symbols rejected. |
-| `frutiger-aero-style` | QA / exclusion lens | Rejected glossy bubbles/UI skeuomorphism; natural water gloss only. |
-| `genre-action-combat` | QA / exclusion lens | Readability check only: clear route and focal landmark; no combat arena mechanics. |
-| `genre-card-party-idle` | QA / exclusion lens | Readability check only: low-distraction background; no table/UI stage. |
-| `genre-metroidvania-roguelike` | QA / exclusion lens | Modular-kit check only; no ability gates or run modifiers. |
-| `genre-narrative-vn` | QA / exclusion lens | Emotional camera/background check; no interaction highlights or VN UI. |
-| `genre-open-world-sandbox` | QA / exclusion lens | Landmark check: house and central peak aid orientation; no traversal toys. |
-| `genre-puzzle-platformer` | QA / exclusion lens | Honest-scale check; no interactable color coding or jump mechanics. |
-| `genre-racing-sports` | QA / exclusion lens | Edge-clarity check on bund/path; no speed landmarks or stadium kits. |
-| `genre-rpg` | QA / exclusion lens | Region-identity check: Kerala materials and paddies; no loot/class language. |
-| `genre-shooter` | QA / exclusion lens | Sightline/eye-height check; no cover or loot mechanics. |
-| `genre-soulslike` | QA / exclusion lens | Landmark/fog check; rejected monumental dread and lethal fog gates. |
-| `genre-stealth` | QA / exclusion lens | Shadow-readability check; no patrol routes or gameplay shadow volumes. |
-| `genre-strategy-sim` | QA / exclusion lens | Building silhouette check at distance; no tile/unit icon system. |
-| `genre-survival` | QA / exclusion lens | Resource-readability check on jars/firewood; no crafting HUD or tension route. |
-| `geometry-nodes` | Applied | Reusable GN_Scatter groups expose Seed/Density/Scale; rice/grass/trees/understory remain instanced. |
-| `godot-export` | Compatibility check | Compatibility check: GLB would be preferred; Godot not installed, no engine import claimed. |
-| `hair-groom` | Not applicable | No hair/fur; coconut fronds are modeled geometry, not groom curves. |
-| `hand-painted-style` | QA / exclusion lens | Rejected brushwork albedo; procedural physical wear retained. |
-| `hard-surface` | Applied | Real bevels on plinth/frames/steps; overlapping roof tiles; rafters and brackets; no uniform micro-greeble. |
-| `hd-2d-style` | QA / exclusion lens | Rejected pixel actors/tilt-shift theatrical DoF; deep-focus 3D retained. |
-| `historical-worlds` | Applied | Period material language: laterite, lime wash, teak, fired clay; no modern tech in the house. |
-| `horror-style` | QA / exclusion lens | Used readable-path check; rejected dread lighting and institutional emptiness. |
-| `indie-horror-aesthetics` | QA / exclusion lens | Rejected horror lane mashup; single naturalistic monsoon lane. |
-| `isometric-style` | QA / exclusion lens | Rejected ortho tile framing; perspective hero camera retained. |
-| `lighting` | Applied | Fixed motivated morning sun, restrained sky fill, named LGT_ lights, bounded mist; no time-lapse sun. |
-| `liminal-space-style` | QA / exclusion lens | Rejected endless wrong repetition; inhabited rural specificity retained. |
-| `lod-pipeline` | Applied | Wider far paddy spacing; smaller understory/foothill instances; separate reduced Eevee LOD preset. |
-| `lookdev` | Applied | Clay proxy, low-res lighting, house detail and foreground detail iterations with gap fixes. |
-| `lowpoly-style` | QA / exclusion lens | Used Workbench clay silhouette check; hero is not intentionally low-poly. |
-| `manga-style` | QA / exclusion lens | Used grayscale value/clay check; no screentone or print language. |
-| `mascot-puppet-horror` | QA / exclusion lens | Rejected mascot/brand corruption language. |
-| `materials` | Applied | 25 named MAT_ materials; PBR ranges, leaf translucency, water IOR 1.333 and absorption. |
-| `minimalist-style` | QA / exclusion lens | Used negative-space check: sky and path rest areas; not abstracted. |
-| `neon-retrofuturism` | QA / exclusion lens | Rejected neon/chrome/sunset grid palette. |
-| `noir-style` | QA / exclusion lens | Used wet-ground reflection check; retained readable color and shadows, not crushed mono. |
-| `painterly-style` | QA / exclusion lens | Rejected pigment/paper overlays; photographic-like tonal continuity. |
-| `physics-sim` | Not applicable | Static scene; no rigid/soft-body caches left unbaked. |
-| `pixel-art-style` | QA / exclusion lens | Native-resolution check: no pixelation or texel locking; thin blades reviewed for shimmer. |
-| `procedural-modeling` | Applied | Seeded terrain/path/roof/scatter generation; authoritative config and reproducible build script. |
-| `prop-artist` | Applied | Terracotta jars, bench, brass lamp, broom and firewood at believable scale; clustered not wallpapered. |
-| `psx-horror-style` | QA / exclusion lens | Rejected affine crunch/low color depth; modern PBR retained. |
-| `qa-review` | Applied | Screenshot-backed QA gate; explicit technical/visual/delivery statuses in final report. |
-| `realistic-style` | Applied | Reference-driven composition; metric scale; restrained procedural wear; no photo backplate. |
-| `rendering` | Applied | Sample tests before final; frozen-scene receipts; backend availability measured, not assumed. |
-| `retopology` | Applied | Quad terrain/water grids; clean folded blade ribbons; no deformation surfaces requiring retopo. |
-| `retro-16bit-style` | QA / exclusion lens | Rejected dither/sprite palette constraints. |
-| `retro-8bit-style` | QA / exclusion lens | Rejected severe palette/chunky sprite logic. |
-| `rigging` | Not applicable | No deforming assets; no armatures or weight maps required. |
-| `scene-assembly` | Applied | COL_ hierarchy, linked palm collection instances, GN field instances, hidden asset library. |
-| `sci-fi-punk-worlds` | QA / exclusion lens | Rejected chrome/steam/cyber tech; agrarian material honesty. |
-| `sculpting` | Applied | Largest-to-smallest massif/shoulder/ravine forms; detail matched to camera distance; no dyntopo spikes. |
-| `set-dressing` | Applied | Narrative clusters at veranda and approach; doors/windows kept clear; background filler subordinate. |
-| `stop-motion-craft-style` | QA / exclusion lens | Used slight irregularity check; rejected visible craft seams/fingerprints. |
-| `stylized-style` | QA / exclusion lens | Used palette harmony/silhouette check without proportion exaggeration. |
-| `texture-workflow` | Applied | Procedural wear masks and bump; no external texture bakes; engine-bake limitation documented. |
-| `unity-export` | Compatibility check | Compatibility check: scale/axis and material baking requirements documented; Unity not installed. |
-| `unreal-export` | Compatibility check | Compatibility check: UCX collision and LOD plan documented; Unreal not installed. |
-| `uv-workflow` | Compatibility check | Compatibility check: hero uses procedural Object coordinates; production packed UVs/ORM are a separate game-export task. |
-| `vector-style` | QA / exclusion lens | Rejected flat fills/icon gradients; natural light retained. |
-| `vegetation-artist` | Applied | Dimensional rice clumps, pinnate coconut fronds, branching broadleaf trees, torn banana leaves; VC_Wind on rice. |
-| `vehicle-artist` | Not applicable | No vehicles in the brief. |
-| `vfx-fx` | Applied | Bounded distant mist volume with height falloff; tiny real-mesh swifts; no huge empty FX domain. |
-| `visual-console-eras` | QA / exclusion lens | Rejected console-era crunch; modern cinematic PBR target. |
-| `voxel-style` | QA / exclusion lens | Rejected block grid; organic curved geometry retained. |
+| `analog-found-footage-horror` | QA / exclusion lens | Rechecked v2 hero/house previews: no analog found footage horror contamination; continuous PBR/HDRI photoreal target retained. |
+| `animation` | Not applicable | Static still; frame range 1; no animation caches. |
+| `anime-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no anime style contamination; continuous PBR/HDRI photoreal target retained. |
+| `apocalypse-worlds` | QA / exclusion lens | Rechecked v2 hero/house previews: no apocalypse worlds contamination; continuous PBR/HDRI photoreal target retained. |
+| `archviz` | Applied | Metric tharavad retained (2.08 m door, 2.70 m walls); scanned PBR wear, IOR 1.333 paddy water, stable perspective. |
+| `asset-optimization` | Applied | Non-realized GN instances; CC0 island_tree_02 LOD1 chosen over LOD0; 946,040 unique mesh triangles; packed 60 MB blend. |
+| `biome-worlds` | Applied | Humid monsoon paddy, wet footprinted bund, narrow drain, tropical canopy, bounded Ghat mist banks. |
+| `blender-director` | Applied | Wrote v2 photoreal brief from both new references; staged three hero/house preview iterations before freezing. |
+| `blender-modeler` | Applied | Named SM_/COL_ hierarchy; live bevel/solidify/displace/GN; real footprint depressions and timber drain crossing. |
+| `body-horror-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no body horror style contamination; continuous PBR/HDRI photoreal target retained. |
+| `brutalist-mood` | QA / exclusion lens | Rechecked v2 hero/house previews: no brutalist mood contamination; continuous PBR/HDRI photoreal target retained. |
+| `camera-cinematography` | Applied | 42 mm leading-bund hero, 58 mm house detail, 50 mm foreground detail; deep focus, no handheld shake. |
+| `cartoon-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no cartoon style contamination; continuous PBR/HDRI photoreal target retained. |
+| `character-archetypes` | Not applicable | No characters; hidden 1.70 m scale proxy only. |
+| `character-artist` | Not applicable | No character hero. |
+| `chibi-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no chibi style contamination; continuous PBR/HDRI photoreal target retained. |
+| `cloth-sim` | Not applicable | No garments/cloth sim. |
+| `collision-proxy` | Compatibility check | v1 UCX-style house proxy retained for compatibility; v2 deliverable is a native render scene, not a game-engine import. |
+| `comic-book-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no comic book style contamination; continuous PBR/HDRI photoreal target retained. |
+| `compositing` | Applied | AgX Base Contrast, exposure +0.20, reversible subtle fog-glow glare; no painted backplate. |
+| `cosmic-eldritch-horror` | QA / exclusion lens | Rechecked v2 hero/house previews: no cosmic eldritch horror contamination; continuous PBR/HDRI photoreal target retained. |
+| `cozy-wholesome-mood` | Applied | Inhabited veranda props, hanging brass lamp, water jar, bench and broom; safe eye-level route. |
+| `creature-artist` | Not applicable | No creature hero; v2 removed distant birds to avoid CG silhouettes. |
+| `dark-gritty-mood` | QA / exclusion lens | Rechecked v2 hero/house previews: no dark gritty mood contamination; continuous PBR/HDRI photoreal target retained. |
+| `dream-surreal-mood` | QA / exclusion lens | Rechecked v2 hero/house previews: no dream surreal mood contamination; continuous PBR/HDRI photoreal target retained. |
+| `dream-weirdcore-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no dream weirdcore style contamination; continuous PBR/HDRI photoreal target retained. |
+| `environment-artist` | Applied | Layered paddy plots, transverse bunds, forest belts, three mesh Ghat ridges with editable rocky displacement. |
+| `export-pipeline` | Applied | Packed editable .blend, per-file CC0 provenance/SHA-256, CI asset transport scripts; v1 house GLB compatibility retained. |
+| `fantasy-worlds` | QA / exclusion lens | Rechecked v2 hero/house previews: no fantasy worlds contamination; continuous PBR/HDRI photoreal target retained. |
+| `folk-horror-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no folk horror style contamination; continuous PBR/HDRI photoreal target retained. |
+| `frutiger-aero-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no frutiger aero style contamination; continuous PBR/HDRI photoreal target retained. |
+| `genre-action-combat` | QA / exclusion lens | Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only. |
+| `genre-card-party-idle` | QA / exclusion lens | Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only. |
+| `genre-metroidvania-roguelike` | QA / exclusion lens | Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only. |
+| `genre-narrative-vn` | QA / exclusion lens | Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only. |
+| `genre-open-world-sandbox` | QA / exclusion lens | Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only. |
+| `genre-puzzle-platformer` | QA / exclusion lens | Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only. |
+| `genre-racing-sports` | QA / exclusion lens | Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only. |
+| `genre-rpg` | QA / exclusion lens | Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only. |
+| `genre-shooter` | QA / exclusion lens | Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only. |
+| `genre-soulslike` | QA / exclusion lens | Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only. |
+| `genre-stealth` | QA / exclusion lens | Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only. |
+| `genre-strategy-sim` | QA / exclusion lens | Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only. |
+| `genre-survival` | QA / exclusion lens | Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only. |
+| `geometry-nodes` | Applied | Editable scatter groups for fine rice, bund grass, sapling belt, CC0 trees, scanned understory and foothill forest. |
+| `godot-export` | Compatibility check | v1 GLB/collision compatibility retained; no Godot import/test claimed in this CPU sandbox. |
+| `hair-groom` | Not applicable | No hair/groom. |
+| `hand-painted-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no hand painted style contamination; continuous PBR/HDRI photoreal target retained. |
+| `hard-surface` | Applied | Turned posts, brackets, door panels, corrugated metal vent ribs/seams, timber crossing planks and bearers. |
+| `hd-2d-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no hd 2d style contamination; continuous PBR/HDRI photoreal target retained. |
+| `historical-worlds` | Applied | Kerala tharavad language: laterite plinth, lime wash, teak joinery, fired clay tiles, granite steps. |
+| `horror-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no horror style contamination; continuous PBR/HDRI photoreal target retained. |
+| `indie-horror-aesthetics` | QA / exclusion lens | Rechecked v2 hero/house previews: no indie horror aesthetics contamination; continuous PBR/HDRI photoreal target retained. |
+| `isometric-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no isometric style contamination; continuous PBR/HDRI photoreal target retained. |
+| `lighting` | Applied | CC0 pure-sky HDRI desaturated for monsoon fill, soft 8° sun, sky bounce area, motivated veranda lamp. |
+| `liminal-space-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no liminal space style contamination; continuous PBR/HDRI photoreal target retained. |
+| `lod-pipeline` | Applied | Selected CC0 tree LOD1; fast Eevee LOD preset exists from v1 and is re-probed for v2 memory limits. |
+| `lookdev` | Applied | Three measured Cycles previews; corrected neon rice, dry path, stone-like plaster, sparse foothill trees and harsh sky. |
+| `lowpoly-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no lowpoly style contamination; continuous PBR/HDRI photoreal target retained. |
+| `manga-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no manga style contamination; continuous PBR/HDRI photoreal target retained. |
+| `mascot-puppet-horror` | QA / exclusion lens | Rechecked v2 hero/house previews: no mascot puppet horror contamination; continuous PBR/HDRI photoreal target retained. |
+| `materials` | Applied | 46 materials; CC0 1K PBR maps for mud/laterite/bark/wood/metal/rock; procedural lime/teak/tile relief; position-varied leaves. |
+| `minimalist-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no minimalist style contamination; continuous PBR/HDRI photoreal target retained. |
+| `neon-retrofuturism` | QA / exclusion lens | Rechecked v2 hero/house previews: no neon retrofuturism contamination; continuous PBR/HDRI photoreal target retained. |
+| `noir-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no noir style contamination; continuous PBR/HDRI photoreal target retained. |
+| `painterly-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no painterly style contamination; continuous PBR/HDRI photoreal target retained. |
+| `physics-sim` | Not applicable | No rigid/soft-body sim; water is shaded shallow geometry. |
+| `pixel-art-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no pixel art style contamination; continuous PBR/HDRI photoreal target retained. |
+| `procedural-modeling` | Applied | Seeded fbm ridges + Displace crags, fine rice clumps, sapling-generated broadleaf variants, footprinted path mesh. |
+| `prop-artist` | Applied | Terracotta jars, brass lamp, bench, broom, firewood, laterite chips, edge stones, timber crossing. |
+| `psx-horror-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no psx horror style contamination; continuous PBR/HDRI photoreal target retained. |
+| `qa-review` | Applied | Visual inspection of hero/house previews; technical verification and receipt checks run on frozen v2 scene. |
+| `realistic-style` | Applied | Primary acceptance target: photoreal, not animated-like; PBR/HDRI/library foliage; cartoon/cel/pixel languages excluded. |
+| `rendering` | Applied | Cycles CPU preview/bench/final route measurements; no GPU backend claimed; honest Eevee/Workbench/LuxCore limits. |
+| `retopology` | Compatibility check | No manual retopology claimed; used authored CC0 LOD1 tree and low-poly sapling/library meshes instead of LOD0. |
+| `retro-16bit-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no retro 16bit style contamination; continuous PBR/HDRI photoreal target retained. |
+| `retro-8bit-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no retro 8bit style contamination; continuous PBR/HDRI photoreal target retained. |
+| `rigging` | Not applicable | No rig/armature deliverable; sapling armature disabled. |
+| `scene-assembly` | Applied | Asset library excluded from view layer but instanced; house remains path destination; separate v2 scene preserves v1. |
+| `sci-fi-punk-worlds` | QA / exclusion lens | Rechecked v2 hero/house previews: no sci fi punk worlds contamination; continuous PBR/HDRI photoreal target retained. |
+| `sculpting` | QA / exclusion lens | No manual multires sculpt claimed; ridge crags are editable Displace modifiers plus scanned bump/rock shading. |
+| `set-dressing` | Applied | Scanned fern/anthurium understory, puddles, footprints, stones, chips, props and timber crossing motivate wear. |
+| `stop-motion-craft-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no stop motion craft style contamination; continuous PBR/HDRI photoreal target retained. |
+| `stylized-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no stylized style contamination; continuous PBR/HDRI photoreal target retained. |
+| `texture-workflow` | Applied | CC0 Poly Haven 1K maps, box-projection PBR where UVs absent, preserved library UVs, packed images, license manifest. |
+| `unity-export` | Compatibility check | v1 GLB/collision compatibility retained; no Unity import/test claimed in this CPU sandbox. |
+| `unreal-export` | Compatibility check | v1 GLB/collision compatibility retained; no Unreal import/test claimed in this CPU sandbox. |
+| `uv-workflow` | Compatibility check | Library UVs preserved; new architectural PBR uses triplanar box projection to avoid fake UV seams; no UV unwrap claimed. |
+| `vector-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no vector style contamination; continuous PBR/HDRI photoreal target retained. |
+| `vegetation-artist` | Applied | Improved Sapling GPL generator produced 6 broadleaf variants; CC0 island tree/fern/anthurium imported; 133,805 fine rice points. |
+| `vehicle-artist` | Not applicable | No vehicles. |
+| `vfx-fx` | Applied | Bounded mist volumes, shallow water absorption/IOR, subtle compositor glare; no destructive photo composite. |
+| `visual-console-eras` | QA / exclusion lens | Rechecked v2 hero/house previews: no visual console eras contamination; continuous PBR/HDRI photoreal target retained. |
+| `voxel-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no voxel style contamination; continuous PBR/HDRI photoreal target retained. |
 
-## Honesty note
-No Blender MCP connection was available; all work used direct `bpy` through the shell. The house GLB compatibility proof completed export/reimport and wrote its report, but the Blender process segfaulted during shutdown afterward; the GLB files and report were produced. No game-engine import was claimed.
+## v1 record
+The original v1 mode/action fields are preserved in `skill_94_review.json` for comparison.

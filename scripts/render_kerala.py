@@ -60,6 +60,6 @@ def main():
     if not tmp.exists() or tmp.stat().st_size<1000:raise SystemExit('Render did not produce a valid PNG')
     tmp.replace(out)
     volume_on=(not a.no_volume) and ('COL_Atmosphere' not in bpy.data.collections or not bpy.data.collections['COL_Atmosphere'].hide_render)
-    receipt={'revision':REVISION,'preset':a.preset,'scene_sha256':sha(a.blend),'blender':bpy.app.version_string,'engine':s.render.engine,'camera':a.camera,'resolution':[s.render.resolution_x,s.render.resolution_y],'samples':getattr(s.cycles,'samples',None) if s.render.engine=='CYCLES' else getattr(s.eevee,'taa_render_samples',None),'seconds':round(dt,3),'image_sha256':sha(out),'image':str(out),'volume':volume_on,'utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime())}
+    receipt={'revision':bpy.context.scene.get('revision',REVISION),'preset':a.preset,'scene_sha256':sha(a.blend),'blender':bpy.app.version_string,'engine':s.render.engine,'camera':a.camera,'resolution':[s.render.resolution_x,s.render.resolution_y],'samples':getattr(s.cycles,'samples',None) if s.render.engine=='CYCLES' else getattr(s.eevee,'taa_render_samples',None),'seconds':round(dt,3),'image_sha256':sha(out),'image':str(out),'volume':volume_on,'utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime())}
     out.with_suffix('.receipt.json').write_text(json.dumps(receipt,indent=2));print('RECEIPT '+json.dumps(receipt))
 if __name__=='__main__':main()

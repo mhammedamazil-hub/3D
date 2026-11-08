@@ -25,3 +25,13 @@ review/
 
 # OS noise
 .DS_Store
+
+# Large raw CC0 model library sources are retrieved by CI and packed into the
+# delivered .blend; keep provenance/small textures tracked, not 38 MB raw blends.
+assets/models/raw/
+transport/
+!output/Kerala_Photoreal.blend
+!output/Kerala_Photoreal_1080p.png
+!output/Kerala_Photoreal_1080p.receipt.json
+!output/Kerala_Photoreal_House_Detail_540p.png
+!output/Kerala_Photoreal_House_Detail_540p.receipt.json
