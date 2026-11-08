@@ -1,0 +1,37 @@
+{
+  "source": "Princeton Infinigen BSD-3-Clause",
+  "source_commit": "main snapshot 2026-11-08",
+  "assets": [
+    {
+      "name": "LIB_Broadleaf_Infinigen",
+      "type": "procedural broadleaf tree, live instancing",
+      "seed": 9917,
+      "height_m": 6.8,
+      "file_bytes": 12580328
+    },
+    {
+      "name": "LIB_Banana_01",
+      "type": "procedural banana monocot",
+      "seed": 5511,
+      "vertices": 44268,
+      "polygons": 55214,
+      "height_m": 2.3810510635375977
+    },
+    {
+      "name": "LIB_Banana_02",
+      "type": "procedural banana monocot",
+      "seed": 5521,
+      "vertices": 48022,
+      "polygons": 62267,
+      "height_m": 3.05342960357666
+    },
+    {
+      "name": "LIB_Banana_03",
+      "type": "procedural banana monocot",
+      "seed": 5531,
+      "vertices": 46236,
+      "polygons": 57946,
+      "height_m": 1.996495008468628
+    }
+  ]
+}

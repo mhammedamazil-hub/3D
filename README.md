@@ -2,6 +2,26 @@
 
 An actual editable Blender landscape inspired by two user-supplied paddy-field references: flooded rice rows, a curved earthen bund, coconut palms and tropical tree belt, layered Western-Ghat-inspired mountains, and an old Kerala tharavad-inspired house at the path end.
 
+## Quality-first v3 deliverables
+
+- `output/Kerala_Quality.blend` — editable packed Blender 4.2 quality scene (metric, named collections, live GN/collection instances, packed PBR).
+- `output/Kerala_Quality_900p.png` — 1600×900 Cycles CPU hero still from the frozen v3 scene.
+- `output/Kerala_Quality_House_Detail_540p.png` — Cycles house detail from the same frozen v3 scene.
+- `*.receipt.json` — scene/image SHA-256, engine, settings and measured render time.
+- `docs/KERALA_VALIDATION_V3.json`, `docs/KERALA_QA_V3.md`, `docs/ADDON_LIBRARY_REPORT_V3.md`, `docs/QUALITY_ASSET_PROVENANCE_V3.json`, `docs/SKILL_94_REVIEW.md` — verification, QA, generator/library tests, provenance and all-94-skill review.
+
+Rebuild/render v3:
+
+```bash
+PYTHONPATH=vendor/sources/infinigen/infinigen-main/src sh scripts/blender-py scripts/build_botanical_library.py
+sh scripts/blender-py scripts/build_kerala_quality.py
+sh scripts/blender-py scripts/render_kerala_quality.py --camera CAM_Q_Hero_LeadingBund --width 1600 --height 900 --samples 64 --out output/Kerala_Quality_900p.png
+sh scripts/blender-py scripts/render_kerala_quality.py --camera CAM_Q_House_Detail --width 960 --height 540 --samples 32 --out output/Kerala_Quality_House_Detail_540p.png
+sh scripts/blender-py scripts/verify_kerala_v3.py
+```
+
+v2 deliverables remain frozen below for comparison.
+
 ## Primary deliverables
 
 - `output/Kerala_Monsoon_Light.blend` — editable packed Blender 4.2 scene, metric units, named collections, procedural node materials, non-realized vegetation instances.

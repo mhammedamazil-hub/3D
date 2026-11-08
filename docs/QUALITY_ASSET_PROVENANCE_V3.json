@@ -1,0 +1,374 @@
+{
+  "revision": "kerala-v3.0-quality",
+  "ci_run": "https://github.com/mhammedamazil-hub/3D/actions/runs/42478934638",
+  "poly_haven": {
+    "license": "CC0-1.0",
+    "files": [
+      {
+        "path": "textures/brown_mud/Diffuse.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/brown_mud/brown_mud_diff_4k.jpg",
+        "source": "https://polyhaven.com/a/brown_mud",
+        "license": "CC0-1.0",
+        "bytes": 8099872,
+        "sha256": "f903093d5720da93deec4bd81a6fbbe9da334bddd347ac866547d3c3fe9d8087"
+      },
+      {
+        "path": "textures/brown_mud/Rough.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/brown_mud/brown_mud_rough_4k.jpg",
+        "source": "https://polyhaven.com/a/brown_mud",
+        "license": "CC0-1.0",
+        "bytes": 5884362,
+        "sha256": "8333fff771d7411346d25eff8135645c684e90e3dff2972ae6441452e7db3310"
+      },
+      {
+        "path": "textures/brown_mud/Displacement.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/brown_mud/brown_mud_disp_4k.jpg",
+        "source": "https://polyhaven.com/a/brown_mud",
+        "license": "CC0-1.0",
+        "bytes": 1961236,
+        "sha256": "67be9ecc525cbdff14b8ed20ce4fea42f87af719ff498d3d688a00cd2cd23357"
+      },
+      {
+        "path": "textures/brown_mud/nor_gl.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/brown_mud/brown_mud_nor_gl_4k.jpg",
+        "source": "https://polyhaven.com/a/brown_mud",
+        "license": "CC0-1.0",
+        "bytes": 9152621,
+        "sha256": "ec124e678ffc4244d1d4366acadc273209387e490d3e565cfd740cd9bd264125"
+      },
+      {
+        "path": "textures/brown_mud/AO.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/brown_mud/brown_mud_ao_4k.jpg",
+        "source": "https://polyhaven.com/a/brown_mud",
+        "license": "CC0-1.0",
+        "bytes": 6858659,
+        "sha256": "7bba2a99689b0d202e665df2955edafc71f389fe5ff0dbd2755603577bf8d933"
+      },
+      {
+        "path": "textures/red_laterite_soil_stones/Diffuse.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/red_laterite_soil_stones/red_laterite_soil_stones_diff_4k.jpg",
+        "source": "https://polyhaven.com/a/red_laterite_soil_stones",
+        "license": "CC0-1.0",
+        "bytes": 13486775,
+        "sha256": "11ef174624e052a3101c5ad19a155e9c8028e58de3383c32486b5054074abf26"
+      },
+      {
+        "path": "textures/red_laterite_soil_stones/Rough.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/red_laterite_soil_stones/red_laterite_soil_stones_rough_4k.jpg",
+        "source": "https://polyhaven.com/a/red_laterite_soil_stones",
+        "license": "CC0-1.0",
+        "bytes": 10406775,
+        "sha256": "d61181bfdddec6673570e995a2ad1358e8d4d0f955479011ba6c622f6ce34d1e"
+      },
+      {
+        "path": "textures/red_laterite_soil_stones/Displacement.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/red_laterite_soil_stones/red_laterite_soil_stones_disp_4k.jpg",
+        "source": "https://polyhaven.com/a/red_laterite_soil_stones",
+        "license": "CC0-1.0",
+        "bytes": 6250554,
+        "sha256": "6f303cdc43273779415279e51d0aac7700647e2f05f56b7e3e584026fc3ad78a"
+      },
+      {
+        "path": "textures/red_laterite_soil_stones/nor_gl.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/red_laterite_soil_stones/red_laterite_soil_stones_nor_gl_4k.jpg",
+        "source": "https://polyhaven.com/a/red_laterite_soil_stones",
+        "license": "CC0-1.0",
+        "bytes": 22024012,
+        "sha256": "c42df116bc65ecf097d1270f101b8924906914f13d2b83c1e7d853d910d2ade5"
+      },
+      {
+        "path": "textures/red_laterite_soil_stones/AO.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/red_laterite_soil_stones/red_laterite_soil_stones_ao_4k.jpg",
+        "source": "https://polyhaven.com/a/red_laterite_soil_stones",
+        "license": "CC0-1.0",
+        "bytes": 13394689,
+        "sha256": "86196fecd06fe043963b4db992460d40ff6aa78d5196e9908000e96853e1252c"
+      },
+      {
+        "path": "textures/clay_roof_tiles/Diffuse.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/clay_roof_tiles/clay_roof_tiles_diff_4k.jpg",
+        "source": "https://polyhaven.com/a/clay_roof_tiles",
+        "license": "CC0-1.0",
+        "bytes": 10880030,
+        "sha256": "abbdb3c96f7cc44b08d5bf739b81f45ebf3db3a8c0a49465aa404385c83bab06"
+      },
+      {
+        "path": "textures/clay_roof_tiles/Rough.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/clay_roof_tiles/clay_roof_tiles_rough_4k.jpg",
+        "source": "https://polyhaven.com/a/clay_roof_tiles",
+        "license": "CC0-1.0",
+        "bytes": 3450728,
+        "sha256": "a9e1743f817ed9c38d564613d84442088b64b5709dce39bcdd564cb89bd215f3"
+      },
+      {
+        "path": "textures/clay_roof_tiles/Displacement.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/clay_roof_tiles/clay_roof_tiles_disp_4k.jpg",
+        "source": "https://polyhaven.com/a/clay_roof_tiles",
+        "license": "CC0-1.0",
+        "bytes": 3660944,
+        "sha256": "f8cf8426228e5ad3363027bbc27133be898318dc22096ef81ab8d769d07bc8d2"
+      },
+      {
+        "path": "textures/clay_roof_tiles/nor_gl.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/clay_roof_tiles/clay_roof_tiles_nor_gl_4k.jpg",
+        "source": "https://polyhaven.com/a/clay_roof_tiles",
+        "license": "CC0-1.0",
+        "bytes": 13125753,
+        "sha256": "2da43d532bef36dc6a61021a388cfd8a46590548e1a7397d6e9932e497accda2"
+      },
+      {
+        "path": "textures/clay_roof_tiles/AO.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/clay_roof_tiles/clay_roof_tiles_ao_4k.jpg",
+        "source": "https://polyhaven.com/a/clay_roof_tiles",
+        "license": "CC0-1.0",
+        "bytes": 8959189,
+        "sha256": "22100c076da3e9bca2c2292150d8abd43fa839484587447d83ad188b68f32c72"
+      },
+      {
+        "path": "textures/wood_planks/Diffuse.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/wood_planks/wood_planks_diff_2k.jpg",
+        "source": "https://polyhaven.com/a/wood_planks",
+        "license": "CC0-1.0",
+        "bytes": 2387732,
+        "sha256": "caa1e71809521050fe0753ee7c17aa2faf32055fe53aff013415bc459dd23ea7"
+      },
+      {
+        "path": "textures/wood_planks/Rough.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/wood_planks/wood_planks_rough_2k.jpg",
+        "source": "https://polyhaven.com/a/wood_planks",
+        "license": "CC0-1.0",
+        "bytes": 1151798,
+        "sha256": "56e3bafda8dfbeb8730b10d59c7541e983cff43b5b74f58d6d2c437f2b9455a1"
+      },
+      {
+        "path": "textures/wood_planks/Displacement.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/wood_planks/wood_planks_disp_2k.jpg",
+        "source": "https://polyhaven.com/a/wood_planks",
+        "license": "CC0-1.0",
+        "bytes": 678214,
+        "sha256": "55397640a3cfa24f45e685411bd05b3ddf80c4fba1fa18705fb8c25940958cd6"
+      },
+      {
+        "path": "textures/wood_planks/nor_gl.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/wood_planks/wood_planks_nor_gl_2k.jpg",
+        "source": "https://polyhaven.com/a/wood_planks",
+        "license": "CC0-1.0",
+        "bytes": 2906326,
+        "sha256": "908d0fe05d5abd963f2e518776bbff0db9617d3ccbb09e5e8503290572caaf27"
+      },
+      {
+        "path": "textures/wood_planks/AO.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/wood_planks/wood_planks_ao_2k.jpg",
+        "source": "https://polyhaven.com/a/wood_planks",
+        "license": "CC0-1.0",
+        "bytes": 1404358,
+        "sha256": "08d0c16665dd88be24eff9ca2fbab983b8d8c56af76f689377c674f1da3679f1"
+      },
+      {
+        "path": "textures/worn_plaster_wall/Diffuse.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/worn_plaster_wall/worn_plaster_wall_diff_2k.jpg",
+        "source": "https://polyhaven.com/a/worn_plaster_wall",
+        "license": "CC0-1.0",
+        "bytes": 3096042,
+        "sha256": "1cf28fcd1a0aa5873055fbfaf791e4a1528e03d3eeea8f66af23aba651e71f54"
+      },
+      {
+        "path": "textures/worn_plaster_wall/Rough.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/worn_plaster_wall/worn_plaster_wall_rough_2k.jpg",
+        "source": "https://polyhaven.com/a/worn_plaster_wall",
+        "license": "CC0-1.0",
+        "bytes": 1012956,
+        "sha256": "1063b53b2cba33f791b895f0d7ac0ee5f3434a54a674164e53405d9cf358f7b1"
+      },
+      {
+        "path": "textures/worn_plaster_wall/Displacement.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/worn_plaster_wall/worn_plaster_wall_disp_2k.jpg",
+        "source": "https://polyhaven.com/a/worn_plaster_wall",
+        "license": "CC0-1.0",
+        "bytes": 387205,
+        "sha256": "05d4df483465d2c3178f6652d147ff037981a7db7b3f862678ced211df0fa874"
+      },
+      {
+        "path": "textures/worn_plaster_wall/nor_gl.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/worn_plaster_wall/worn_plaster_wall_nor_gl_2k.jpg",
+        "source": "https://polyhaven.com/a/worn_plaster_wall",
+        "license": "CC0-1.0",
+        "bytes": 2935964,
+        "sha256": "ffc110c57a6f98416a9cec390aeee80e1c6a3e6be627cfabfa041a55ccf96546"
+      },
+      {
+        "path": "textures/worn_plaster_wall/AO.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/worn_plaster_wall/worn_plaster_wall_ao_2k.jpg",
+        "source": "https://polyhaven.com/a/worn_plaster_wall",
+        "license": "CC0-1.0",
+        "bytes": 1675976,
+        "sha256": "ab636e099f2b0bc03a2d8190bcb08580c2e515a36079577ae8dc7e71ff9f0cae"
+      },
+      {
+        "path": "textures/rock_face/Diffuse.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/rock_face/rock_face_diff_2k.jpg",
+        "source": "https://polyhaven.com/a/rock_face",
+        "license": "CC0-1.0",
+        "bytes": 2971109,
+        "sha256": "b989c832327538a9e546cca359417acb9a657d041f300407e8398daaf743f5bc"
+      },
+      {
+        "path": "textures/rock_face/Rough.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/rock_face/rock_face_rough_2k.jpg",
+        "source": "https://polyhaven.com/a/rock_face",
+        "license": "CC0-1.0",
+        "bytes": 980027,
+        "sha256": "91517cdc191bf60fdb135929e12041e2ad50dd7343b33f25dae75d87ba61b226"
+      },
+      {
+        "path": "textures/rock_face/Displacement.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/rock_face/rock_face_disp_2k.jpg",
+        "source": "https://polyhaven.com/a/rock_face",
+        "license": "CC0-1.0",
+        "bytes": 879369,
+        "sha256": "2b057d933924f800f0aa008b9d5a0011dbf2a91d7819fc412db12e02c6553814"
+      },
+      {
+        "path": "textures/rock_face/nor_gl.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/rock_face/rock_face_nor_gl_2k.jpg",
+        "source": "https://polyhaven.com/a/rock_face",
+        "license": "CC0-1.0",
+        "bytes": 4158538,
+        "sha256": "352b87db2502d54487b0ed8abdfb621fae2abf7d360a281b419f567346178cf0"
+      },
+      {
+        "path": "textures/rock_face/AO.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/rock_face/rock_face_ao_2k.jpg",
+        "source": "https://polyhaven.com/a/rock_face",
+        "license": "CC0-1.0",
+        "bytes": 1621583,
+        "sha256": "a1307b27bb712faa3569ec6bfbd74e867c30f66a815df3fc88f86b6158551d5d"
+      },
+      {
+        "path": "textures/bark_brown_02/Diffuse.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/bark_brown_02/bark_brown_02_diff_2k.jpg",
+        "source": "https://polyhaven.com/a/bark_brown_02",
+        "license": "CC0-1.0",
+        "bytes": 2356592,
+        "sha256": "285051e34826ace29f4ab438ad35cc1201b2aae0a6157a5f3c0bf6667bbc539e"
+      },
+      {
+        "path": "textures/bark_brown_02/Rough.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/bark_brown_02/bark_brown_02_rough_2k.jpg",
+        "source": "https://polyhaven.com/a/bark_brown_02",
+        "license": "CC0-1.0",
+        "bytes": 1236654,
+        "sha256": "adafcab150c1ca99150c77198329e251437dc00fa1f66019f75624366926996e"
+      },
+      {
+        "path": "textures/bark_brown_02/Displacement.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/bark_brown_02/bark_brown_02_disp_2k.jpg",
+        "source": "https://polyhaven.com/a/bark_brown_02",
+        "license": "CC0-1.0",
+        "bytes": 534990,
+        "sha256": "bbcbba94be86527048d658974e43046a53bf2ada01aa8dd991c85d5069b48b23"
+      },
+      {
+        "path": "textures/bark_brown_02/nor_gl.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/bark_brown_02/bark_brown_02_nor_gl_2k.jpg",
+        "source": "https://polyhaven.com/a/bark_brown_02",
+        "license": "CC0-1.0",
+        "bytes": 3707907,
+        "sha256": "aaba4529c3167a7811b4dbf5b4327d054a166c2fc8ea08ebd249a2692adace41"
+      },
+      {
+        "path": "textures/bark_brown_02/AO.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/bark_brown_02/bark_brown_02_ao_2k.jpg",
+        "source": "https://polyhaven.com/a/bark_brown_02",
+        "license": "CC0-1.0",
+        "bytes": 1919982,
+        "sha256": "7efd7e23faf79d17cd906e542028020fac0aed0e0ef7f7b996ab3f980a417951"
+      },
+      {
+        "path": "textures/corrugated_iron_02/Diffuse.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/corrugated_iron_02/corrugated_iron_02_diff_2k.jpg",
+        "source": "https://polyhaven.com/a/corrugated_iron_02",
+        "license": "CC0-1.0",
+        "bytes": 2325335,
+        "sha256": "1bd2b9900e066d7e6cbacc5093aa4204db71c1bbe13b42a3d8ad23d04fa8075a"
+      },
+      {
+        "path": "textures/corrugated_iron_02/Rough.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/corrugated_iron_02/corrugated_iron_02_rough_2k.jpg",
+        "source": "https://polyhaven.com/a/corrugated_iron_02",
+        "license": "CC0-1.0",
+        "bytes": 3492646,
+        "sha256": "926d883052ad9f07e3110f3ce09157d9968872d1f7dafc7da70460f3158f4b4b"
+      },
+      {
+        "path": "textures/corrugated_iron_02/Displacement.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/corrugated_iron_02/corrugated_iron_02_disp_2k.jpg",
+        "source": "https://polyhaven.com/a/corrugated_iron_02",
+        "license": "CC0-1.0",
+        "bytes": 821702,
+        "sha256": "9cb37271014c8f02dc8a06917b2f78ed3ee29a62ca4d571ab1914b19e6e59502"
+      },
+      {
+        "path": "textures/corrugated_iron_02/nor_gl.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/corrugated_iron_02/corrugated_iron_02_nor_gl_2k.jpg",
+        "source": "https://polyhaven.com/a/corrugated_iron_02",
+        "license": "CC0-1.0",
+        "bytes": 2178443,
+        "sha256": "a7972360f64fb44beee57750b0ad6bee1f3b64268cd9f649b5e92e1de4de0632"
+      },
+      {
+        "path": "textures/corrugated_iron_02/AO.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/corrugated_iron_02/corrugated_iron_02_ao_2k.jpg",
+        "source": "https://polyhaven.com/a/corrugated_iron_02",
+        "license": "CC0-1.0",
+        "bytes": 1297335,
+        "sha256": "5ac729251c75d2560bab8c7e7f2921204d6fffd7671c57ae7b4a44003d469b56"
+      },
+      {
+        "path": "textures/corrugated_iron_02/Metal.jpg",
+        "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/corrugated_iron_02/corrugated_iron_02_metal_2k.jpg",
+        "source": "https://polyhaven.com/a/corrugated_iron_02",
+        "license": "CC0-1.0",
+        "bytes": 542030,
+        "sha256": "01d675c00567aa12abf71019320436f6e5bfdfd9924a0e84ca1a16920f75f758"
+      },
+      {
+        "path": "hdri/overcast_soil_puresky_4k.hdr",
+        "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/4k/overcast_soil_puresky_4k.hdr",
+        "source": "https://polyhaven.com/a/overcast_soil_puresky",
+        "license": "CC0-1.0",
+        "bytes": 16949123,
+        "sha256": "717958e9dfd092fcead82ff4691f3d615088803dd1888bb638ba948669021140"
+      }
+    ]
+  },
+  "infinigen": {
+    "source": "https://github.com/princeton-vl/infinigen",
+    "license": "BSD-3-Clause",
+    "commit": "edac8171aac4a34974c7bcd5c5652a3b59e89880",
+    "used_factories": [
+      "BananaMonocotFactory (final banana clumps)",
+      "TreeFactory broadleaf summer (generated/retained in library; not scattered in final after leaf-visibility issue)"
+    ],
+    "rejected": [
+      "PlantBananaTreeFactory preview",
+      "dense realized TreeFactory allocation abort",
+      "CoconutTreeFactory OOM",
+      "aggressive leaf decimation collapse"
+    ]
+  },
+  "potted_plants": {
+    "source": "Poly Haven CC0 via earlier CI transport ebcfc59",
+    "assets": [
+      "potted_plant_01"
+    ]
+  },
+  "native_geometry": [
+    "coconut palms",
+    "rice clumps",
+    "earthen bunds/path",
+    "house",
+    "ridges",
+    "mist volumes"
+  ]
+}

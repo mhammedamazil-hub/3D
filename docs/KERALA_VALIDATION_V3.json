@@ -1,0 +1,77 @@
+{
+  "pass": true,
+  "blend_sha256": "48dd90faf3c6cf578f6d412959d9b26553e5425760b08d0e0d66118e4193d5aa",
+  "hero_sha256": "2e69872236b4f737a864369ca4a1fe58c66f5a4995388cc692619c782c41bee2",
+  "house_sha256": "8e04926a4ad10883a5030c78af05820fce6fb545496537e58923c222d6a0acdb",
+  "checks": {
+    "blend_exists": true,
+    "hero_exists": true,
+    "house_detail_exists": true,
+    "revision": "kerala-v3.0-quality",
+    "engine": "CYCLES",
+    "device": "CPU",
+    "resolution": [
+      2560,
+      1440
+    ],
+    "samples_max": 128,
+    "camera": "CAM_Q_Hero_LeadingBund",
+    "units": "METRIC",
+    "rice_instance_points": 79917,
+    "path_material": "MAT_Q_Wet_Earthen_Bund_4K",
+    "house_root_present": true,
+    "house_location": [
+      3.0,
+      62.0,
+      0.0
+    ],
+    "packed_images": 73,
+    "materials": 48,
+    "objects": 991,
+    "infinigen_broadleaf_collection": true,
+    "scanned_jacaranda": true,
+    "no_photo_backplate": true,
+    "hero_receipt_scene_hash_match": true,
+    "house_receipt_scene_hash_match": true
+  },
+  "receipts": {
+    "Kerala_Quality_900p.png": {
+      "revision": "kerala-v3.0-quality",
+      "camera": "CAM_Q_Hero_LeadingBund",
+      "engine": "CYCLES",
+      "device": "CPU",
+      "resolution": [
+        1600,
+        900
+      ],
+      "samples_max": 64,
+      "adaptive_threshold": 0.015,
+      "denoiser": "OPENIMAGEDENOISE",
+      "render_seconds": 429.287,
+      "blend_sha256": "48dd90faf3c6cf578f6d412959d9b26553e5425760b08d0e0d66118e4193d5aa",
+      "image_sha256": "2e69872236b4f737a864369ca4a1fe58c66f5a4995388cc692619c782c41bee2",
+      "image_bytes": 2225157,
+      "output": "output/Kerala_Quality_900p.png",
+      "utc": "2026-11-08T13:40:02Z"
+    },
+    "Kerala_Quality_House_Detail_540p.png": {
+      "revision": "kerala-v3.0-quality",
+      "camera": "CAM_Q_House_Detail",
+      "engine": "CYCLES",
+      "device": "CPU",
+      "resolution": [
+        960,
+        540
+      ],
+      "samples_max": 32,
+      "adaptive_threshold": 0.015,
+      "denoiser": "OPENIMAGEDENOISE",
+      "render_seconds": 83.055,
+      "blend_sha256": "48dd90faf3c6cf578f6d412959d9b26553e5425760b08d0e0d66118e4193d5aa",
+      "image_sha256": "8e04926a4ad10883a5030c78af05820fce6fb545496537e58923c222d6a0acdb",
+      "image_bytes": 765079,
+      "output": "output/Kerala_Quality_House_Detail_540p.png",
+      "utc": "2026-11-08T13:41:28Z"
+    }
+  }
+}

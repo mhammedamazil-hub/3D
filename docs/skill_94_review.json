@@ -4,657 +4,845 @@
     "mode": "QA / exclusion lens",
     "action": "Rejected tape damage/handheld shake; stable documentary-like camera.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no analog found footage horror contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no analog found footage horror contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "animation",
     "mode": "Not applicable",
     "action": "Static still requested; frame range 1; no unbaked animation caches.",
     "v2_mode": "Not applicable",
-    "v2_action": "Static still; frame range 1; no animation caches."
+    "v2_action": "Static still; frame range 1; no animation caches.",
+    "v3_mode": "Not applicable",
+    "v3_action": "Static still; frame range 1; no animation caches."
   },
   {
     "skill": "anime-style",
     "mode": "QA / exclusion lens",
     "action": "Rejected cel value steps; continuous PBR shading retained.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no anime style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no anime style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "apocalypse-worlds",
     "mode": "QA / exclusion lens",
     "action": "Rejected collapse/scavenger language; house is old but maintained and inhabited.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no apocalypse worlds contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no apocalypse worlds contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "archviz",
     "mode": "Applied",
     "action": "Metric house: 2.08 m door, 2.70 m walls; stable perspective; plausible dielectric water.",
     "v2_mode": "Applied",
-    "v2_action": "Metric tharavad retained (2.08 m door, 2.70 m walls); scanned PBR wear, IOR 1.333 paddy water, stable perspective."
+    "v2_action": "Metric tharavad retained (2.08 m door, 2.70 m walls); scanned PBR wear, IOR 1.333 paddy water, stable perspective.",
+    "v3_mode": "Applied",
+    "v3_action": "Metric tharavad retained at path end; 2K/4K scanned PBR, IOR 1.333 shallow paddy water, stable 38 mm eye-level perspective."
   },
   {
     "skill": "asset-optimization",
     "mode": "Applied",
     "action": "Non-realized GN instances; 282,720 unique mesh triangles; 25 materials; build manifest recorded.",
     "v2_mode": "Applied",
-    "v2_action": "Non-realized GN instances; CC0 island_tree_02 LOD1 chosen over LOD0; 946,040 unique mesh triangles; packed 60 MB blend. Reopened scene retains 30 materials after unused purge."
+    "v2_action": "Non-realized GN instances; CC0 island_tree_02 LOD1 chosen over LOD0; 946,040 unique mesh triangles; packed 60 MB blend. Reopened scene retains 30 materials after unused purge.",
+    "v3_mode": "Applied",
+    "v3_action": "Packed 79 MB blend; recompressed scans (surface 1K, tree/rock 512, HDRI 1K), collection instances, 79,917 rice points; coconut GN and bare live-GN broadleaf instances excluded after memory/visibility failures."
   },
   {
     "skill": "biome-worlds",
     "mode": "Applied",
     "action": "Humid tropical palette, monsoon water, localized damp/moss, bounded distant mist.",
     "v2_mode": "Applied",
-    "v2_action": "Humid monsoon paddy, wet footprinted bund, narrow drain, tropical canopy, bounded Ghat mist banks."
+    "v2_action": "Humid monsoon paddy, wet footprinted bund, narrow drain, tropical canopy, bounded Ghat mist banks.",
+    "v3_mode": "Applied",
+    "v3_action": "Humid monsoon paddy with open water between rows, thin earthen bunds, coconut/banana/scan-tree canopy, bounded Ghat mist banks."
   },
   {
     "skill": "blender-director",
     "mode": "Applied",
     "action": "Brief and reference analysis written before modeling; COL_ hierarchy; staged visual tests.",
     "v2_mode": "Applied",
-    "v2_action": "Wrote v2 photoreal brief from both new references; staged three hero/house preview iterations before freezing."
+    "v2_action": "Wrote v2 photoreal brief from both new references; staged three hero/house preview iterations before freezing.",
+    "v3_mode": "Applied",
+    "v3_action": "Quality-first brief from references; Infinigen/library/texture probes; multiple measured preview iterations before final render."
   },
   {
     "skill": "blender-modeler",
     "mode": "Applied",
     "action": "Named SM_ meshes; live bevel/solidify/GN modifiers; separate house/terrain/vegetation collections.",
     "v2_mode": "Applied",
-    "v2_action": "Named SM_/COL_ hierarchy; live bevel/solidify/displace/GN; real footprint depressions and timber drain crossing."
+    "v2_action": "Named SM_/COL_ hierarchy; live bevel/solidify/displace/GN; real footprint depressions and timber drain crossing.",
+    "v3_mode": "Applied",
+    "v3_action": "Named SM_/COL_ hierarchy; live GN/solidify/displace; timber drain crossing, detailed coconut fronds, row rice clumps."
   },
   {
     "skill": "body-horror-style",
     "mode": "QA / exclusion lens",
     "action": "Rejected mutation/flesh material language.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no body horror style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no body horror style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "brutalist-mood",
     "mode": "QA / exclusion lens",
     "action": "Rejected monumental concrete; modest domestic scale retained.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no brutalist mood contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no brutalist mood contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "camera-cinematography",
     "mode": "Applied",
     "action": "39 mm hero leading-line composition; deep focus; separate house and foreground detail cameras.",
     "v2_mode": "Applied",
-    "v2_action": "42 mm leading-bund hero, 58 mm house detail, 50 mm foreground detail; deep focus, no handheld shake."
+    "v2_action": "42 mm leading-bund hero, 58 mm house detail, 50 mm foreground detail; deep focus, no handheld shake.",
+    "v3_mode": "Applied",
+    "v3_action": "38 mm hero at 1.62 m, 58 mm house detail, 50 mm foreground; f/9 deep-ish focus, no handheld shake."
   },
   {
     "skill": "cartoon-style",
     "mode": "QA / exclusion lens",
     "action": "Used silhouette-first check, rejected exaggerated cartoon proportions.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no cartoon style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no cartoon style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "character-archetypes",
     "mode": "Not applicable",
     "action": "No characters in brief; hidden 1.70 m scale proxy only.",
     "v2_mode": "Not applicable",
-    "v2_action": "No characters; hidden 1.70 m scale proxy only."
+    "v2_action": "No characters; hidden 1.70 m scale proxy only.",
+    "v3_mode": "Not applicable",
+    "v3_action": "No characters; hidden 1.70 m scale proxy only."
   },
   {
     "skill": "character-artist",
     "mode": "Not applicable",
     "action": "No character hero; scale proxy only.",
     "v2_mode": "Not applicable",
-    "v2_action": "No character hero."
+    "v2_action": "No character hero.",
+    "v3_mode": "Not applicable",
+    "v3_action": "No character hero."
   },
   {
     "skill": "chibi-style",
     "mode": "QA / exclusion lens",
     "action": "Rejected cute oversized proportions.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no chibi style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no chibi style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "cloth-sim",
     "mode": "Not applicable",
     "action": "No garments or cloth simulation; no raw unstable caches.",
     "v2_mode": "Not applicable",
-    "v2_action": "No garments/cloth sim."
+    "v2_action": "No garments/cloth sim.",
+    "v3_mode": "Not applicable",
+    "v3_action": "No garments/cloth sim."
   },
   {
     "skill": "collision-proxy",
     "mode": "Applied",
     "action": "Separate UCX-style convex house proxy exported as GLB, kept out of frozen hero render scene.",
     "v2_mode": "Compatibility check",
-    "v2_action": "v1 UCX-style house proxy retained for compatibility; v2 deliverable is a native render scene, not a game-engine import."
+    "v2_action": "v1 UCX-style house proxy retained for compatibility; v2 deliverable is a native render scene, not a game-engine import.",
+    "v3_mode": "Compatibility check",
+    "v3_action": "Compatibility retained from v1/v2; no unavailable backend/game-engine import claimed in v3."
   },
   {
     "skill": "comic-book-style",
     "mode": "QA / exclusion lens",
     "action": "Rejected ink contours/halftone; natural tonal gradation retained.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no comic book style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no comic book style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "compositing",
     "mode": "Applied",
     "action": "Reversible compositor glare node; AgX view transform; exposure documented.",
     "v2_mode": "Applied",
-    "v2_action": "AgX Base Contrast, exposure +0.20, reversible subtle fog-glow glare; no painted backplate."
+    "v2_action": "AgX Base Contrast, exposure +0.20, reversible subtle fog-glow glare; no painted backplate.",
+    "v3_mode": "Applied",
+    "v3_action": "AgX Medium High Contrast, exposure 0.0, reversible subtle fog-glow; no painted/photo backplate."
   },
   {
     "skill": "cosmic-eldritch-horror",
     "mode": "QA / exclusion lens",
     "action": "Rejected impossible scale/void pressure; believable landscape scale.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no cosmic eldritch horror contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no cosmic eldritch horror contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "cozy-wholesome-mood",
     "mode": "Applied",
     "action": "Warm inhabited veranda props, safe eye-level route, gentle daylight rather than threat lighting.",
     "v2_mode": "Applied",
-    "v2_action": "Inhabited veranda props, hanging brass lamp, water jar, bench and broom; safe eye-level route."
+    "v2_action": "Inhabited veranda props, hanging brass lamp, water jar, bench and broom; safe eye-level route.",
+    "v3_mode": "Applied",
+    "v3_action": "Inhabited veranda props, potted plants, brass lamp, water jar, bench; safe eye-level route."
   },
   {
     "skill": "creature-artist",
     "mode": "Not applicable",
     "action": "No creature hero; distant birds are simple subordinate meshes.",
     "v2_mode": "Not applicable",
-    "v2_action": "No creature hero; v2 removed distant birds to avoid CG silhouettes."
+    "v2_action": "No creature hero; v2 removed distant birds to avoid CG silhouettes.",
+    "v3_mode": "Not applicable",
+    "v3_action": "No creature hero; v2 removed distant birds to avoid CG silhouettes."
   },
   {
     "skill": "dark-gritty-mood",
     "mode": "QA / exclusion lens",
     "action": "Used wear-as-story check but rejected low-key industrial melancholy.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no dark gritty mood contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no dark gritty mood contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "dream-surreal-mood",
     "mode": "QA / exclusion lens",
     "action": "Rejected bent logic/scale play; physical geography retained.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no dream surreal mood contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no dream surreal mood contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "dream-weirdcore-style",
     "mode": "QA / exclusion lens",
     "action": "Rejected nostalgic wrongness/UI overlays.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no dream weirdcore style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no dream weirdcore style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "environment-artist",
     "mode": "Applied",
     "action": "Modular house kit, paddy plots, bunds, tree belt and three depth layers; one hero focal point.",
     "v2_mode": "Applied",
-    "v2_action": "Layered paddy plots, transverse bunds, forest belts, three mesh Ghat ridges with editable rocky displacement."
+    "v2_action": "Layered paddy plots, transverse bunds, forest belts, three mesh Ghat ridges with editable rocky displacement.",
+    "v3_mode": "Applied",
+    "v3_action": "Layered paddy plots, transverse bunds, mixed forest belts, three mesh Ghat ridges with editable displacement and mist."
   },
   {
     "skill": "export-pipeline",
     "mode": "Applied",
     "action": "House GLB export + clean Blender reimport PASS; bbox 13.66\u00d711.36\u00d75.88 m; separate collision GLB. Engine import not claimed; bpy shutdown segfault after successful report noted.",
     "v2_mode": "Applied",
-    "v2_action": "Packed editable .blend, per-file CC0 provenance/SHA-256, CI asset transport scripts; v1 house GLB compatibility retained."
+    "v2_action": "Packed editable .blend, per-file CC0 provenance/SHA-256, CI asset transport scripts; v1 house GLB compatibility retained.",
+    "v3_mode": "Applied",
+    "v3_action": "Packed editable .blend, per-file CC0/BSD provenance/SHA-256, CI asset preparation scripts; v1/v2 deliverables preserved."
   },
   {
     "skill": "fantasy-worlds",
     "mode": "QA / exclusion lens",
     "action": "Used material-honesty check; no magic emissive or fantasy heraldry.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no fantasy worlds contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no fantasy worlds contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "folk-horror-style",
     "mode": "QA / exclusion lens",
     "action": "Pastoral fields retained, but ritual dread and closed-community symbols rejected.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no folk horror style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no folk horror style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "frutiger-aero-style",
     "mode": "QA / exclusion lens",
     "action": "Rejected glossy bubbles/UI skeuomorphism; natural water gloss only.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no frutiger aero style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no frutiger aero style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "genre-action-combat",
     "mode": "QA / exclusion lens",
     "action": "Readability check only: clear route and focal landmark; no combat arena mechanics.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only."
+    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "genre-card-party-idle",
     "mode": "QA / exclusion lens",
     "action": "Readability check only: low-distraction background; no table/UI stage.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only."
+    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "genre-metroidvania-roguelike",
     "mode": "QA / exclusion lens",
     "action": "Modular-kit check only; no ability gates or run modifiers.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only."
+    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "genre-narrative-vn",
     "mode": "QA / exclusion lens",
     "action": "Emotional camera/background check; no interaction highlights or VN UI.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only."
+    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "genre-open-world-sandbox",
     "mode": "QA / exclusion lens",
     "action": "Landmark check: house and central peak aid orientation; no traversal toys.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only."
+    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "genre-puzzle-platformer",
     "mode": "QA / exclusion lens",
     "action": "Honest-scale check; no interactable color coding or jump mechanics.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only."
+    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "genre-racing-sports",
     "mode": "QA / exclusion lens",
     "action": "Edge-clarity check on bund/path; no speed landmarks or stadium kits.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only."
+    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "genre-rpg",
     "mode": "QA / exclusion lens",
     "action": "Region-identity check: Kerala materials and paddies; no loot/class language.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only."
+    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "genre-shooter",
     "mode": "QA / exclusion lens",
     "action": "Sightline/eye-height check; no cover or loot mechanics.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only."
+    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "genre-soulslike",
     "mode": "QA / exclusion lens",
     "action": "Landmark/fog check; rejected monumental dread and lethal fog gates.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only."
+    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "genre-stealth",
     "mode": "QA / exclusion lens",
     "action": "Shadow-readability check; no patrol routes or gameplay shadow volumes.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only."
+    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "genre-strategy-sim",
     "mode": "QA / exclusion lens",
     "action": "Building silhouette check at distance; no tile/unit icon system.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only."
+    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "genre-survival",
     "mode": "QA / exclusion lens",
     "action": "Resource-readability check on jars/firewood; no crafting HUD or tension route.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only."
+    "v2_action": "Rechecked v2 stills: no gameplay UI, mechanics or genre framing; static photoreal Kerala landscape only.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "geometry-nodes",
     "mode": "Applied",
     "action": "Reusable GN_Scatter groups expose Seed/Density/Scale; rice/grass/trees/understory remain instanced.",
     "v2_mode": "Applied",
-    "v2_action": "Editable scatter groups for fine rice, bund grass, sapling belt, CC0 trees, scanned understory and foothill forest."
+    "v2_action": "Editable scatter groups for fine rice, bund grass, sapling belt, CC0 trees, scanned understory and foothill forest.",
+    "v3_mode": "Applied",
+    "v3_action": "Editable scatter groups for rice/bund grass/understory; Infinigen broadleaf generated/retained but replaced in final scatter by scanned trees after leaf-visibility issue."
   },
   {
     "skill": "godot-export",
     "mode": "Compatibility check",
     "action": "Compatibility check: GLB would be preferred; Godot not installed, no engine import claimed.",
     "v2_mode": "Compatibility check",
-    "v2_action": "v1 GLB/collision compatibility retained; no Godot import/test claimed in this CPU sandbox."
+    "v2_action": "v1 GLB/collision compatibility retained; no Godot import/test claimed in this CPU sandbox.",
+    "v3_mode": "Compatibility check",
+    "v3_action": "Compatibility retained from v1/v2; no unavailable backend/game-engine import claimed in v3."
   },
   {
     "skill": "hair-groom",
     "mode": "Not applicable",
     "action": "No hair/fur; coconut fronds are modeled geometry, not groom curves.",
     "v2_mode": "Not applicable",
-    "v2_action": "No hair/groom."
+    "v2_action": "No hair/groom.",
+    "v3_mode": "Not applicable",
+    "v3_action": "No hair/groom."
   },
   {
     "skill": "hand-painted-style",
     "mode": "QA / exclusion lens",
     "action": "Rejected brushwork albedo; procedural physical wear retained.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no hand painted style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no hand painted style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "hard-surface",
     "mode": "Applied",
     "action": "Real bevels on plinth/frames/steps; overlapping roof tiles; rafters and brackets; no uniform micro-greeble.",
     "v2_mode": "Applied",
-    "v2_action": "Turned posts, brackets, door panels, corrugated metal vent ribs/seams, timber crossing planks and bearers."
+    "v2_action": "Turned posts, brackets, door panels, corrugated metal vent ribs/seams, timber crossing planks and bearers.",
+    "v3_mode": "Applied",
+    "v3_action": "Turned posts/brackets/door panels, corrugated metal vent ribs/seams, timber crossing planks/bearers."
   },
   {
     "skill": "hd-2d-style",
     "mode": "QA / exclusion lens",
     "action": "Rejected pixel actors/tilt-shift theatrical DoF; deep-focus 3D retained.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no hd 2d style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no hd 2d style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "historical-worlds",
     "mode": "Applied",
     "action": "Period material language: laterite, lime wash, teak, fired clay; no modern tech in the house.",
     "v2_mode": "Applied",
-    "v2_action": "Kerala tharavad language: laterite plinth, lime wash, teak joinery, fired clay tiles, granite steps."
+    "v2_action": "Kerala tharavad language: laterite plinth, lime wash, teak joinery, fired clay tiles, granite steps.",
+    "v3_mode": "Applied",
+    "v3_action": "Kerala tharavad language: laterite plinth, lime wash, teak joinery, fired clay tiles, granite steps."
   },
   {
     "skill": "horror-style",
     "mode": "QA / exclusion lens",
     "action": "Used readable-path check; rejected dread lighting and institutional emptiness.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no horror style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no horror style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "indie-horror-aesthetics",
     "mode": "QA / exclusion lens",
     "action": "Rejected horror lane mashup; single naturalistic monsoon lane.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no indie horror aesthetics contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no indie horror aesthetics contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "isometric-style",
     "mode": "QA / exclusion lens",
     "action": "Rejected ortho tile framing; perspective hero camera retained.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no isometric style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no isometric style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "lighting",
     "mode": "Applied",
     "action": "Fixed motivated morning sun, restrained sky fill, named LGT_ lights, bounded mist; no time-lapse sun.",
     "v2_mode": "Applied",
-    "v2_action": "CC0 pure-sky HDRI desaturated for monsoon fill, soft 8\u00b0 sun, sky bounce area, motivated veranda lamp."
+    "v2_action": "CC0 pure-sky HDRI desaturated for monsoon fill, soft 8\u00b0 sun, sky bounce area, motivated veranda lamp.",
+    "v3_mode": "Applied",
+    "v3_action": "Overcast pure-sky HDRI downsampled to 2K, soft 4\u00b0 sun, sky bounce area, noise-driven mist volumes."
   },
   {
     "skill": "liminal-space-style",
     "mode": "QA / exclusion lens",
     "action": "Rejected endless wrong repetition; inhabited rural specificity retained.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no liminal space style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no liminal space style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "lod-pipeline",
     "mode": "Applied",
     "action": "Wider far paddy spacing; smaller understory/foothill instances; separate reduced Eevee LOD preset.",
     "v2_mode": "Applied",
-    "v2_action": "Selected CC0 tree LOD1; v2 Eevee fast LOD probe OOM-killed at 480p, so Cycles CPU remained the usable route."
+    "v2_action": "Selected CC0 tree LOD1; v2 Eevee fast LOD probe OOM-killed at 480p, so Cycles CPU remained the usable route.",
+    "v3_mode": "Applied",
+    "v3_action": "Scanned LOD1 trees, light hero decimation, background collection instances; dense realized Infinigen tree and coconut GN rejected after memory failures."
   },
   {
     "skill": "lookdev",
     "mode": "Applied",
     "action": "Clay proxy, low-res lighting, house detail and foreground detail iterations with gap fixes.",
     "v2_mode": "Applied",
-    "v2_action": "Three measured Cycles previews; corrected neon rice, dry path, stone-like plaster, sparse foothill trees and harsh sky."
+    "v2_action": "Three measured Cycles previews; corrected neon rice, dry path, stone-like plaster, sparse foothill trees and harsh sky.",
+    "v3_mode": "Applied",
+    "v3_action": "Measured Cycles previews corrected lawn-like rice, concrete bunds, bare decimated forest, close faceted mountains and gray path."
   },
   {
     "skill": "lowpoly-style",
     "mode": "QA / exclusion lens",
     "action": "Used Workbench clay silhouette check; hero is not intentionally low-poly.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no lowpoly style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no lowpoly style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "manga-style",
     "mode": "QA / exclusion lens",
     "action": "Used grayscale value/clay check; no screentone or print language.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no manga style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no manga style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "mascot-puppet-horror",
     "mode": "QA / exclusion lens",
     "action": "Rejected mascot/brand corruption language.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no mascot puppet horror contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no mascot puppet horror contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "materials",
     "mode": "Applied",
     "action": "25 named MAT_ materials; PBR ranges, leaf translucency, water IOR 1.333 and absorption.",
     "v2_mode": "Applied",
-    "v2_action": "46 materials; CC0 1K PBR maps for mud/laterite/bark/wood/metal/rock; procedural lime/teak/tile relief; position-varied leaves."
+    "v2_action": "46 materials; CC0 1K PBR maps for mud/laterite/bark/wood/metal/rock; procedural lime/teak/tile relief; position-varied leaves.",
+    "v3_mode": "Applied",
+    "v3_action": "48 materials; 2K/4K CC0 PBR recompressed for packing; procedural lime/teak/tile relief; position-varied leaves."
   },
   {
     "skill": "minimalist-style",
     "mode": "QA / exclusion lens",
     "action": "Used negative-space check: sky and path rest areas; not abstracted.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no minimalist style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no minimalist style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "neon-retrofuturism",
     "mode": "QA / exclusion lens",
     "action": "Rejected neon/chrome/sunset grid palette.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no neon retrofuturism contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no neon retrofuturism contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "noir-style",
     "mode": "QA / exclusion lens",
     "action": "Used wet-ground reflection check; retained readable color and shadows, not crushed mono.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no noir style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no noir style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "painterly-style",
     "mode": "QA / exclusion lens",
     "action": "Rejected pigment/paper overlays; photographic-like tonal continuity.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no painterly style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no painterly style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "physics-sim",
     "mode": "Not applicable",
     "action": "Static scene; no rigid/soft-body caches left unbaked.",
     "v2_mode": "Not applicable",
-    "v2_action": "No rigid/soft-body sim; water is shaded shallow geometry."
+    "v2_action": "No rigid/soft-body sim; water is shaded shallow geometry.",
+    "v3_mode": "Not applicable",
+    "v3_action": "No rigid/soft-body sim; water is shaded shallow geometry."
   },
   {
     "skill": "pixel-art-style",
     "mode": "QA / exclusion lens",
     "action": "Native-resolution check: no pixelation or texel locking; thin blades reviewed for shimmer.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no pixel art style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no pixel art style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "procedural-modeling",
     "mode": "Applied",
     "action": "Seeded terrain/path/roof/scatter generation; authoritative config and reproducible build script.",
     "v2_mode": "Applied",
-    "v2_action": "Seeded fbm ridges + Displace crags, fine rice clumps, sapling-generated broadleaf variants, footprinted path mesh."
+    "v2_action": "Seeded fbm ridges + Displace crags, fine rice clumps, sapling-generated broadleaf variants, footprinted path mesh.",
+    "v3_mode": "Applied",
+    "v3_action": "Rechecked and applied to v3 quality revision: native Blender geometry/materials, honest CPU render and provenance."
   },
   {
     "skill": "prop-artist",
     "mode": "Applied",
     "action": "Terracotta jars, bench, brass lamp, broom and firewood at believable scale; clustered not wallpapered.",
     "v2_mode": "Applied",
-    "v2_action": "Terracotta jars, brass lamp, bench, broom, firewood, laterite chips, edge stones, timber crossing."
+    "v2_action": "Terracotta jars, brass lamp, bench, broom, firewood, laterite chips, edge stones, timber crossing.",
+    "v3_mode": "Applied",
+    "v3_action": "Rechecked and applied to v3 quality revision: native Blender geometry/materials, honest CPU render and provenance."
   },
   {
     "skill": "psx-horror-style",
     "mode": "QA / exclusion lens",
     "action": "Rejected affine crunch/low color depth; modern PBR retained.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no psx horror style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no psx horror style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "qa-review",
     "mode": "Applied",
     "action": "Screenshot-backed QA gate; explicit technical/visual/delivery statuses in final report.",
     "v2_mode": "Applied",
-    "v2_action": "Visual inspection of three previews plus final hero/house detail; verify_kerala_v2 technical PASS; receipt hashes match frozen scene."
+    "v2_action": "Visual inspection of three previews plus final hero/house detail; verify_kerala_v2 technical PASS; receipt hashes match frozen scene.",
+    "v3_mode": "Applied",
+    "v3_action": "Rechecked and applied to v3 quality revision: native Blender geometry/materials, honest CPU render and provenance."
   },
   {
     "skill": "realistic-style",
     "mode": "Applied",
     "action": "Reference-driven composition; metric scale; restrained procedural wear; no photo backplate.",
     "v2_mode": "Applied",
-    "v2_action": "Primary acceptance target: photoreal, not animated-like; PBR/HDRI/library foliage; cartoon/cel/pixel languages excluded."
+    "v2_action": "Primary acceptance target: photoreal, not animated-like; PBR/HDRI/library foliage; cartoon/cel/pixel languages excluded.",
+    "v3_mode": "Applied",
+    "v3_action": "Rechecked and applied to v3 quality revision: native Blender geometry/materials, honest CPU render and provenance."
   },
   {
     "skill": "rendering",
     "mode": "Applied",
     "action": "Sample tests before final; frozen-scene receipts; backend availability measured, not assumed.",
     "v2_mode": "Applied",
-    "v2_action": "Cycles CPU preview 28.180 s, final 1080p/64 1044.869 s, house detail 122.309 s; Workbench proxy 45.609 s; Eevee LOD OOM; no GPU backend claimed."
+    "v2_action": "Cycles CPU preview 28.180 s, final 1080p/64 1044.869 s, house detail 122.309 s; Workbench proxy 45.609 s; Eevee LOD OOM; no GPU backend claimed.",
+    "v3_mode": "Applied",
+    "v3_action": "Cycles CPU final hero 1600x900/64 adaptive + OIDN (higher-sample attempts OOM near denoise); house detail 960x540/32; receipts with scene/image hashes."
   },
   {
     "skill": "retopology",
     "mode": "Applied",
     "action": "Quad terrain/water grids; clean folded blade ribbons; no deformation surfaces requiring retopo.",
     "v2_mode": "Compatibility check",
-    "v2_action": "No manual retopology claimed; used authored CC0 LOD1 tree and low-poly sapling/library meshes instead of LOD0."
+    "v2_action": "No manual retopology claimed; used authored CC0 LOD1 tree and low-poly sapling/library meshes instead of LOD0.",
+    "v3_mode": "Compatibility check",
+    "v3_action": "Compatibility retained from v1/v2; no unavailable backend/game-engine import claimed in v3."
   },
   {
     "skill": "retro-16bit-style",
     "mode": "QA / exclusion lens",
     "action": "Rejected dither/sprite palette constraints.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no retro 16bit style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no retro 16bit style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "retro-8bit-style",
     "mode": "QA / exclusion lens",
     "action": "Rejected severe palette/chunky sprite logic.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no retro 8bit style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no retro 8bit style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "rigging",
     "mode": "Not applicable",
     "action": "No deforming assets; no armatures or weight maps required.",
     "v2_mode": "Not applicable",
-    "v2_action": "No rig/armature deliverable; sapling armature disabled."
+    "v2_action": "No rig/armature deliverable; sapling armature disabled.",
+    "v3_mode": "Not applicable",
+    "v3_action": "No rig/armature deliverable; sapling armature disabled."
   },
   {
     "skill": "scene-assembly",
     "mode": "Applied",
     "action": "COL_ hierarchy, linked palm collection instances, GN field instances, hidden asset library.",
     "v2_mode": "Applied",
-    "v2_action": "Asset library excluded from view layer but instanced; house remains path destination; separate v2 scene preserves v1."
+    "v2_action": "Asset library excluded from view layer but instanced; house remains path destination; separate v2 scene preserves v1.",
+    "v3_mode": "Applied",
+    "v3_action": "Rechecked and applied to v3 quality revision: native Blender geometry/materials, honest CPU render and provenance."
   },
   {
     "skill": "sci-fi-punk-worlds",
     "mode": "QA / exclusion lens",
     "action": "Rejected chrome/steam/cyber tech; agrarian material honesty.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no sci fi punk worlds contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no sci fi punk worlds contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "sculpting",
     "mode": "Applied",
     "action": "Largest-to-smallest massif/shoulder/ravine forms; detail matched to camera distance; no dyntopo spikes.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "No manual multires sculpt claimed; ridge crags are editable Displace modifiers plus scanned bump/rock shading."
+    "v2_action": "No manual multires sculpt claimed; ridge crags are editable Displace modifiers plus scanned bump/rock shading.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "set-dressing",
     "mode": "Applied",
     "action": "Narrative clusters at veranda and approach; doors/windows kept clear; background filler subordinate.",
     "v2_mode": "Applied",
-    "v2_action": "Scanned fern/anthurium understory, puddles, footprints, stones, chips, props and timber crossing motivate wear."
+    "v2_action": "Scanned fern/anthurium understory, puddles, footprints, stones, chips, props and timber crossing motivate wear.",
+    "v3_mode": "Applied",
+    "v3_action": "Rechecked and applied to v3 quality revision: native Blender geometry/materials, honest CPU render and provenance."
   },
   {
     "skill": "stop-motion-craft-style",
     "mode": "QA / exclusion lens",
     "action": "Used slight irregularity check; rejected visible craft seams/fingerprints.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no stop motion craft style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no stop motion craft style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "stylized-style",
     "mode": "QA / exclusion lens",
     "action": "Used palette harmony/silhouette check without proportion exaggeration.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no stylized style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no stylized style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "texture-workflow",
     "mode": "Applied",
     "action": "Procedural wear masks and bump; no external texture bakes; engine-bake limitation documented.",
     "v2_mode": "Applied",
-    "v2_action": "CC0 Poly Haven 1K maps, box-projection PBR where UVs absent, preserved library UVs, packed images, license manifest."
+    "v2_action": "CC0 Poly Haven 1K maps, box-projection PBR where UVs absent, preserved library UVs, packed images, license manifest.",
+    "v3_mode": "Applied",
+    "v3_action": "Rechecked and applied to v3 quality revision: native Blender geometry/materials, honest CPU render and provenance."
   },
   {
     "skill": "unity-export",
     "mode": "Compatibility check",
     "action": "Compatibility check: scale/axis and material baking requirements documented; Unity not installed.",
     "v2_mode": "Compatibility check",
-    "v2_action": "v1 GLB/collision compatibility retained; no Unity import/test claimed in this CPU sandbox."
+    "v2_action": "v1 GLB/collision compatibility retained; no Unity import/test claimed in this CPU sandbox.",
+    "v3_mode": "Compatibility check",
+    "v3_action": "Compatibility retained from v1/v2; no unavailable backend/game-engine import claimed in v3."
   },
   {
     "skill": "unreal-export",
     "mode": "Compatibility check",
     "action": "Compatibility check: UCX collision and LOD plan documented; Unreal not installed.",
     "v2_mode": "Compatibility check",
-    "v2_action": "v1 GLB/collision compatibility retained; no Unreal import/test claimed in this CPU sandbox."
+    "v2_action": "v1 GLB/collision compatibility retained; no Unreal import/test claimed in this CPU sandbox.",
+    "v3_mode": "Compatibility check",
+    "v3_action": "Compatibility retained from v1/v2; no unavailable backend/game-engine import claimed in v3."
   },
   {
     "skill": "uv-workflow",
     "mode": "Compatibility check",
     "action": "Compatibility check: hero uses procedural Object coordinates; production packed UVs/ORM are a separate game-export task.",
     "v2_mode": "Compatibility check",
-    "v2_action": "Library UVs preserved; new architectural PBR uses triplanar box projection to avoid fake UV seams; no UV unwrap claimed."
+    "v2_action": "Library UVs preserved; new architectural PBR uses triplanar box projection to avoid fake UV seams; no UV unwrap claimed.",
+    "v3_mode": "Compatibility check",
+    "v3_action": "Compatibility retained from v1/v2; no unavailable backend/game-engine import claimed in v3."
   },
   {
     "skill": "vector-style",
     "mode": "QA / exclusion lens",
     "action": "Rejected flat fills/icon gradients; natural light retained.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no vector style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no vector style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "vegetation-artist",
     "mode": "Applied",
     "action": "Dimensional rice clumps, pinnate coconut fronds, branching broadleaf trees, torn banana leaves; VC_Wind on rice.",
     "v2_mode": "Applied",
-    "v2_action": "Improved Sapling GPL generator produced 6 broadleaf variants; CC0 island tree/fern/anthurium imported; 133,805 fine rice points."
+    "v2_action": "Improved Sapling GPL generator produced 6 broadleaf variants; CC0 island tree/fern/anthurium imported; 133,805 fine rice points.",
+    "v3_mode": "Applied",
+    "v3_action": "Rechecked and applied to v3 quality revision: native Blender geometry/materials, honest CPU render and provenance."
   },
   {
     "skill": "vehicle-artist",
     "mode": "Not applicable",
     "action": "No vehicles in the brief.",
     "v2_mode": "Not applicable",
-    "v2_action": "No vehicles."
+    "v2_action": "No vehicles.",
+    "v3_mode": "Not applicable",
+    "v3_action": "No vehicles."
   },
   {
     "skill": "vfx-fx",
     "mode": "Applied",
     "action": "Bounded distant mist volume with height falloff; tiny real-mesh swifts; no huge empty FX domain.",
     "v2_mode": "Applied",
-    "v2_action": "Bounded mist volumes, shallow water absorption/IOR, subtle compositor glare; no destructive photo composite."
+    "v2_action": "Bounded mist volumes, shallow water absorption/IOR, subtle compositor glare; no destructive photo composite.",
+    "v3_mode": "Applied",
+    "v3_action": "Rechecked and applied to v3 quality revision: native Blender geometry/materials, honest CPU render and provenance."
   },
   {
     "skill": "visual-console-eras",
     "mode": "QA / exclusion lens",
     "action": "Rejected console-era crunch; modern cinematic PBR target.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no visual console eras contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no visual console eras contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   },
   {
     "skill": "voxel-style",
     "mode": "QA / exclusion lens",
     "action": "Rejected block grid; organic curved geometry retained.",
     "v2_mode": "QA / exclusion lens",
-    "v2_action": "Rechecked v2 hero/house previews: no voxel style contamination; continuous PBR/HDRI photoreal target retained."
+    "v2_action": "Rechecked v2 hero/house previews: no voxel style contamination; continuous PBR/HDRI photoreal target retained.",
+    "v3_mode": "QA / exclusion lens",
+    "v3_action": "Rechecked v3 previews/final: no style/genre contamination; continuous PBR/HDRI photoreal Kerala target retained."
   }
 ]

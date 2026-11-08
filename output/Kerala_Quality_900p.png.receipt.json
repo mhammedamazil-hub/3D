@@ -1,0 +1,19 @@
+{
+  "revision": "kerala-v3.0-quality",
+  "camera": "CAM_Q_Hero_LeadingBund",
+  "engine": "CYCLES",
+  "device": "CPU",
+  "resolution": [
+    1600,
+    900
+  ],
+  "samples_max": 64,
+  "adaptive_threshold": 0.015,
+  "denoiser": "OPENIMAGEDENOISE",
+  "render_seconds": 429.287,
+  "blend_sha256": "48dd90faf3c6cf578f6d412959d9b26553e5425760b08d0e0d66118e4193d5aa",
+  "image_sha256": "2e69872236b4f737a864369ca4a1fe58c66f5a4995388cc692619c782c41bee2",
+  "image_bytes": 2225157,
+  "output": "output/Kerala_Quality_900p.png",
+  "utc": "2026-11-08T13:40:02Z"
+}
