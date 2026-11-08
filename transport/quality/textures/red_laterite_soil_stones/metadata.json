@@ -1,0 +1,60 @@
+{
+  "name": "Red Laterite Soil Stones",
+  "categories": [
+    "outdoor",
+    "natural",
+    "terrain",
+    "rock",
+    "road",
+    "sand"
+  ],
+  "type": 1,
+  "tags": [
+    "rough",
+    "red",
+    "laterite",
+    "stones",
+    "ground",
+    "dirt",
+    "pebbles",
+    "rocks",
+    "gravel",
+    "debris",
+    "nature",
+    "pathway",
+    "path",
+    "rock",
+    "brown",
+    "chipped"
+  ],
+  "authors": {
+    "Amal Kumar": "All"
+  },
+  "info": null,
+  "dimensions": [
+    2000,
+    2000
+  ],
+  "date_published": 1666828800,
+  "staging": null,
+  "prepaid": true,
+  "max_resolution": [
+    8192,
+    8192
+  ],
+  "files_hash": "7162c7ae70b9626991753b8e0ba6c2b4abd633ca",
+  "description": "Free 8K texture of red laterite soil with coarse, compacted gravel and scattered pebble stones; rough, earthy brown-red surface with chipped rock fragments.",
+  "category_id": "ff767449-ea44-5527-96f0-d74aa52df2d0",
+  "category": "Ground & Terrain/Gravel & Pebbles/Crushed Aggregate",
+  "attributes": {
+    "surface_use": "ground",
+    "origin": "natural",
+    "setting": "outdoor",
+    "condition": [
+      "clean"
+    ]
+  },
+  "img_version": "3e15d464",
+  "download_count": 71492,
+  "thumbnail_url": "https://cdn.polyhaven.com/asset_img/thumbs/red_laterite_soil_stones.png?width=256&height=256&format=webp&v=3e15d464"
+}

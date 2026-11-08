@@ -1,0 +1,50 @@
+{
+  "date_published": 1545431528,
+  "sponsors": [
+    "9910225"
+  ],
+  "name": "Bark Brown 02",
+  "old_id": 182,
+  "categories": [
+    "wood",
+    "outdoor",
+    "natural",
+    "bark"
+  ],
+  "type": 1,
+  "dimensions": [
+    999.9990463256836,
+    999.998927116394
+  ],
+  "authors": {
+    "Rob Tuytel": "All"
+  },
+  "max_resolution": [
+    8192,
+    8192
+  ],
+  "files_hash": "6791070915dfc329106f7427d305d13b87984763",
+  "tags": [
+    "bark",
+    "tree",
+    "forest",
+    "knots",
+    "wooden knots",
+    "tree trunk"
+  ],
+  "description": "Free 8K bark texture showing rough brown tree bark with deep vertical furrows, wooden knots and subtle mossy green patches, high-detail surface relief.",
+  "category_id": "8d2e6acd-922e-5774-89f1-3988e37758c3",
+  "category": "Wood/Bark/Furrowed Bark",
+  "attributes": {
+    "surface_use": "object",
+    "condition": [
+      "weathered",
+      "mossy"
+    ],
+    "origin": "natural",
+    "setting": "outdoor"
+  },
+  "img_version": "d35bc0c7",
+  "download_count": 233167,
+  "thumbnail_url": "https://cdn.polyhaven.com/asset_img/thumbs/bark_brown_02.png?width=256&height=256&format=webp&v=d35bc0c7"
+}

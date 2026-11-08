@@ -1,0 +1,177 @@
+Warning: File written by newer Blender binary (404.32), expect loss of data!
+MODEL jacaranda_tree choose jacaranda_tree_LOD1 1813490 1512380
+Read blend: "/tmp/kerala-quality-_u56cav_/jacaranda_tree.blend"
+Info: Total files 11 | Changed 10 | Failed 0
+Info: Deleted 17 data-block(s)
+Info: No orphaned data-blocks to purge
+Info: No orphaned data-blocks to purge
+Info: No orphaned data-blocks to purge
+Info: Packed 10 file(s)
+Info: Saved "jacaranda_tree.blend"
+FAIL MODEL jacaranda_tree ReferenceError('StructRNA of type Object has been removed')
+Traceback (most recent call last):
+  File "/home/runner/work/3D/3D/scripts/prepare_quality_assets.py", line 49, in prepare_model
+    d=p.read_bytes();REC.append({'path':rel,'url':b['url'],'source':'https://polyhaven.com/a/'+aid,'license':'CC0-1.0','bytes':len(d),'sha256':hashlib.sha256(d).hexdigest(),'prepared_from':o.name,'prepared_polygons':len(keep.data.polygons),'dimensions_m':list(mx-mn)})
+                                                                                                                                                                                             ^^^^^^
+ReferenceError: StructRNA of type Object has been removed
+Warning: File written by newer Blender binary (404.32), expect loss of data!
+MODEL tree_small_02 choose tree_small_02_LOD1 626249 376155
+Read blend: "/tmp/kerala-quality-_u56cav_/tree_small_02.blend"
+Info: Total files 13 | Changed 10 | Failed 0
+Info: Deleted 14 data-block(s)
+Info: No orphaned data-blocks to purge
+Info: No orphaned data-blocks to purge
+Info: No orphaned data-blocks to purge
+Info: Packed 10 file(s)
+Info: Saved "tree_small_02.blend"
+FAIL MODEL tree_small_02 ReferenceError('StructRNA of type Object has been removed')
+Traceback (most recent call last):
+  File "/home/runner/work/3D/3D/scripts/prepare_quality_assets.py", line 49, in prepare_model
+    d=p.read_bytes();REC.append({'path':rel,'url':b['url'],'source':'https://polyhaven.com/a/'+aid,'license':'CC0-1.0','bytes':len(d),'sha256':hashlib.sha256(d).hexdigest(),'prepared_from':o.name,'prepared_polygons':len(keep.data.polygons),'dimensions_m':list(mx-mn)})
+                                                                                                                                                                                             ^^^^^^
+ReferenceError: StructRNA of type Object has been removed
+Warning: File written by newer Blender binary (404.32), expect loss of data!
+MODEL island_tree_03 choose island_tree_03_LOD1 671376 571597
+Read blend: "/tmp/kerala-quality-_u56cav_/island_tree_03.blend"
+Info: Total files 10 | Changed 10 | Failed 0
+Info: Deleted 18 data-block(s)
+Info: No orphaned data-blocks to purge
+Info: No orphaned data-blocks to purge
+Info: No orphaned data-blocks to purge
+Info: Packed 10 file(s)
+Info: Saved "island_tree_03.blend"
+FAIL MODEL island_tree_03 ReferenceError('StructRNA of type Object has been removed')
+Traceback (most recent call last):
+  File "/home/runner/work/3D/3D/scripts/prepare_quality_assets.py", line 49, in prepare_model
+    d=p.read_bytes();REC.append({'path':rel,'url':b['url'],'source':'https://polyhaven.com/a/'+aid,'license':'CC0-1.0','bytes':len(d),'sha256':hashlib.sha256(d).hexdigest(),'prepared_from':o.name,'prepared_polygons':len(keep.data.polygons),'dimensions_m':list(mx-mn)})
+                                                                                                                                                                                             ^^^^^^
+ReferenceError: StructRNA of type Object has been removed
+MODEL rock_face_02 choose rock_face_02 15157 29566
+Read blend: "/tmp/kerala-quality-_u56cav_/rock_face_02.blend"
+Info: Total files 3 | Changed 3 | Failed 0
+Info: Deleted 1 data-block(s)
+Info: No orphaned data-blocks to purge
+Info: No orphaned data-blocks to purge
+Info: No orphaned data-blocks to purge
+Info: Packed 3 file(s)
+Info: Saved "rock_face_02.blend"
+FAIL MODEL rock_face_02 ReferenceError('StructRNA of type Object has been removed')
+Traceback (most recent call last):
+  File "/home/runner/work/3D/3D/scripts/prepare_quality_assets.py", line 49, in prepare_model
+    d=p.read_bytes();REC.append({'path':rel,'url':b['url'],'source':'https://polyhaven.com/a/'+aid,'license':'CC0-1.0','bytes':len(d),'sha256':hashlib.sha256(d).hexdigest(),'prepared_from':o.name,'prepared_polygons':len(keep.data.polygons),'dimensions_m':list(mx-mn)})
+                                                                                                                                                                                             ^^^^^^
+ReferenceError: StructRNA of type Object has been removed
+MODEL boulder_01 choose boulder_01_LOD0 33063 66122
+Read blend: "/tmp/kerala-quality-_u56cav_/boulder_01.blend"
+Info: Total files 3 | Changed 3 | Failed 0
+Info: Deleted 5 data-block(s)
+Info: No orphaned data-blocks to purge
+Info: No orphaned data-blocks to purge
+Info: No orphaned data-blocks to purge
+Info: Packed 3 file(s)
+Info: Saved "boulder_01.blend"
+FAIL MODEL boulder_01 ReferenceError('StructRNA of type Object has been removed')
+Traceback (most recent call last):
+  File "/home/runner/work/3D/3D/scripts/prepare_quality_assets.py", line 49, in prepare_model
+    d=p.read_bytes();REC.append({'path':rel,'url':b['url'],'source':'https://polyhaven.com/a/'+aid,'license':'CC0-1.0','bytes':len(d),'sha256':hashlib.sha256(d).hexdigest(),'prepared_from':o.name,'prepared_polygons':len(keep.data.polygons),'dimensions_m':list(mx-mn)})
+                                                                                                                                                                                             ^^^^^^
+ReferenceError: StructRNA of type Object has been removed
+MODEL rock_07 choose rock_07_LOD0 7424 14844
+Read blend: "/tmp/kerala-quality-_u56cav_/rock_07.blend"
+Info: Total files 3 | Changed 3 | Failed 0
+Info: Deleted 4 data-block(s)
+Info: No orphaned data-blocks to purge
+Info: No orphaned data-blocks to purge
+Info: No orphaned data-blocks to purge
+Info: Packed 3 file(s)
+Info: Saved "rock_07.blend"
+FAIL MODEL rock_07 ReferenceError('StructRNA of type Object has been removed')
+Traceback (most recent call last):
+  File "/home/runner/work/3D/3D/scripts/prepare_quality_assets.py", line 49, in prepare_model
+    d=p.read_bytes();REC.append({'path':rel,'url':b['url'],'source':'https://polyhaven.com/a/'+aid,'license':'CC0-1.0','bytes':len(d),'sha256':hashlib.sha256(d).hexdigest(),'prepared_from':o.name,'prepared_polygons':len(keep.data.polygons),'dimensions_m':list(mx-mn)})
+                                                                                                                                                                                             ^^^^^^
+ReferenceError: StructRNA of type Object has been removed
+MODEL stone_01 choose stone_01_LOD0 26762 53520
+Read blend: "/tmp/kerala-quality-_u56cav_/stone_01.blend"
+Info: Total files 4 | Changed 4 | Failed 0
+Info: Deleted 5 data-block(s)
+Info: No orphaned data-blocks to purge
+Info: No orphaned data-blocks to purge
+Info: No orphaned data-blocks to purge
+Info: Packed 4 file(s)
+Info: Saved "stone_01.blend"
+FAIL MODEL stone_01 ReferenceError('StructRNA of type Object has been removed')
+Traceback (most recent call last):
+  File "/home/runner/work/3D/3D/scripts/prepare_quality_assets.py", line 49, in prepare_model
+    d=p.read_bytes();REC.append({'path':rel,'url':b['url'],'source':'https://polyhaven.com/a/'+aid,'license':'CC0-1.0','bytes':len(d),'sha256':hashlib.sha256(d).hexdigest(),'prepared_from':o.name,'prepared_polygons':len(keep.data.polygons),'dimensions_m':list(mx-mn)})
+                                                                                                                                                                                             ^^^^^^
+ReferenceError: StructRNA of type Object has been removed
+MODEL coast_rocks_01 choose coast_rocks_01_LOD0 340583 679936
+Read blend: "/tmp/kerala-quality-_u56cav_/coast_rocks_01.blend"
+Info: Total files 3 | Changed 3 | Failed 0
+Info: Deleted 4 data-block(s)
+Info: No orphaned data-blocks to purge
+Info: No orphaned data-blocks to purge
+Info: No orphaned data-blocks to purge
+Info: Packed 3 file(s)
+Info: Saved "coast_rocks_01.blend"
+FAIL MODEL coast_rocks_01 ReferenceError('StructRNA of type Object has been removed')
+Traceback (most recent call last):
+  File "/home/runner/work/3D/3D/scripts/prepare_quality_assets.py", line 49, in prepare_model
+    d=p.read_bytes();REC.append({'path':rel,'url':b['url'],'source':'https://polyhaven.com/a/'+aid,'license':'CC0-1.0','bytes':len(d),'sha256':hashlib.sha256(d).hexdigest(),'prepared_from':o.name,'prepared_polygons':len(keep.data.polygons),'dimensions_m':list(mx-mn)})
+                                                                                                                                                                                             ^^^^^^
+ReferenceError: StructRNA of type Object has been removed
+SAVED textures/brown_mud/Diffuse.jpg 8099872
+SAVED textures/brown_mud/Rough.jpg 5884362
+SAVED textures/brown_mud/Displacement.jpg 1961236
+SAVED textures/brown_mud/nor_gl.jpg 9152621
+SAVED textures/brown_mud/AO.jpg 6858659
+SAVED textures/red_laterite_soil_stones/Diffuse.jpg 13486775
+SAVED textures/red_laterite_soil_stones/Rough.jpg 10406775
+SAVED textures/red_laterite_soil_stones/Displacement.jpg 6250554
+SAVED textures/red_laterite_soil_stones/nor_gl.jpg 22024012
+SAVED textures/red_laterite_soil_stones/AO.jpg 13394689
+SAVED textures/clay_roof_tiles/Diffuse.jpg 10880030
+SAVED textures/clay_roof_tiles/Rough.jpg 3450728
+SAVED textures/clay_roof_tiles/Displacement.jpg 3660944
+SAVED textures/clay_roof_tiles/nor_gl.jpg 13125753
+SAVED textures/clay_roof_tiles/AO.jpg 8959189
+SAVED textures/wood_planks/Diffuse.jpg 2387732
+SAVED textures/wood_planks/Rough.jpg 1151798
+SAVED textures/wood_planks/Displacement.jpg 678214
+SAVED textures/wood_planks/nor_gl.jpg 2906326
+SAVED textures/wood_planks/AO.jpg 1404358
+SAVED textures/worn_plaster_wall/Diffuse.jpg 3096042
+SAVED textures/worn_plaster_wall/Rough.jpg 1012956
+SAVED textures/worn_plaster_wall/Displacement.jpg 387205
+SAVED textures/worn_plaster_wall/nor_gl.jpg 2935964
+SAVED textures/worn_plaster_wall/AO.jpg 1675976
+SAVED textures/rock_face/Diffuse.jpg 2971109
+SAVED textures/rock_face/Rough.jpg 980027
+SAVED textures/rock_face/Displacement.jpg 879369
+SAVED textures/rock_face/nor_gl.jpg 4158538
+SAVED textures/rock_face/AO.jpg 1621583
+SAVED textures/bark_brown_02/Diffuse.jpg 2356592
+SAVED textures/bark_brown_02/Rough.jpg 1236654
+SAVED textures/bark_brown_02/Displacement.jpg 534990
+SAVED textures/bark_brown_02/nor_gl.jpg 3707907
+SAVED textures/bark_brown_02/AO.jpg 1919982
+SAVED textures/corrugated_iron_02/Diffuse.jpg 2325335
+SAVED textures/corrugated_iron_02/Rough.jpg 3492646
+SAVED textures/corrugated_iron_02/Displacement.jpg 821702
+SAVED textures/corrugated_iron_02/nor_gl.jpg 2178443
+SAVED textures/corrugated_iron_02/AO.jpg 1297335
+SAVED textures/corrugated_iron_02/Metal.jpg 542030
+SAVED textures/forest_ground_04/Diffuse.jpg 4529321
+SAVED textures/forest_ground_04/Rough.jpg 2509805
+SAVED textures/forest_ground_04/Displacement.jpg 696276
+SAVED textures/forest_ground_04/nor_gl.jpg 5288849
+SAVED textures/forest_ground_04/AO.jpg 2950026
+SAVED textures/red_dirt_mud_01/Diffuse.jpg 3246646
+SAVED textures/red_dirt_mud_01/Rough.jpg 2541902
+SAVED textures/red_dirt_mud_01/Displacement.jpg 714487
+SAVED textures/red_dirt_mud_01/nor_gl.jpg 3096204
+SAVED textures/red_dirt_mud_01/AO.jpg 1211343
+SAVED hdri/overcast_soil_puresky_4k.hdr 16949123
+SAVED hdri/kloofendal_overcast_puresky_4k.hdr 16953534
+DONE 53 246944528
