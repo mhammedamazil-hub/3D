@@ -43,3 +43,9 @@ assets/quality/
 !output/Kerala_Quality_900p.png.receipt.json
 !output/Kerala_Quality_House_Detail_540p.png
 !output/Kerala_Quality_House_Detail_540p.png.receipt.json
+
+# User coconut GLB and selected AI art-direction references are deliverables.
+!assets/models/user/
+!assets/models/user/coconut_tree_low_poly.glb
+!output/References/
+!output/References/**

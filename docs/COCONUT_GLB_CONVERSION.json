@@ -1,0 +1,35 @@
+{
+  "original_filename": "coconut_tree_low_poly.glb.txt",
+  "original_bytes": 1974436,
+  "sha256": "348ed52f1320941ba80c49e8b2bf4c7fb7612ca6adb19c578c64db3a8a414198",
+  "conversion": "Restore .glb suffix; already valid self-contained glTF 2.0 binary. No mesh or texture transcode.",
+  "output": "assets/models/user/coconut_tree_low_poly.glb",
+  "chunks": [
+    {
+      "type": "JSON",
+      "bytes": 4456
+    },
+    {
+      "type": "BIN",
+      "bytes": 1969952
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "Pixel_Monster (https://sketchfab.com/ar.jethin)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/coconut-tree-low-poly-8c5d6b661b2f4c37834d87cd187eb907",
+      "title": "Coconut Tree Low poly"
+    },
+    "generator": "Sketchfab-12.67.0",
+    "version": "2.0"
+  },
+  "counts": {
+    "nodes": 7,
+    "meshes": 2,
+    "materials": 2,
+    "textures": 4,
+    "images": 4,
+    "accessors": 10
+  }
+}
