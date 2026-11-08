@@ -1,0 +1,25 @@
+{
+  "pass": true,
+  "file": "output/Coconut_Tree_Scene_Ready.glb",
+  "sha256": "715eacd01ab8c86c84ab01bb489ae35dc34f2269aaa57b1eff93d63ed4348c08",
+  "bytes": 16382508,
+  "leaf_alphaMode": "MASK",
+  "alphaCutoff": 0.49399998784065247,
+  "embedded_images": 13,
+  "mesh_objects": 18,
+  "dimensions_m": [
+    6.662353038787842,
+    6.758244514465332,
+    15.569140434265137
+  ],
+  "bounds_min_m": [
+    -3.46527361869812,
+    -4.43392276763916,
+    0.0
+  ],
+  "bounds_max_m": [
+    3.1970794200897217,
+    2.324321746826172,
+    15.569140434265137
+  ]
+}

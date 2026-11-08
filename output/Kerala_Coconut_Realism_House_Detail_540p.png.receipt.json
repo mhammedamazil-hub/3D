@@ -1,0 +1,20 @@
+{
+  "revision": "kerala-v4.0-user-coconut",
+  "camera": "CAM_Q_House_Detail",
+  "engine": "CYCLES",
+  "device": "CPU",
+  "resolution": [
+    960,
+    540
+  ],
+  "samples_max": 32,
+  "adaptive_threshold": 0.02,
+  "denoiser": "OPENIMAGEDENOISE",
+  "render_seconds": 106.533,
+  "blend_sha256": "9a7d92bd5423fa495cdc8457f73e7c89f66e701cb7a05fdc058d4e9fd290b304",
+  "blend": "output/Kerala_Coconut_Realism.blend",
+  "image_sha256": "579cb1fdaba6cf7a57bb984ddddb35042fac8933cfd272d6841dc7399c9f2f95",
+  "image_bytes": 750146,
+  "output": "output/Kerala_Coconut_Realism_House_Detail_540p.png",
+  "utc": "2026-11-08T18:07:28Z"
+}

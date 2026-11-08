@@ -1,0 +1,103 @@
+{
+  "pass": true,
+  "blend_sha256": "9a7d92bd5423fa495cdc8457f73e7c89f66e701cb7a05fdc058d4e9fd290b304",
+  "image_sha256": {
+    "Kerala_Coconut_Realism_900p.png": "0683615bb6ff1713f8187ccfe68d7f90560e3289facc0a0ec30fd1557082bfd0",
+    "Kerala_Coconut_Realism_House_Detail_540p.png": "579cb1fdaba6cf7a57bb984ddddb35042fac8933cfd272d6841dc7399c9f2f95",
+    "Kerala_Coconut_Realism_Coconut_Detail.png": "ae88be115a60edccca72f54d4f148c7e34425a40a7093f633afd5ea07c853769"
+  },
+  "checks": {
+    "blend_exists": true,
+    "all_renders_exist": true,
+    "revision": "kerala-v4.0-user-coconut",
+    "engine": "CYCLES",
+    "device": "CPU",
+    "resolution": [
+      1600,
+      900
+    ],
+    "samples_max": 64,
+    "camera": "CAM_Q_Hero_LeadingBund",
+    "units": "METRIC",
+    "user_coconut_instances": 26,
+    "rice_instance_points": 79917,
+    "v4_path_present": true,
+    "house_root_present": true,
+    "packed_images": 80,
+    "materials": 53,
+    "objects": 862,
+    "asset_library_excluded": true,
+    "source_libs_excluded": true,
+    "source_glb_sha_match": true,
+    "scene_ready_glb_exists": true,
+    "glb_roundtrip_pass": true,
+    "glb_leaf_alpha_mask": true,
+    "generated_references_disclosed": true,
+    "reference_disclosure_prop": true,
+    "Kerala_Coconut_Realism_900p_receipt_scene_hash_match": true,
+    "Kerala_Coconut_Realism_House_Detail_540p_receipt_scene_hash_match": true,
+    "Kerala_Coconut_Realism_Coconut_Detail_receipt_scene_hash_match": true
+  },
+  "receipts": {
+    "Kerala_Coconut_Realism_900p.png": {
+      "revision": "kerala-v4.0-user-coconut",
+      "camera": "CAM_Q_Hero_LeadingBund",
+      "engine": "CYCLES",
+      "device": "CPU",
+      "resolution": [
+        1600,
+        900
+      ],
+      "samples_max": 64,
+      "adaptive_threshold": 0.015,
+      "denoiser": "OPENIMAGEDENOISE",
+      "render_seconds": 495.298,
+      "blend_sha256": "9a7d92bd5423fa495cdc8457f73e7c89f66e701cb7a05fdc058d4e9fd290b304",
+      "blend": "output/Kerala_Coconut_Realism.blend",
+      "image_sha256": "0683615bb6ff1713f8187ccfe68d7f90560e3289facc0a0ec30fd1557082bfd0",
+      "image_bytes": 2451202,
+      "output": "output/Kerala_Coconut_Realism_900p.png",
+      "utc": "2026-11-08T18:05:19Z"
+    },
+    "Kerala_Coconut_Realism_House_Detail_540p.png": {
+      "revision": "kerala-v4.0-user-coconut",
+      "camera": "CAM_Q_House_Detail",
+      "engine": "CYCLES",
+      "device": "CPU",
+      "resolution": [
+        960,
+        540
+      ],
+      "samples_max": 32,
+      "adaptive_threshold": 0.02,
+      "denoiser": "OPENIMAGEDENOISE",
+      "render_seconds": 106.533,
+      "blend_sha256": "9a7d92bd5423fa495cdc8457f73e7c89f66e701cb7a05fdc058d4e9fd290b304",
+      "blend": "output/Kerala_Coconut_Realism.blend",
+      "image_sha256": "579cb1fdaba6cf7a57bb984ddddb35042fac8933cfd272d6841dc7399c9f2f95",
+      "image_bytes": 750146,
+      "output": "output/Kerala_Coconut_Realism_House_Detail_540p.png",
+      "utc": "2026-11-08T18:07:28Z"
+    },
+    "Kerala_Coconut_Realism_Coconut_Detail.png": {
+      "revision": "kerala-v4.0-user-coconut",
+      "camera": "CAM_V4_Coconut_Detail",
+      "engine": "CYCLES",
+      "device": "CPU",
+      "resolution": [
+        900,
+        1100
+      ],
+      "samples_max": 32,
+      "adaptive_threshold": 0.02,
+      "denoiser": "OPENIMAGEDENOISE",
+      "render_seconds": 96.195,
+      "blend_sha256": "9a7d92bd5423fa495cdc8457f73e7c89f66e701cb7a05fdc058d4e9fd290b304",
+      "blend": "output/Kerala_Coconut_Realism.blend",
+      "image_sha256": "ae88be115a60edccca72f54d4f148c7e34425a40a7093f633afd5ea07c853769",
+      "image_bytes": 1603415,
+      "output": "output/Kerala_Coconut_Realism_Coconut_Detail.png",
+      "utc": "2026-11-08T18:09:07Z"
+    }
+  }
+}

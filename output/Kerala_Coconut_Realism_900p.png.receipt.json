@@ -1,0 +1,20 @@
+{
+  "revision": "kerala-v4.0-user-coconut",
+  "camera": "CAM_Q_Hero_LeadingBund",
+  "engine": "CYCLES",
+  "device": "CPU",
+  "resolution": [
+    1600,
+    900
+  ],
+  "samples_max": 64,
+  "adaptive_threshold": 0.015,
+  "denoiser": "OPENIMAGEDENOISE",
+  "render_seconds": 495.298,
+  "blend_sha256": "9a7d92bd5423fa495cdc8457f73e7c89f66e701cb7a05fdc058d4e9fd290b304",
+  "blend": "output/Kerala_Coconut_Realism.blend",
+  "image_sha256": "0683615bb6ff1713f8187ccfe68d7f90560e3289facc0a0ec30fd1557082bfd0",
+  "image_bytes": 2451202,
+  "output": "output/Kerala_Coconut_Realism_900p.png",
+  "utc": "2026-11-08T18:05:19Z"
+}

@@ -1,0 +1,41 @@
+{
+  "source_glb": "assets/models/user/coconut_tree_low_poly.glb",
+  "source_sha256": "348ed52f1320941ba80c49e8b2bf4c7fb7612ca6adb19c578c64db3a8a414198",
+  "export": "output/Coconut_Tree_Scene_Ready.glb",
+  "export_sha256": "f51cf7a7c51cd26eaa9bd330eeef043f5f1fb7fdc955f96a4968ab84f03b2809",
+  "bounds_min_m": [
+    -3.46527361869812,
+    -4.43392276763916,
+    0.0
+  ],
+  "bounds_max_m": [
+    3.1970794200897217,
+    2.324321746826172,
+    15.569140434265137
+  ],
+  "dimensions_m": [
+    6.662353038787842,
+    6.758244514465332,
+    15.569140434265137
+  ],
+  "objects": [
+    "SM_UserCoconut_Trunk",
+    "SM_UserCoconut_Fronds",
+    "SM_UserCoconut_Fruit_0_0",
+    "SM_UserCoconut_Fruit_0_1",
+    "SM_UserCoconut_Fruit_0_2",
+    "SM_UserCoconut_Fruit_0_3",
+    "SM_UserCoconut_Fruit_0_4",
+    "SM_UserCoconut_Fruit_1_0",
+    "SM_UserCoconut_Fruit_1_1",
+    "SM_UserCoconut_Fruit_1_2",
+    "SM_UserCoconut_Fruit_1_3",
+    "SM_UserCoconut_Fruit_1_4",
+    "SM_UserCoconut_Fruit_2_0",
+    "SM_UserCoconut_Fruit_2_1",
+    "SM_UserCoconut_Fruit_2_2",
+    "SM_UserCoconut_Fruit_2_3",
+    "SM_UserCoconut_Fruit_2_4"
+  ],
+  "note": "Uploaded trunk/frond meshes preserved; metric scale and fruit clusters added. GLB uses Principled alpha-clip foliage; Blender scene adds restrained Cycles translucency."
+}
