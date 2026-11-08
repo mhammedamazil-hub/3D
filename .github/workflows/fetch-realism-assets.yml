@@ -1,0 +1,37 @@
+name: Fetch licensed realism assets
+
+# Public, licensed asset transport for the network-restricted Agent sandbox.
+# No paid services or credentials. Retrieved files are checksummed and pushed
+# to the triggering branch with source/license metadata. Keep total <70 MB.
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/fetch-realism-assets.yml'
+      - 'scripts/realism-assets-request.txt'
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve public licensed assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p transport/realism
+          python3 scripts/fetch_realism_assets.py transport/realism 2>&1 | tee transport/realism/fetch.log
+      - name: Push retrieved assets
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -f transport/realism
+          if ! git diff --cached --quiet; then
+            git commit -m "ci: transport licensed realism assets and provenance"
+            git push origin HEAD:"$GITHUB_REF_NAME"
+          fi
