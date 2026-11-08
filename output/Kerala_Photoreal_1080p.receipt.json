@@ -1,0 +1,18 @@
+{
+  "revision": "kerala-v2.0-photoreal",
+  "preset": "cycles_final",
+  "scene_sha256": "2ef97184b7efe03f790419dd7b360b512e24d9f2b860f868315aba52727c15a7",
+  "blender": "4.2.23 LTS",
+  "engine": "CYCLES",
+  "camera": "CAM_Hero_LeadingBund",
+  "resolution": [
+    1920,
+    1080
+  ],
+  "samples": 64,
+  "seconds": 1044.869,
+  "image_sha256": "8e95b55b1a6ec2cf4b55bdb0632d5a8a93633ec0bb0ae02566e94b4b387e6f2d",
+  "image": "output/Kerala_Photoreal_1080p.png",
+  "volume": true,
+  "utc": "2026-11-08T11:33:44Z"
+}

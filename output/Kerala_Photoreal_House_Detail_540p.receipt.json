@@ -1,0 +1,18 @@
+{
+  "revision": "kerala-v2.0-photoreal",
+  "preset": "cycles_final",
+  "scene_sha256": "2ef97184b7efe03f790419dd7b360b512e24d9f2b860f868315aba52727c15a7",
+  "blender": "4.2.23 LTS",
+  "engine": "CYCLES",
+  "camera": "CAM_House_Detail",
+  "resolution": [
+    960,
+    540
+  ],
+  "samples": 32,
+  "seconds": 122.309,
+  "image_sha256": "cda0b93c4cd3b7f4926a7dacfc6b190bb30fa78de6e02ddfdb34806370130b81",
+  "image": "output/Kerala_Photoreal_House_Detail_540p.png",
+  "volume": true,
+  "utc": "2026-11-08T11:36:38Z"
+}

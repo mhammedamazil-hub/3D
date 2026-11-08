@@ -39,7 +39,7 @@
     "mode": "Applied",
     "action": "Non-realized GN instances; 282,720 unique mesh triangles; 25 materials; build manifest recorded.",
     "v2_mode": "Applied",
-    "v2_action": "Non-realized GN instances; CC0 island_tree_02 LOD1 chosen over LOD0; 946,040 unique mesh triangles; packed 60 MB blend."
+    "v2_action": "Non-realized GN instances; CC0 island_tree_02 LOD1 chosen over LOD0; 946,040 unique mesh triangles; packed 60 MB blend. Reopened scene retains 30 materials after unused purge."
   },
   {
     "skill": "biome-worlds",
@@ -396,7 +396,7 @@
     "mode": "Applied",
     "action": "Wider far paddy spacing; smaller understory/foothill instances; separate reduced Eevee LOD preset.",
     "v2_mode": "Applied",
-    "v2_action": "Selected CC0 tree LOD1; fast Eevee LOD preset exists from v1 and is re-probed for v2 memory limits."
+    "v2_action": "Selected CC0 tree LOD1; v2 Eevee fast LOD probe OOM-killed at 480p, so Cycles CPU remained the usable route."
   },
   {
     "skill": "lookdev",
@@ -501,7 +501,7 @@
     "mode": "Applied",
     "action": "Screenshot-backed QA gate; explicit technical/visual/delivery statuses in final report.",
     "v2_mode": "Applied",
-    "v2_action": "Visual inspection of hero/house previews; technical verification and receipt checks run on frozen v2 scene."
+    "v2_action": "Visual inspection of three previews plus final hero/house detail; verify_kerala_v2 technical PASS; receipt hashes match frozen scene."
   },
   {
     "skill": "realistic-style",
@@ -515,7 +515,7 @@
     "mode": "Applied",
     "action": "Sample tests before final; frozen-scene receipts; backend availability measured, not assumed.",
     "v2_mode": "Applied",
-    "v2_action": "Cycles CPU preview/bench/final route measurements; no GPU backend claimed; honest Eevee/Workbench/LuxCore limits."
+    "v2_action": "Cycles CPU preview 28.180 s, final 1080p/64 1044.869 s, house detail 122.309 s; Workbench proxy 45.609 s; Eevee LOD OOM; no GPU backend claimed."
   },
   {
     "skill": "retopology",

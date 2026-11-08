@@ -37,3 +37,8 @@ There is no `blender` CLI in this sandbox; Blender is the PyPI `bpy` module. Use
 ## Honest limits
 
 2 vCPU, 3.85 GiB RAM, no GPU. Cycles CPU is the reliable hero path. Full-density Eevee on software OpenGL was OOM-killed; Workbench is practical only as a simplified clay proxy. The visible sky is a procedural shader on a distant dome, not volumetric cloud geometry. References were analyzed only; no reference photo is used as a backplate.
+
+
+## Kerala photoreal v2 deliverables
+
+`output/Kerala_Photoreal.blend`, `output/Kerala_Photoreal_1080p.png` + receipt, `output/Kerala_Photoreal_House_Detail_540p.png` + receipt. Rebuild: `sh scripts/blender-py scripts/build_kerala_photoreal.py`; verify: `sh scripts/blender-py scripts/verify_kerala_v2.py`. Add-on/library/texture tests: `docs/ADDON_LIBRARY_REPORT.md`; 94-skill recheck: `docs/SKILL_94_REVIEW.md`.

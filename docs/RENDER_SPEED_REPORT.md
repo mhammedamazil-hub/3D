@@ -37,3 +37,20 @@ Sandbox: Debian 12, 2 vCPU Intel Xeon @ 2.60 GHz, 3.85 GiB RAM, **no GPU**, Blen
 ## Fastest honest recommendation
 
 For this exact scene on this sandbox: **Cycles CPU with adaptive sampling + OIDN** is the reliable quality path. Eevee can be attractive on a real GPU, but here software GL plus dense instances is memory-bound. Workbench is only for simplified clay checks. The biggest speed levers are instance density, volumetrics, resolution, and samples—not pretending a GPU exists.
+
+
+## Kerala photoreal v2 measured routes (Blender 4.2.23 LTS, CPU-only)
+
+Frozen scene: `output/Kerala_Photoreal.blend`, SHA-256 `2ef97184b7efe03f790419dd7b360b512e24d9f2b860f868315aba52727c15a7`.
+
+| Route | Settings | Result | Wall time | Notes |
+|---|---|---:|---:|---|
+| Cycles preview | 640×360, 12 samples, adaptive .10, OIDN, mist on | PASS | 28.180 s | Accepted composition/material preview 3; earlier previews 24.257 s / 25.830 s. |
+| Cycles final hero | 1920×1080, 64 samples, adaptive .03, min 24, OIDN, mist on | PASS | 1044.869 s | Peak render memory ~1.35 GiB; receipt hashes match frozen scene. |
+| Cycles house detail | 960×540, 32 samples, adaptive .03, OIDN, mist on | PASS | 122.309 s | Separate 58 mm house camera. |
+| Workbench clay proxy | 960×540, vegetation/atmosphere hidden, studio cavity | PASS | 45.609 s | Composition proxy only; samples not applicable; no volume. |
+| Eevee fast LOD | 480×270, v2 LOD densities, scanned canopy/understory/foothill forest hidden, no volume | KILLED | ~43.7 s | global OOM: anon-rss ~3.87 GiB; EGL_BAD_MATCH software GL. No image produced. |
+| Cycles bench | 960×540, 24 samples | Not separately run for v2 | — | Preview and house-detail timings bracket this route. |
+| GPU / Storm / LuxCore / BlenderKit | CUDA/OptiX/HIP/oneAPI CPU-only; Metal absent; Storm enabled but no engine enum; LuxCore import-only historical; BlenderKit binary blocked | NOT TESTED as render | — | No unavailable backend is claimed. |
+
+Fastest usable v2 route for a full-material still remains Cycles CPU preview/LOD; Eevee software GL is not memory-safe for this scene even at 480p LOD. The final hero was rendered with Cycles CPU, not a photo backplate or external renderer.

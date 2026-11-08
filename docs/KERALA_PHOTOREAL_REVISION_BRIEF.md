@@ -25,3 +25,8 @@ Ultra-realistic / photorealistic rather than animated or stylized; try available
 
 ## Acceptance gate
 Editable packed v2 `.blend`, native PNG, source/config, asset licenses/credits, add-on/library test report, updated 94-skill matrix, independent hash/image validation, visual limitations stated separately from technical PASS.
+
+
+## Completion status
+
+Delivered: `output/Kerala_Photoreal.blend` + 1920×1080 Cycles CPU hero + 960×540 house detail, receipts, `docs/KERALA_VALIDATION_V2.json` PASS, `docs/ADDON_LIBRARY_REPORT.md`, `docs/RENDER_SPEED_REPORT.md` v2 routes, and 94-skill v2 recheck. CC0 Poly Haven PBR/HDRI/tree/understory assets and GPL Improved Sapling generation were actually used; incompatible add-ons/backends are recorded honestly. The scene is native 3D, not a photo backplate.

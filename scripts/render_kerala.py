@@ -33,6 +33,18 @@ def apply_preset(name,samples=None):
                                 f=.30 if 'Paddy' in ob.name else (.45 if 'Tree' in ob.name or 'Understory' in ob.name or 'Foothill' in ob.name else .55)
                                 md[sock.identifier]=max(0.0,min(1.0,md.get(sock.identifier,1.0)*f))
             bpy.data.collections['COL_Atmosphere'].hide_render=True
+        if name=='eevee_fast' and str(s.get('revision','')).startswith('kerala-v2'):
+            # Software-GL v2 LOD: drop the heaviest scanned canopy/understory and foothill forest.
+            for obn in ['SM_CC0_Library_Tree_Instances','SM_Foothill_Forest_Instances','SM_Scanned_Fern_Anthurium_Understory']:
+                ob=bpy.data.objects.get(obn)
+                if ob:ob.hide_render=True
+            for ob in bpy.data.objects:
+                for md in ob.modifiers:
+                    if md.type=='NODES' and md.node_group:
+                        for sock in md.node_group.interface.items_tree:
+                            if sock.item_type=='SOCKET' and sock.in_out=='INPUT' and sock.name=='Density':
+                                f=.18 if 'Paddy' in ob.name else .25
+                                md[sock.identifier]=max(0.0,min(1.0,md.get(sock.identifier,1.0)*f))
         s.render.engine='BLENDER_EEVEE_NEXT';s.eevee.taa_render_samples=samples or (16 if 'preview' in name else 32)
         s.eevee.use_raytracing=(name!='eevee_fast');s.eevee.ray_tracing_method='SCREEN';s.eevee.shadow_ray_count=1;s.eevee.shadow_step_count=4;s.eevee.volumetric_samples=16 if name=='eevee_fast' else 32;s.eevee.use_volumetric_shadows=False;s.eevee.use_shadows=True
         s.eevee.fast_gi_quality=.5;s.eevee.fast_gi_ray_count=2;s.eevee.fast_gi_step_count=8

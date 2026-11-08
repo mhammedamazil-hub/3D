@@ -18,7 +18,7 @@ Every one of the 94 pinned SKILL.md documents was rechecked for the photoreal re
 | `anime-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no anime style contamination; continuous PBR/HDRI photoreal target retained. |
 | `apocalypse-worlds` | QA / exclusion lens | Rechecked v2 hero/house previews: no apocalypse worlds contamination; continuous PBR/HDRI photoreal target retained. |
 | `archviz` | Applied | Metric tharavad retained (2.08 m door, 2.70 m walls); scanned PBR wear, IOR 1.333 paddy water, stable perspective. |
-| `asset-optimization` | Applied | Non-realized GN instances; CC0 island_tree_02 LOD1 chosen over LOD0; 946,040 unique mesh triangles; packed 60 MB blend. |
+| `asset-optimization` | Applied | Non-realized GN instances; CC0 island_tree_02 LOD1 chosen over LOD0; 946,040 unique mesh triangles; packed 60 MB blend. Reopened scene retains 30 materials after unused purge. |
 | `biome-worlds` | Applied | Humid monsoon paddy, wet footprinted bund, narrow drain, tropical canopy, bounded Ghat mist banks. |
 | `blender-director` | Applied | Wrote v2 photoreal brief from both new references; staged three hero/house preview iterations before freezing. |
 | `blender-modeler` | Applied | Named SM_/COL_ hierarchy; live bevel/solidify/displace/GN; real footprint depressions and timber drain crossing. |
@@ -69,7 +69,7 @@ Every one of the 94 pinned SKILL.md documents was rechecked for the photoreal re
 | `isometric-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no isometric style contamination; continuous PBR/HDRI photoreal target retained. |
 | `lighting` | Applied | CC0 pure-sky HDRI desaturated for monsoon fill, soft 8° sun, sky bounce area, motivated veranda lamp. |
 | `liminal-space-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no liminal space style contamination; continuous PBR/HDRI photoreal target retained. |
-| `lod-pipeline` | Applied | Selected CC0 tree LOD1; fast Eevee LOD preset exists from v1 and is re-probed for v2 memory limits. |
+| `lod-pipeline` | Applied | Selected CC0 tree LOD1; v2 Eevee fast LOD probe OOM-killed at 480p, so Cycles CPU remained the usable route. |
 | `lookdev` | Applied | Three measured Cycles previews; corrected neon rice, dry path, stone-like plaster, sparse foothill trees and harsh sky. |
 | `lowpoly-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no lowpoly style contamination; continuous PBR/HDRI photoreal target retained. |
 | `manga-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no manga style contamination; continuous PBR/HDRI photoreal target retained. |
@@ -84,9 +84,9 @@ Every one of the 94 pinned SKILL.md documents was rechecked for the photoreal re
 | `procedural-modeling` | Applied | Seeded fbm ridges + Displace crags, fine rice clumps, sapling-generated broadleaf variants, footprinted path mesh. |
 | `prop-artist` | Applied | Terracotta jars, brass lamp, bench, broom, firewood, laterite chips, edge stones, timber crossing. |
 | `psx-horror-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no psx horror style contamination; continuous PBR/HDRI photoreal target retained. |
-| `qa-review` | Applied | Visual inspection of hero/house previews; technical verification and receipt checks run on frozen v2 scene. |
+| `qa-review` | Applied | Visual inspection of three previews plus final hero/house detail; verify_kerala_v2 technical PASS; receipt hashes match frozen scene. |
 | `realistic-style` | Applied | Primary acceptance target: photoreal, not animated-like; PBR/HDRI/library foliage; cartoon/cel/pixel languages excluded. |
-| `rendering` | Applied | Cycles CPU preview/bench/final route measurements; no GPU backend claimed; honest Eevee/Workbench/LuxCore limits. |
+| `rendering` | Applied | Cycles CPU preview 28.180 s, final 1080p/64 1044.869 s, house detail 122.309 s; Workbench proxy 45.609 s; Eevee LOD OOM; no GPU backend claimed. |
 | `retopology` | Compatibility check | No manual retopology claimed; used authored CC0 LOD1 tree and low-poly sapling/library meshes instead of LOD0. |
 | `retro-16bit-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no retro 16bit style contamination; continuous PBR/HDRI photoreal target retained. |
 | `retro-8bit-style` | QA / exclusion lens | Rechecked v2 hero/house previews: no retro 8bit style contamination; continuous PBR/HDRI photoreal target retained. |

@@ -1,0 +1,66 @@
+{
+  "revision_expected": "kerala-v2.0-photoreal",
+  "checks": {
+    "blend_exists": true,
+    "blend_sha256": "2ef97184b7efe03f790419dd7b360b512e24d9f2b860f868315aba52727c15a7",
+    "scene_revision": "kerala-v2.0-photoreal",
+    "revision_match": true,
+    "resolution": [
+      1920,
+      1080
+    ],
+    "resolution_match": true,
+    "camera": "CAM_Hero_LeadingBund",
+    "units_metric": true,
+    "collections": {
+      "COL_Terrain": true,
+      "COL_Paddies": true,
+      "COL_Water": true,
+      "COL_Path_and_Bunds": true,
+      "COL_FieldVegetation": true,
+      "COL_Mountains": true,
+      "COL_Kerala_House": true,
+      "COL_Atmosphere": true,
+      "COL_Lights": true,
+      "COL_Cameras": true
+    },
+    "collections_present": true,
+    "water_ior": 1.333,
+    "water_ior_ok": true,
+    "external_images_missing": [],
+    "objects": 599,
+    "materials": 30,
+    "node_groups": [
+      "GN_Scatter_CC0_IslandTree_v02",
+      "GN_Scatter_FineBundGrass_v02",
+      "GN_Scatter_FinePaddyRows_v02",
+      "GN_Scatter_Foothill_Forest_v02",
+      "GN_Scatter_Sapling_TropicalBelt_v02",
+      "GN_Scatter_ScannedUnderstory_v02"
+    ],
+    "rice_points": 133805,
+    "cc0_tree_instances": true,
+    "sapling_library": 6,
+    "packed_images": 41,
+    "hero_size": [
+      1920,
+      1080
+    ],
+    "hero_mode": "RGB",
+    "hero_luma_extrema": [
+      0,
+      233
+    ],
+    "hero_dimensions_ok": true,
+    "hero_not_blank": true,
+    "hero_sha256": "8e95b55b1a6ec2cf4b55bdb0632d5a8a93633ec0bb0ae02566e94b4b387e6f2d",
+    "receipt_scene_hash_match": true,
+    "receipt_image_hash_match": true,
+    "render_seconds": 1044.869,
+    "engine": "CYCLES",
+    "samples": 64
+  },
+  "technical": "PASS",
+  "visual": "Agent-reviewed preview stills; final still inspection recorded in QA notes.",
+  "delivery": "Final verified"
+}
