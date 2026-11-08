@@ -1,0 +1,31 @@
+name: Fetch targeted trees rocks and PBR maps
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/fetch-realism-assets-2.yml'
+      - 'scripts/realism-assets-request-2.txt'
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p transport/realism2
+          python3 scripts/fetch_realism_assets2.py transport/realism2 2>&1 | tee transport/realism2/fetch.log
+      - if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -f transport/realism2
+          if ! git diff --cached --quiet; then
+            git commit -m "ci: transport targeted CC0 trees rocks and PBR maps"
+            git push origin HEAD:"$GITHUB_REF_NAME"
+          fi
