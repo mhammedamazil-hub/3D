@@ -1,0 +1,18 @@
+{
+  "revision": "kerala-v1.4",
+  "preset": "cycles_final",
+  "scene_sha256": "eee5a31f8759a040dbff582bb01b21ec581dc158647826c3189609ba8c8230bc",
+  "blender": "4.2.23 LTS",
+  "engine": "CYCLES",
+  "camera": "CAM_Hero_LeadingBund",
+  "resolution": [
+    1920,
+    1080
+  ],
+  "samples": 64,
+  "seconds": 830.324,
+  "image_sha256": "bfb0a77766aafa22945450d252c17a61eea39a1663391686beca185415749ff0",
+  "image": "output/Kerala_Monsoon_Light_1080p.png",
+  "volume": true,
+  "utc": "2026-11-08T08:05:05Z"
+}

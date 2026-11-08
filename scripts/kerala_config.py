@@ -1,0 +1,19 @@
+"""Authoritative scene settings. One Blender unit = one metre."""
+from pathlib import Path
+ROOT = Path(__file__).resolve().parent.parent
+SCENE_NAME = "Monsoon Light — Kerala"
+REVISION = "kerala-v1.4"
+SEED = 2717453
+RES_X, RES_Y = 1920, 1080
+FPS = 24
+HOUSE_X, HOUSE_Y = 3.0, 62.0
+CAMERA_LOC = (-1.8, -15.5, 2.55)
+CAMERA_TARGET = (2.0, 66.0, 5.0)
+LENS_MM = 39.0
+OUTPUT = ROOT / "output"
+REVIEW = ROOT / "review"
+BLEND = OUTPUT / "Kerala_Monsoon_Light.blend"
+HERO = OUTPUT / "Kerala_Monsoon_Light_1080p.png"
+PATH_NODES = [(-2.6,-22),(-1.5,-10),(0.4,0),(3.0,13),(3.6,25),(1.4,42),(3.0,52),(3.0,55.8)]
+PADDY_BANDS = [(-18.0,3.0),(4.4,23.0),(24.5,43.0),(44.5,54.0),(68.5,88.0)]
+FIELD_HALF_WIDTH = 55.0

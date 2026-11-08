@@ -1,0 +1,61 @@
+{
+  "revision_expected": "kerala-v1.4",
+  "checks": {
+    "blend_exists": true,
+    "blend_sha256": "eee5a31f8759a040dbff582bb01b21ec581dc158647826c3189609ba8c8230bc",
+    "scene_revision": "kerala-v1.4",
+    "revision_match": true,
+    "resolution": [
+      1920,
+      1080
+    ],
+    "resolution_match": true,
+    "camera": "CAM_Hero_LeadingBund",
+    "units_metric": true,
+    "collections": {
+      "COL_Terrain": true,
+      "COL_Paddies": true,
+      "COL_Water": true,
+      "COL_Path_and_Bunds": true,
+      "COL_FieldVegetation": true,
+      "COL_Mountains": true,
+      "COL_Kerala_House": true,
+      "COL_Atmosphere": true,
+      "COL_Lights": true,
+      "COL_Cameras": true
+    },
+    "collections_present": true,
+    "water_ior": 1.333,
+    "water_ior_ok": true,
+    "external_images_missing": [],
+    "objects": 500,
+    "materials": 25,
+    "node_groups": [
+      "GN_Scatter_Bund_GrassTufts_v01",
+      "GN_Scatter_Foothill_Forest_v01",
+      "GN_Scatter_Paddy_RowClumps_v01",
+      "GN_Scatter_Tropical_Understory_v01.001",
+      "GN_Scatter_TropicalTreeBelt_v01"
+    ],
+    "rice_points": 65980,
+    "hero_size": [
+      1920,
+      1080
+    ],
+    "hero_mode": "RGB",
+    "hero_luma_extrema": [
+      0,
+      255
+    ],
+    "hero_dimensions_ok": true,
+    "hero_not_blank": true,
+    "hero_sha256": "bfb0a77766aafa22945450d252c17a61eea39a1663391686beca185415749ff0",
+    "receipt_scene_hash_match": true,
+    "receipt_image_hash_match": true,
+    "render_seconds": 830.324,
+    "engine": "CYCLES"
+  },
+  "technical": "PASS",
+  "visual": "Agent-reviewed stills; subjective user approval pending",
+  "delivery": "Final verified"
+}

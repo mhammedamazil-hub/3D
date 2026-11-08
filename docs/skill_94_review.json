@@ -1,0 +1,472 @@
+[
+  {
+    "skill": "analog-found-footage-horror",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected tape damage/handheld shake; stable documentary-like camera."
+  },
+  {
+    "skill": "animation",
+    "mode": "Not applicable",
+    "action": "Static still requested; frame range 1; no unbaked animation caches."
+  },
+  {
+    "skill": "anime-style",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected cel value steps; continuous PBR shading retained."
+  },
+  {
+    "skill": "apocalypse-worlds",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected collapse/scavenger language; house is old but maintained and inhabited."
+  },
+  {
+    "skill": "archviz",
+    "mode": "Applied",
+    "action": "Metric house: 2.08 m door, 2.70 m walls; stable perspective; plausible dielectric water."
+  },
+  {
+    "skill": "asset-optimization",
+    "mode": "Applied",
+    "action": "Non-realized GN instances; 282,720 unique mesh triangles; 25 materials; build manifest recorded."
+  },
+  {
+    "skill": "biome-worlds",
+    "mode": "Applied",
+    "action": "Humid tropical palette, monsoon water, localized damp/moss, bounded distant mist."
+  },
+  {
+    "skill": "blender-director",
+    "mode": "Applied",
+    "action": "Brief and reference analysis written before modeling; COL_ hierarchy; staged visual tests."
+  },
+  {
+    "skill": "blender-modeler",
+    "mode": "Applied",
+    "action": "Named SM_ meshes; live bevel/solidify/GN modifiers; separate house/terrain/vegetation collections."
+  },
+  {
+    "skill": "body-horror-style",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected mutation/flesh material language."
+  },
+  {
+    "skill": "brutalist-mood",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected monumental concrete; modest domestic scale retained."
+  },
+  {
+    "skill": "camera-cinematography",
+    "mode": "Applied",
+    "action": "39 mm hero leading-line composition; deep focus; separate house and foreground detail cameras."
+  },
+  {
+    "skill": "cartoon-style",
+    "mode": "QA / exclusion lens",
+    "action": "Used silhouette-first check, rejected exaggerated cartoon proportions."
+  },
+  {
+    "skill": "character-archetypes",
+    "mode": "Not applicable",
+    "action": "No characters in brief; hidden 1.70 m scale proxy only."
+  },
+  {
+    "skill": "character-artist",
+    "mode": "Not applicable",
+    "action": "No character hero; scale proxy only."
+  },
+  {
+    "skill": "chibi-style",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected cute oversized proportions."
+  },
+  {
+    "skill": "cloth-sim",
+    "mode": "Not applicable",
+    "action": "No garments or cloth simulation; no raw unstable caches."
+  },
+  {
+    "skill": "collision-proxy",
+    "mode": "Applied",
+    "action": "Separate UCX-style convex house proxy exported as GLB, kept out of frozen hero render scene."
+  },
+  {
+    "skill": "comic-book-style",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected ink contours/halftone; natural tonal gradation retained."
+  },
+  {
+    "skill": "compositing",
+    "mode": "Applied",
+    "action": "Reversible compositor glare node; AgX view transform; exposure documented."
+  },
+  {
+    "skill": "cosmic-eldritch-horror",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected impossible scale/void pressure; believable landscape scale."
+  },
+  {
+    "skill": "cozy-wholesome-mood",
+    "mode": "Applied",
+    "action": "Warm inhabited veranda props, safe eye-level route, gentle daylight rather than threat lighting."
+  },
+  {
+    "skill": "creature-artist",
+    "mode": "Not applicable",
+    "action": "No creature hero; distant birds are simple subordinate meshes."
+  },
+  {
+    "skill": "dark-gritty-mood",
+    "mode": "QA / exclusion lens",
+    "action": "Used wear-as-story check but rejected low-key industrial melancholy."
+  },
+  {
+    "skill": "dream-surreal-mood",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected bent logic/scale play; physical geography retained."
+  },
+  {
+    "skill": "dream-weirdcore-style",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected nostalgic wrongness/UI overlays."
+  },
+  {
+    "skill": "environment-artist",
+    "mode": "Applied",
+    "action": "Modular house kit, paddy plots, bunds, tree belt and three depth layers; one hero focal point."
+  },
+  {
+    "skill": "export-pipeline",
+    "mode": "Applied",
+    "action": "House GLB export + clean Blender reimport PASS; bbox 13.66\u00d711.36\u00d75.88 m; separate collision GLB. Engine import not claimed; bpy shutdown segfault after successful report noted."
+  },
+  {
+    "skill": "fantasy-worlds",
+    "mode": "QA / exclusion lens",
+    "action": "Used material-honesty check; no magic emissive or fantasy heraldry."
+  },
+  {
+    "skill": "folk-horror-style",
+    "mode": "QA / exclusion lens",
+    "action": "Pastoral fields retained, but ritual dread and closed-community symbols rejected."
+  },
+  {
+    "skill": "frutiger-aero-style",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected glossy bubbles/UI skeuomorphism; natural water gloss only."
+  },
+  {
+    "skill": "genre-action-combat",
+    "mode": "QA / exclusion lens",
+    "action": "Readability check only: clear route and focal landmark; no combat arena mechanics."
+  },
+  {
+    "skill": "genre-card-party-idle",
+    "mode": "QA / exclusion lens",
+    "action": "Readability check only: low-distraction background; no table/UI stage."
+  },
+  {
+    "skill": "genre-metroidvania-roguelike",
+    "mode": "QA / exclusion lens",
+    "action": "Modular-kit check only; no ability gates or run modifiers."
+  },
+  {
+    "skill": "genre-narrative-vn",
+    "mode": "QA / exclusion lens",
+    "action": "Emotional camera/background check; no interaction highlights or VN UI."
+  },
+  {
+    "skill": "genre-open-world-sandbox",
+    "mode": "QA / exclusion lens",
+    "action": "Landmark check: house and central peak aid orientation; no traversal toys."
+  },
+  {
+    "skill": "genre-puzzle-platformer",
+    "mode": "QA / exclusion lens",
+    "action": "Honest-scale check; no interactable color coding or jump mechanics."
+  },
+  {
+    "skill": "genre-racing-sports",
+    "mode": "QA / exclusion lens",
+    "action": "Edge-clarity check on bund/path; no speed landmarks or stadium kits."
+  },
+  {
+    "skill": "genre-rpg",
+    "mode": "QA / exclusion lens",
+    "action": "Region-identity check: Kerala materials and paddies; no loot/class language."
+  },
+  {
+    "skill": "genre-shooter",
+    "mode": "QA / exclusion lens",
+    "action": "Sightline/eye-height check; no cover or loot mechanics."
+  },
+  {
+    "skill": "genre-soulslike",
+    "mode": "QA / exclusion lens",
+    "action": "Landmark/fog check; rejected monumental dread and lethal fog gates."
+  },
+  {
+    "skill": "genre-stealth",
+    "mode": "QA / exclusion lens",
+    "action": "Shadow-readability check; no patrol routes or gameplay shadow volumes."
+  },
+  {
+    "skill": "genre-strategy-sim",
+    "mode": "QA / exclusion lens",
+    "action": "Building silhouette check at distance; no tile/unit icon system."
+  },
+  {
+    "skill": "genre-survival",
+    "mode": "QA / exclusion lens",
+    "action": "Resource-readability check on jars/firewood; no crafting HUD or tension route."
+  },
+  {
+    "skill": "geometry-nodes",
+    "mode": "Applied",
+    "action": "Reusable GN_Scatter groups expose Seed/Density/Scale; rice/grass/trees/understory remain instanced."
+  },
+  {
+    "skill": "godot-export",
+    "mode": "Compatibility check",
+    "action": "Compatibility check: GLB would be preferred; Godot not installed, no engine import claimed."
+  },
+  {
+    "skill": "hair-groom",
+    "mode": "Not applicable",
+    "action": "No hair/fur; coconut fronds are modeled geometry, not groom curves."
+  },
+  {
+    "skill": "hand-painted-style",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected brushwork albedo; procedural physical wear retained."
+  },
+  {
+    "skill": "hard-surface",
+    "mode": "Applied",
+    "action": "Real bevels on plinth/frames/steps; overlapping roof tiles; rafters and brackets; no uniform micro-greeble."
+  },
+  {
+    "skill": "hd-2d-style",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected pixel actors/tilt-shift theatrical DoF; deep-focus 3D retained."
+  },
+  {
+    "skill": "historical-worlds",
+    "mode": "Applied",
+    "action": "Period material language: laterite, lime wash, teak, fired clay; no modern tech in the house."
+  },
+  {
+    "skill": "horror-style",
+    "mode": "QA / exclusion lens",
+    "action": "Used readable-path check; rejected dread lighting and institutional emptiness."
+  },
+  {
+    "skill": "indie-horror-aesthetics",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected horror lane mashup; single naturalistic monsoon lane."
+  },
+  {
+    "skill": "isometric-style",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected ortho tile framing; perspective hero camera retained."
+  },
+  {
+    "skill": "lighting",
+    "mode": "Applied",
+    "action": "Fixed motivated morning sun, restrained sky fill, named LGT_ lights, bounded mist; no time-lapse sun."
+  },
+  {
+    "skill": "liminal-space-style",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected endless wrong repetition; inhabited rural specificity retained."
+  },
+  {
+    "skill": "lod-pipeline",
+    "mode": "Applied",
+    "action": "Wider far paddy spacing; smaller understory/foothill instances; separate reduced Eevee LOD preset."
+  },
+  {
+    "skill": "lookdev",
+    "mode": "Applied",
+    "action": "Clay proxy, low-res lighting, house detail and foreground detail iterations with gap fixes."
+  },
+  {
+    "skill": "lowpoly-style",
+    "mode": "QA / exclusion lens",
+    "action": "Used Workbench clay silhouette check; hero is not intentionally low-poly."
+  },
+  {
+    "skill": "manga-style",
+    "mode": "QA / exclusion lens",
+    "action": "Used grayscale value/clay check; no screentone or print language."
+  },
+  {
+    "skill": "mascot-puppet-horror",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected mascot/brand corruption language."
+  },
+  {
+    "skill": "materials",
+    "mode": "Applied",
+    "action": "25 named MAT_ materials; PBR ranges, leaf translucency, water IOR 1.333 and absorption."
+  },
+  {
+    "skill": "minimalist-style",
+    "mode": "QA / exclusion lens",
+    "action": "Used negative-space check: sky and path rest areas; not abstracted."
+  },
+  {
+    "skill": "neon-retrofuturism",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected neon/chrome/sunset grid palette."
+  },
+  {
+    "skill": "noir-style",
+    "mode": "QA / exclusion lens",
+    "action": "Used wet-ground reflection check; retained readable color and shadows, not crushed mono."
+  },
+  {
+    "skill": "painterly-style",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected pigment/paper overlays; photographic-like tonal continuity."
+  },
+  {
+    "skill": "physics-sim",
+    "mode": "Not applicable",
+    "action": "Static scene; no rigid/soft-body caches left unbaked."
+  },
+  {
+    "skill": "pixel-art-style",
+    "mode": "QA / exclusion lens",
+    "action": "Native-resolution check: no pixelation or texel locking; thin blades reviewed for shimmer."
+  },
+  {
+    "skill": "procedural-modeling",
+    "mode": "Applied",
+    "action": "Seeded terrain/path/roof/scatter generation; authoritative config and reproducible build script."
+  },
+  {
+    "skill": "prop-artist",
+    "mode": "Applied",
+    "action": "Terracotta jars, bench, brass lamp, broom and firewood at believable scale; clustered not wallpapered."
+  },
+  {
+    "skill": "psx-horror-style",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected affine crunch/low color depth; modern PBR retained."
+  },
+  {
+    "skill": "qa-review",
+    "mode": "Applied",
+    "action": "Screenshot-backed QA gate; explicit technical/visual/delivery statuses in final report."
+  },
+  {
+    "skill": "realistic-style",
+    "mode": "Applied",
+    "action": "Reference-driven composition; metric scale; restrained procedural wear; no photo backplate."
+  },
+  {
+    "skill": "rendering",
+    "mode": "Applied",
+    "action": "Sample tests before final; frozen-scene receipts; backend availability measured, not assumed."
+  },
+  {
+    "skill": "retopology",
+    "mode": "Applied",
+    "action": "Quad terrain/water grids; clean folded blade ribbons; no deformation surfaces requiring retopo."
+  },
+  {
+    "skill": "retro-16bit-style",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected dither/sprite palette constraints."
+  },
+  {
+    "skill": "retro-8bit-style",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected severe palette/chunky sprite logic."
+  },
+  {
+    "skill": "rigging",
+    "mode": "Not applicable",
+    "action": "No deforming assets; no armatures or weight maps required."
+  },
+  {
+    "skill": "scene-assembly",
+    "mode": "Applied",
+    "action": "COL_ hierarchy, linked palm collection instances, GN field instances, hidden asset library."
+  },
+  {
+    "skill": "sci-fi-punk-worlds",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected chrome/steam/cyber tech; agrarian material honesty."
+  },
+  {
+    "skill": "sculpting",
+    "mode": "Applied",
+    "action": "Largest-to-smallest massif/shoulder/ravine forms; detail matched to camera distance; no dyntopo spikes."
+  },
+  {
+    "skill": "set-dressing",
+    "mode": "Applied",
+    "action": "Narrative clusters at veranda and approach; doors/windows kept clear; background filler subordinate."
+  },
+  {
+    "skill": "stop-motion-craft-style",
+    "mode": "QA / exclusion lens",
+    "action": "Used slight irregularity check; rejected visible craft seams/fingerprints."
+  },
+  {
+    "skill": "stylized-style",
+    "mode": "QA / exclusion lens",
+    "action": "Used palette harmony/silhouette check without proportion exaggeration."
+  },
+  {
+    "skill": "texture-workflow",
+    "mode": "Applied",
+    "action": "Procedural wear masks and bump; no external texture bakes; engine-bake limitation documented."
+  },
+  {
+    "skill": "unity-export",
+    "mode": "Compatibility check",
+    "action": "Compatibility check: scale/axis and material baking requirements documented; Unity not installed."
+  },
+  {
+    "skill": "unreal-export",
+    "mode": "Compatibility check",
+    "action": "Compatibility check: UCX collision and LOD plan documented; Unreal not installed."
+  },
+  {
+    "skill": "uv-workflow",
+    "mode": "Compatibility check",
+    "action": "Compatibility check: hero uses procedural Object coordinates; production packed UVs/ORM are a separate game-export task."
+  },
+  {
+    "skill": "vector-style",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected flat fills/icon gradients; natural light retained."
+  },
+  {
+    "skill": "vegetation-artist",
+    "mode": "Applied",
+    "action": "Dimensional rice clumps, pinnate coconut fronds, branching broadleaf trees, torn banana leaves; VC_Wind on rice."
+  },
+  {
+    "skill": "vehicle-artist",
+    "mode": "Not applicable",
+    "action": "No vehicles in the brief."
+  },
+  {
+    "skill": "vfx-fx",
+    "mode": "Applied",
+    "action": "Bounded distant mist volume with height falloff; tiny real-mesh swifts; no huge empty FX domain."
+  },
+  {
+    "skill": "visual-console-eras",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected console-era crunch; modern cinematic PBR target."
+  },
+  {
+    "skill": "voxel-style",
+    "mode": "QA / exclusion lens",
+    "action": "Rejected block grid; organic curved geometry retained."
+  }
+]

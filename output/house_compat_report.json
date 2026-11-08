@@ -1,0 +1,13 @@
+{
+  "glb": "/home/user/3D/output/Kerala_House_Compat.glb",
+  "collision_proxy": "/home/user/3D/output/Kerala_House_CollisionProxy.glb",
+  "reimported_mesh_objects": 286,
+  "bbox_dimensions_m": [
+    13.659,
+    11.355,
+    5.884
+  ],
+  "scale_sane": true,
+  "engine_import": "NOT TESTED \u2014 no Unity/Unreal/Godot installed",
+  "materials": "procedural source retained in .blend; glTF material baking is a separate task"
+}

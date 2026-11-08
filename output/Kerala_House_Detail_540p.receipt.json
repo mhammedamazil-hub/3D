@@ -1,0 +1,18 @@
+{
+  "revision": "kerala-v1.4",
+  "preset": "cycles_bench",
+  "scene_sha256": "eee5a31f8759a040dbff582bb01b21ec581dc158647826c3189609ba8c8230bc",
+  "blender": "4.2.23 LTS",
+  "engine": "CYCLES",
+  "camera": "CAM_House_Detail",
+  "resolution": [
+    960,
+    540
+  ],
+  "samples": 32,
+  "seconds": 80.533,
+  "image_sha256": "2606b1eb2669dfc5e5e3822d5c1e11500d1ff71d5b6d845fffc8d3d09acf19f8",
+  "image": "output/Kerala_House_Detail_540p.png",
+  "volume": true,
+  "utc": "2026-11-08T08:10:08Z"
+}

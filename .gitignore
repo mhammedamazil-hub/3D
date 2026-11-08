@@ -7,8 +7,18 @@ __pycache__/
 # re-fetch with the "Fetch Blender OS libraries" workflow if missing)
 vendor/
 
-# Render outputs and scratch (regenerable)
-output/
+# Render outputs and scratch (regenerable). Keep only requested final deliverables.
+output/*
+!output/Kerala_Monsoon_Light.blend
+!output/Kerala_Monsoon_Light_1080p.png
+!output/Kerala_Monsoon_Light_1080p.receipt.json
+!output/Kerala_Fast_Eevee_LOD_540p.png
+!output/Kerala_Fast_Eevee_LOD_540p.receipt.json
+!output/Kerala_House_Detail_540p.png
+!output/Kerala_House_Detail_540p.receipt.json
+!output/Kerala_House_Compat.glb
+!output/Kerala_House_CollisionProxy.glb
+!output/house_compat_report.json
 review/
 *.blend1
 *.blend2

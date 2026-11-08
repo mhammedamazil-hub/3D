@@ -1,0 +1,19 @@
+{
+  "revision": "kerala-v1.4",
+  "preset": "eevee_fast",
+  "scene_sha256": "eee5a31f8759a040dbff582bb01b21ec581dc158647826c3189609ba8c8230bc",
+  "blender": "4.2.23 LTS",
+  "engine": "BLENDER_EEVEE_NEXT",
+  "camera": "CAM_Hero_LeadingBund",
+  "resolution": [
+    960,
+    540
+  ],
+  "samples": 8,
+  "seconds": 53.75,
+  "image_sha256": "52c93cf08d9fe3d4127766e6685338c464056cf0b0d43889e866d309689c333b",
+  "image": "output/Kerala_Fast_Eevee_LOD_540p.png",
+  "volume": false,
+  "utc": "2026-11-08T08:08:46Z",
+  "lod_note": "Reduced GN density; no mist volume; no ray tracing. Preview compromise, not hero."
+}

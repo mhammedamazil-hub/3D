@@ -1,41 +1,39 @@
-# 3D — realistic Blender production sandbox
+# Monsoon Light — Kerala
 
-Prepared 2026-11-07 per `skills/realistic-blender-production/SKILL.md`.
-Measured audit and verified capabilities: **`docs/ENVIRONMENT.md`**.
+An actual editable Blender landscape inspired by two user-supplied paddy-field references: flooded rice rows, a curved earthen bund, coconut palms and tropical tree belt, layered Western-Ghat-inspired mountains, and an old Kerala tharavad-inspired house at the path end.
 
-## Quick start
+## Primary deliverables
+
+- `output/Kerala_Monsoon_Light.blend` — editable packed Blender 4.2 scene, metric units, named collections, procedural node materials, non-realized vegetation instances.
+- `output/Kerala_Monsoon_Light_1080p.png` — 1920×1080 Cycles CPU hero still rendered from the frozen scene.
+- `output/Kerala_Monsoon_Light_1080p.receipt.json` — scene/image SHA-256, engine, settings and measured render time.
+- `output/Kerala_House_Detail_540p.png` — Cycles house detail from the same frozen scene.
+- `output/Kerala_Fast_Eevee_LOD_540p.png` — fast Eevee preview with reduced instance density, no mist volume and no ray tracing; explicitly not the hero.
+- `output/Kerala_House_Compat.glb` / `Kerala_House_CollisionProxy.glb` — generic export/collision compatibility proof; no game-engine import claimed.
+- `docs/KERALA_VALIDATION.json` — independent delivery checks.
+- `docs/KERALA_QA.md` — ship-with-notes verdict and visual limitations.
+- `docs/RENDER_SPEED_REPORT.md` — measured render routes, failures and unavailable backends.
+- `docs/SKILL_94_REVIEW.md` — how all 94 specialist documents were reviewed/applied/checked.
+
+## Rebuild and render
 
 ```bash
-# Run Python with Blender (bpy 4.2.23 LTS) in the prepared environment:
-scripts/blender-py -c "import bpy; print(bpy.app.version_string)"
-
-# Re-verify the whole pipeline (renders + encode/decode proof):
-scripts/blender-py scripts/env_doctor.py
-
-# Rebuild everything from scratch (venv + OS libs + verification):
-sh scripts/setup_sandbox.sh
+sh scripts/setup_sandbox.sh                     # rebuild venv + vendored OS libs if sandbox reset
+sh scripts/blender-py scripts/build_kerala_scene.py
+sh scripts/blender-py scripts/render_kerala.py cycles_final --samples 64 \
+  --out output/Kerala_Monsoon_Light_1080p.png
+sh scripts/blender-py scripts/verify_kerala.py
 ```
 
-There is no `blender` CLI here — Blender is the PyPI `bpy` module (CPU Cycles;
-headless Eevee works via software OpenGL). 2 vCPU / 3.85 GiB RAM / no GPU:
-benchmark before committing to big renders.
+Fast checks:
 
-## Layout
-
-```text
-skills/    production skill + vendored blender-skills library (94 specialists, MIT)
-scripts/   setup, environment wrapper, doctor; future build/render/verify scripts
-docs/      environment audit, OS-library provenance (SHA-256 + versions)
-assets/    licensed source assets and credits (empty yet)
-output/    requested deliverables (gitignored)
-review/    temporary tests and smoke renders (gitignored)
-vendor/    Debian X/GL libraries for bpy (gitignored; CI-transported)
-.venv/     pinned Python environment (not snapshotted; setup script rebuilds it)
+```bash
+sh scripts/blender-py scripts/render_kerala.py cycles_preview --out review/preview.png
+sh scripts/blender-py scripts/render_kerala.py clay --size 800 450 --out review/clay.png
 ```
 
-## Network-restricted sandbox
+There is no `blender` CLI in this sandbox; Blender is the PyPI `bpy` module. Use `scripts/blender-py`.
 
-Only GitHub / PyPI / npm hosts are reachable. OS libraries arrive via the
-`Fetch Blender OS libraries` GitHub Actions workflow (official Debian bookworm
-packages, checksummed); re-trigger it by pushing a change to
-`scripts/os-libs-request.txt`, then `git pull` and re-run setup.
+## Honest limits
+
+2 vCPU, 3.85 GiB RAM, no GPU. Cycles CPU is the reliable hero path. Full-density Eevee on software OpenGL was OOM-killed; Workbench is practical only as a simplified clay proxy. The visible sky is a procedural shader on a distant dome, not volumetric cloud geometry. References were analyzed only; no reference photo is used as a backplate.
