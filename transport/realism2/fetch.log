@@ -1,0 +1,48 @@
+SKIP models/island_tree_01/island_tree_01.blend 58077856
+SAVED models/island_tree_01/textures/island_tree_01_branches_diff_1k.png 5300342
+SAVED models/island_tree_01/textures/island_tree_01_branches_nor_gl_1k.png 5400459
+SAVED models/island_tree_01/textures/island_tree_01_branches_rough_1k.png 1625206
+SAVED models/island_tree_01/textures/island_tree_01_diff_1k.jpg 791327
+SAVED models/island_tree_01/textures/island_tree_01_leaves_alpha_1k.png 57438
+SAVED models/island_tree_01/textures/island_tree_01_leaves_diff_1k.png 1638916
+SAVED models/island_tree_01/textures/island_tree_01_leaves_nor_gl_1k.png 2886859
+SAVED models/island_tree_01/textures/island_tree_01_leaves_rough_1k.png 879599
+SAVED models/island_tree_01/textures/island_tree_01_nor_gl_1k.exr 2415664
+SAVED models/island_tree_01/textures/island_tree_01_rough_1k.exr 875265
+SKIP models/island_tree_02/island_tree_02.blend 38795227
+SAVED models/island_tree_02/textures/island_tree_02_branches_diff_1k.png 5300342
+SAVED models/island_tree_02/textures/island_tree_02_branches_nor_gl_1k.png 5400459
+SAVED models/island_tree_02/textures/island_tree_02_branches_rough_1k.png 1625206
+SAVED models/island_tree_02/textures/island_tree_02_diff_1k.jpg 738738
+SAVED models/island_tree_02/textures/island_tree_02_leaves_alpha_1k.png 57438
+SAVED models/island_tree_02/textures/island_tree_02_leaves_diff_1k.png 1638916
+SAVED models/island_tree_02/textures/island_tree_02_leaves_nor_gl_1k.png 2886859
+SAVED models/island_tree_02/textures/island_tree_02_leaves_rough_1k.png 879599
+SAVED models/island_tree_02/textures/island_tree_02_nor_gl_1k.exr 2353279
+SAVED models/island_tree_02/textures/island_tree_02_rough_1k.exr 892307
+SKIP models/jacaranda_tree/jacaranda_tree.blend 180228496
+SAVED models/jacaranda_tree/textures/jacaranda_tree_branches_diff_1k.png 5223386
+SAVED models/jacaranda_tree/textures/jacaranda_tree_branches_nor_gl_1k.png 5400459
+SAVED models/jacaranda_tree/textures/jacaranda_tree_branches_rough_1k.png 1625206
+FAIL model jacaranda_tree RuntimeError('budget')
+FAIL model tree_small_02 RuntimeError('budget')
+FAIL model rock_face_02 RuntimeError('budget')
+FAIL model boulder_01 RuntimeError('budget')
+TEX KEYS brown_mud ['Diffuse', 'nor_dx', 'nor_gl', 'blend', 'gltf', 'Bump', 'arm', 'AO', 'Displacement', 'Rough', 'spec', 'mtlx']
+NO MAPS brown_mud
+TEX KEYS clay_roof_tiles ['Diffuse', 'nor_dx', 'nor_gl', 'blend', 'gltf', 'arm', 'AO', 'Displacement', 'Rough', 'mtlx']
+NO MAPS clay_roof_tiles
+TEX KEYS bark_brown_02 ['Diffuse', 'nor_dx', 'nor_gl', 'blend', 'gltf', 'Bump', 'arm', 'AO', 'Displacement', 'Rough', 'spec', 'mtlx']
+NO MAPS bark_brown_02
+TEX KEYS worn_plaster_wall ['blend', 'AO', 'arm', 'Diffuse', 'Displacement', 'nor_dx', 'nor_gl', 'Rough', 'gltf', 'mtlx']
+NO MAPS worn_plaster_wall
+TEX KEYS rock_face ['Diffuse', 'nor_dx', 'nor_gl', 'blend', 'gltf', 'arm', 'AO', 'Displacement', 'Rough', 'mtlx']
+NO MAPS rock_face
+TEX KEYS red_laterite_soil_stones ['Diffuse', 'nor_dx', 'nor_gl', 'blend', 'gltf', 'arm', 'Rough', 'Displacement', 'AO', 'mtlx']
+NO MAPS red_laterite_soil_stones
+TEX KEYS wood_planks ['Diffuse', 'nor_dx', 'nor_gl', 'blend', 'gltf', 'arm', 'AO', 'Displacement', 'Rough', 'mtlx']
+NO MAPS wood_planks
+TEX KEYS corrugated_iron_02 ['blend', 'AO', 'arm', 'Diffuse', 'Displacement', 'Metal', 'nor_dx', 'nor_gl', 'Rough', 'gltf', 'mtlx']
+NO MAPS corrugated_iron_02
+DONE 56733859 23
+budget

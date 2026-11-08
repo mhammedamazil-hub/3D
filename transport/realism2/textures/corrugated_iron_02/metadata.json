@@ -1,0 +1,53 @@
+{
+  "name": "Corrugated Iron 02",
+  "categories": [
+    "man made",
+    "wall",
+    "metal"
+  ],
+  "type": 1,
+  "info": null,
+  "dimensions": [
+    2700.000047683716,
+    2700.000047683716
+  ],
+  "date_published": 1701302400,
+  "staging": null,
+  "max_resolution": [
+    16384,
+    16384
+  ],
+  "tags": [
+    "metal",
+    "metallic",
+    "metal sheet",
+    "steel sheeting",
+    "corrugation",
+    "galvanized",
+    "sheet",
+    "roofing",
+    "roof",
+    "iron",
+    "corrugated",
+    "corrugated iron"
+  ],
+  "description": "Free 16K texture of corrugated galvanized iron roofing - metallic sheet with pronounced ribs, subtle weathering, rivets and realistic metallic sheen.",
+  "files_hash": "8c9a1acc82e561a5f13ecff80add1908fd1b6e90",
+  "authors": {
+    "Jenelle van Heerden": "Processing",
+    "Sergej Majboroda": "Photography"
+  },
+  "category_id": "c10ee76b-cb81-546f-bba9-095bf5a18a6d",
+  "category": "Metal/Sheet & Corrugated/Corrugated Iron",
+  "attributes": {
+    "surface_use": "roof",
+    "condition": [
+      "weathered"
+    ],
+    "origin": "man_made",
+    "setting": "outdoor"
+  },
+  "img_version": "c83cb6ae",
+  "download_count": 86642,
+  "thumbnail_url": "https://cdn.polyhaven.com/asset_img/thumbs/corrugated_iron_02.png?width=256&height=256&format=webp&v=c83cb6ae"
+}
