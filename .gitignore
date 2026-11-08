@@ -35,3 +35,6 @@ transport/
 !output/Kerala_Photoreal_1080p.receipt.json
 !output/Kerala_Photoreal_House_Detail_540p.png
 !output/Kerala_Photoreal_House_Detail_540p.receipt.json
+
+# Quality-first raw sources are packed into the v3 blend; do not track duplicates.
+assets/quality/
