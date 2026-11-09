@@ -1,0 +1,58 @@
+{
+  "revision": "kerala-v5.1-single-sun-rays",
+  "file": "output/Kerala_Coconut_Realism_GodRays_FIXED_1080p30_5s.mp4",
+  "sha256": "56018fe7ac4d62c6d1f70866058bd40706c8af581f220b84ee92a5597ddf15f6",
+  "bytes": 9068250,
+  "ffprobe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1",
+        "duration": "5.000000",
+        "nb_frames": "150"
+      }
+    ]
+  },
+  "spec": {
+    "seconds": 5,
+    "fps": 30,
+    "frames": 150,
+    "resolution": [
+      1920,
+      1080
+    ]
+  },
+  "source_blend": "output/Kerala_Coconut_Realism.blend",
+  "builder": "scripts/kerala_v5.py",
+  "renderer": "scripts/render_kerala_animation.py",
+  "engine": "CYCLES",
+  "samples_max": 20,
+  "lighting_audit": {
+    "revision": "kerala-v5.1-single-sun-rays",
+    "sun_count": 1,
+    "sun_names": [
+      "LGT_V51_SingleSun"
+    ],
+    "spot_count": 0,
+    "fake_shaft_objects": [],
+    "unparented_vent_parts": [],
+    "emissive_volume_materials": [],
+    "volume_bounces": 0,
+    "sun_direction_world": [
+      -0.47999998927116394,
+      -0.6399999856948853,
+      -0.6000000238418579
+    ],
+    "pass": true
+  },
+  "fixes": [
+    "removed three shaft spotlights",
+    "removed emissive beam cones",
+    "single directional sun with non-emissive mist",
+    "parented floating roof-vent ribs/caps to house",
+    "replaced snow-like distant ridge shader with matte forest/rock tones"
+  ]
+}

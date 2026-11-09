@@ -1,0 +1,19 @@
+{
+  "pass": true,
+  "checks": {
+    "mp4_exists": true,
+    "receipt_exists": true,
+    "sha_match": true,
+    "1920x1080": true,
+    "30fps": true,
+    "150_frames": true,
+    "5_seconds": true,
+    "revision": true,
+    "one_sun": true,
+    "no_spot_shafts": true,
+    "no_fake_cones": true,
+    "no_emissive_volumes": true,
+    "vent_grid_fixed": true
+  },
+  "mp4_sha256": "56018fe7ac4d62c6d1f70866058bd40706c8af581f220b84ee92a5597ddf15f6"
+}
