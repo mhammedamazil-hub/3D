@@ -122,7 +122,7 @@ jobs:
           assert int(st['nb_frames'])==150 and abs(float(st['duration'])-5.0)<0.05
           receipts=[json.loads(r.read_text()) for r in sorted(Path('frames').glob('receipt_*.json'))]
           mp4=Path('output/Kerala_Coconut_Realism_GodRays_FIXED_1080p30_5s.mp4')
-          receipt={'revision':'kerala-v5.1-single-sun-rays','file':str(mp4),'sha256':hashlib.sha256(mp4.read_bytes()).hexdigest(),'bytes':mp4.stat().st_size,'ffprobe':probe,'spec':{'seconds':5,'fps':30,'frames':150,'resolution':[1920,1080]},'source_blend':'output/Kerala_Coconut_Realism.blend','builder':'scripts/kerala_v5.py','renderer':'scripts/render_kerala_animation.py','engine':'CYCLES','samples_max':20,'lighting_audit':receipts[0]['lighting_audit'],'fixes':['removed three shaft spotlights','removed emissive beam cones','single directional sun with non-emissive mist','parented floating roof-vent ribs/caps to house']}
+          receipt={'revision':'kerala-v5.1-single-sun-rays','file':str(mp4),'sha256':hashlib.sha256(mp4.read_bytes()).hexdigest(),'bytes':mp4.stat().st_size,'ffprobe':probe,'spec':{'seconds':5,'fps':30,'frames':150,'resolution':[1920,1080]},'source_blend':'output/Kerala_Coconut_Realism.blend','builder':'scripts/kerala_v5.py','renderer':'scripts/render_kerala_animation.py','engine':'CYCLES','samples_max':20,'lighting_audit':receipts[0]['lighting_audit'],'fixes':['removed three shaft spotlights','removed emissive beam cones','single directional sun with non-emissive mist','parented floating roof-vent ribs/caps to house','replaced snow-like distant ridge shader with matte forest/rock tones']}
           Path('docs/KERALA_ANIMATION_V51_RECEIPT.json').write_text(json.dumps(receipt,indent=2))
           print(json.dumps(receipt,indent=2))
           PY

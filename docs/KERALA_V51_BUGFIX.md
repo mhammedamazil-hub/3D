@@ -5,6 +5,7 @@ User report: the v5.0 animation appeared to show three suns / searchlight cones,
 ## Root causes found
 1. **Three actual spotlights + emissive cone volumes.** `scripts/kerala_v5.py` v5.0 created `LGT_V5_GodRay_Shaft_0..2` and `SM_V5_Light_Shaft_*` cones with volume emission. These read as separate suns/searchlights, not natural crepuscular rays.
 2. **Floating roof-vent parts.** `SM_Vent_Cap_StandingSeam_*` and `SM_Vent_Metal_Rib_*` were unparented at the origin instead of under `SM_Tharavad_House_Root`. In the opening camera frame they appeared as a black grid overhead.
+3. **Snow-like horizon patches.** The v4 distant-ridge shader’s strong bump/specular response produced bright white patches under the new low sun. This was a surface-shading artifact, not fog. The ridges now use matte forest/rock tones with gentle large-scale variation.
 
 ## Fix
 - Removed all shaft spotlights and emissive beam cones.
@@ -12,6 +13,7 @@ User report: the v5.0 animation appeared to show three suns / searchlight cones,
 - A shadow-only cloud aperture and scene geometry occlude that same sun; volume bounces = 0 for crisp single scattering.
 - Parented stray roof-vent ribs/caps to the house root.
 - Relocated near coconut crowns / adjusted camera headroom; hid old hard mist banks that caused horizon fog walls.
+- Replaced the distant-ridge shader that produced snow-like white patches with matte forest/rock tones.
 - Added structural audits: one sun, zero spots, zero fake shaft objects, zero emissive volumes, zero unparented vent parts.
 
 ## Verification

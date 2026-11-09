@@ -171,16 +171,7 @@ def _make_cloud_aperture(atmo):
     opacity = _math(nt, 'MAXIMUM', _math(nt, 'ADD', edge.outputs['Result'], perturb), cloud_between_gaps)
     opacity = _math(nt, 'MAXIMUM', opacity, 0.0)
     lp = nt.nodes.new('ShaderNodeLightPath')
-    # Only occlude the nearby mist/field, not the far Ghats; avoids patchy
-    # cloud-shadow blobs on distant ridges while keeping local shafts.
-    near = nt.nodes.new('ShaderNodeMapRange')
-    near.inputs['From Min'].default_value = 95.0
-    near.inputs['From Max'].default_value = 170.0
-    near.inputs['To Min'].default_value = 1.0
-    near.inputs['To Max'].default_value = 0.0
-    near.clamp = True
-    nt.links.new(lp.outputs['Ray Length'], near.inputs['Value'])
-    shadow_opacity = _math(nt, 'MULTIPLY', _math(nt, 'MULTIPLY', opacity, lp.outputs['Is Shadow Ray']), near.outputs['Result'])
+    shadow_opacity = _math(nt, 'MULTIPLY', opacity, lp.outputs['Is Shadow Ray'])
     mix = nt.nodes.new('ShaderNodeMixShader')
     nt.links.new(shadow_opacity, mix.inputs[0])
     nt.links.new(transparent.outputs['BSDF'], mix.inputs[1])
@@ -289,16 +280,30 @@ def apply_v5(samples=32):
     for o in bpy.data.objects:
         if o.name.startswith(('SM_Q_Mist_Bank','SM_V4_Valley_Haze')):
             o.hide_render = True  # old hard fog banks caused bright horizon patches
-    # Calm distant sunlit ridges/marsh so cloud shadows do not read as white blobs.
-    for mn in ['MAT_Q_Ghat_ForestRock', 'MAT_Q_Distant_Ghat']:
+    # The v4 ridge shader's strong bump/specular response turned low-sun
+    # highlights into snow-like white patches.  Use matte forest/rock tones
+    # with gentle large-scale variation instead; keep the geometry editable.
+    for mn, c0, c1 in [
+        ('MAT_Q_Ghat_ForestRock', (.014, .028, .020, 1), (.030, .052, .036, 1)),
+        ('MAT_Q_Distant_Ghat', (.040, .054, .060, 1), (.065, .082, .090, 1)),
+    ]:
         m = bpy.data.materials.get(mn)
-        if m and m.use_nodes:
-            nt = m.node_tree; p = next((n for n in nt.nodes if n.type == 'BSDF_PRINCIPLED'), None)
-            if p:
-                link = next((l for l in nt.links if l.to_node == p and l.to_socket.name == 'Base Color'), None)
-                if link:
-                    mx = nt.nodes.new('ShaderNodeMixRGB'); mx.blend_type = 'MULTIPLY'; mx.inputs[0].default_value = .55; mx.inputs[2].default_value = (.50, .58, .66, 1)
-                    src = link.from_socket; nt.links.new(src, mx.inputs[1]); nt.links.new(mx.outputs['Color'], p.inputs['Base Color'])
+        if m:
+            m.use_nodes = True
+            nt = m.node_tree; nt.nodes.clear()
+            out = nt.nodes.new('ShaderNodeOutputMaterial')
+            p = nt.nodes.new('ShaderNodeBsdfPrincipled')
+            p.inputs['Roughness'].default_value = 1.0
+            p.inputs['Specular IOR Level'].default_value = 0.0
+            nz = nt.nodes.new('ShaderNodeTexNoise')
+            nz.inputs['Scale'].default_value = .018
+            nz.inputs['Detail'].default_value = 2.0
+            ramp = nt.nodes.new('ShaderNodeValToRGB')
+            ramp.color_ramp.elements[0].color = c0
+            ramp.color_ramp.elements[1].color = c1
+            nt.links.new(nz.outputs['Fac'], ramp.inputs['Fac'])
+            nt.links.new(ramp.outputs['Color'], p.inputs['Base Color'])
+            nt.links.new(p.outputs['BSDF'], out.inputs['Surface'])
     marsh = bpy.data.objects.get('SM_V4_Back_Marsh_Ground')
     if marsh:
         mm = bpy.data.materials.new('MAT_V51_Distant_Marsh'); mm.use_nodes = True
