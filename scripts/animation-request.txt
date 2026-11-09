@@ -1,0 +1,4 @@
+Kerala v5 animation request
+5 seconds, 30 fps, 1920x1080, 150 frames.
+Use uploaded coconut GLB via v4 scene; improve god rays, shadows, lighting, textures.
+Render via GitHub Actions workflow render-kerala-animation.yml.
