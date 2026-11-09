@@ -1,10 +1,8 @@
 name: Render Kerala 1080p30 animation
 
-# Renders the 5-second / 30 fps / 1920x1080 Kerala v5 god-rays dolly on GitHub
-# Actions. The derived v5 scene is rebuilt from the tracked v4 blend on each
-# shard so the large animation blend does not need to be committed. Frames are
-# sharded across runners, uploaded as artifacts, then assembled into an MP4 and
-# pushed back to the branch (GITHUB_TOKEN pushes do not re-trigger workflows).
+# v5.1 bug-fix render: one sun, no emissive shaft cones, no shaft spotlights,
+# roof-vent grid parented correctly. Frames are sharded, verified, assembled,
+# and pushed back to the branch by CI.
 
 on:
   workflow_dispatch:
@@ -23,7 +21,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  SAMPLES: '16'
+  SAMPLES: '20'
   FPS: '30'
   WIDTH: '1920'
   HEIGHT: '1080'
@@ -90,7 +88,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends ffmpeg
-      - name: Verify frames and encode MP4
+      - name: Verify frames and encode corrected MP4
         shell: bash
         run: |
           set -euo pipefail
@@ -100,50 +98,52 @@ jobs:
           frames=sorted(Path('frames').glob('frame_*.png'))
           expected=[f'frame_{i:04d}.png' for i in range(1,151)]
           names=[p.name for p in frames]
-          assert names==expected, f'frame mismatch: {len(names)} frames, first={names[:3]}, last={names[-3:]}'
-          receipts=[]
-          for r in sorted(Path('frames').glob('receipt_*.json')):
-              receipts.append(json.loads(r.read_text()))
+          assert names==expected, f'frame mismatch: {len(names)} frames'
+          receipts=[json.loads(r.read_text()) for r in sorted(Path('frames').glob('receipt_*.json'))]
+          assert receipts, 'missing shard receipts'
+          for r in receipts:
+              assert r['revision']=='kerala-v5.1-single-sun-rays', r['revision']
+              assert r['lighting_audit']['pass'], r['lighting_audit']
           info={'frame_count':len(frames),'expected_count':150,'fps':30,'width':1920,'height':1080,'duration_seconds':5.0,'frame_sha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in frames},'shard_receipts':receipts}
           Path('frames/animation_frames_receipt.json').write_text(json.dumps(info,indent=2))
-          print('Verified 150 frames')
+          print('Verified 150 frames and single-sun audits')
           PY
           mkdir -p output
           ffmpeg -y -framerate 30 -i frames/frame_%04d.png \
             -c:v libx264 -preset slow -crf 18 -pix_fmt yuv420p -movflags +faststart \
-            output/Kerala_Coconut_Realism_GodRays_1080p30_5s.mp4
+            output/Kerala_Coconut_Realism_GodRays_FIXED_1080p30_5s.mp4
           ffprobe -v error -select_streams v:0 -show_entries stream=width,height,r_frame_rate,nb_frames,duration -of json \
-            output/Kerala_Coconut_Realism_GodRays_1080p30_5s.mp4 > frames/ffprobe.json
+            output/Kerala_Coconut_Realism_GodRays_FIXED_1080p30_5s.mp4 > frames/ffprobe.json
           python - <<'PY'
           import json,hashlib
           from pathlib import Path
-          probe=json.loads(Path('frames/ffprobe.json').read_text())
-          st=probe['streams'][0]
-          assert st['width']==1920 and st['height']==1080, st
-          assert st['r_frame_rate']=='30/1', st
-          assert int(st['nb_frames'])==150, st
-          assert abs(float(st['duration'])-5.0)<0.05, st
-          mp4=Path('output/Kerala_Coconut_Realism_GodRays_1080p30_5s.mp4')
-          receipt={'revision':'kerala-v5.0-godrays-animation','file':str(mp4),'sha256':hashlib.sha256(mp4.read_bytes()).hexdigest(),'bytes':mp4.stat().st_size,'ffprobe':probe,'spec':{'seconds':5,'fps':30,'frames':150,'resolution':[1920,1080]},'source_blend':'output/Kerala_Coconut_Realism.blend','builder':'scripts/kerala_v5.py','renderer':'scripts/render_kerala_animation.py','engine':'CYCLES','samples_max':16}
-          Path('docs/KERALA_ANIMATION_V5_RECEIPT.json').write_text(json.dumps(receipt,indent=2))
+          probe=json.loads(Path('frames/ffprobe.json').read_text()); st=probe['streams'][0]
+          assert st['width']==1920 and st['height']==1080 and st['r_frame_rate']=='30/1'
+          assert int(st['nb_frames'])==150 and abs(float(st['duration'])-5.0)<0.05
+          receipts=[json.loads(r.read_text()) for r in sorted(Path('frames').glob('receipt_*.json'))]
+          mp4=Path('output/Kerala_Coconut_Realism_GodRays_FIXED_1080p30_5s.mp4')
+          receipt={'revision':'kerala-v5.1-single-sun-rays','file':str(mp4),'sha256':hashlib.sha256(mp4.read_bytes()).hexdigest(),'bytes':mp4.stat().st_size,'ffprobe':probe,'spec':{'seconds':5,'fps':30,'frames':150,'resolution':[1920,1080]},'source_blend':'output/Kerala_Coconut_Realism.blend','builder':'scripts/kerala_v5.py','renderer':'scripts/render_kerala_animation.py','engine':'CYCLES','samples_max':20,'lighting_audit':receipts[0]['lighting_audit'],'fixes':['removed three shaft spotlights','removed emissive beam cones','single directional sun with non-emissive mist','parented floating roof-vent ribs/caps to house']}
+          Path('docs/KERALA_ANIMATION_V51_RECEIPT.json').write_text(json.dumps(receipt,indent=2))
           print(json.dumps(receipt,indent=2))
           PY
-      - name: Commit and push final animation
+          python scripts/verify_kerala_animation_v51.py
+      - name: Commit and push corrected animation
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f output/Kerala_Coconut_Realism_GodRays_1080p30_5s.mp4 docs/KERALA_ANIMATION_V5_RECEIPT.json
+          git add -f output/Kerala_Coconut_Realism_GodRays_FIXED_1080p30_5s.mp4 docs/KERALA_ANIMATION_V51_RECEIPT.json docs/KERALA_ANIMATION_V51_VALIDATION.json
           if ! git diff --cached --quiet; then
-            git commit -m "ci: render Kerala v5 god-rays 1080p30 5s animation"
+            git commit -m "ci: render corrected Kerala v5.1 single-sun 1080p30 5s animation"
             git push origin HEAD:"$GITHUB_REF_NAME"
           fi
-      - name: Upload final video artifact
+      - name: Upload corrected video artifact
         uses: actions/upload-artifact@v4
         with:
-          name: kerala-godrays-1080p30-5s
+          name: kerala-godrays-fixed-1080p30-5s
           path: |
-            output/Kerala_Coconut_Realism_GodRays_1080p30_5s.mp4
-            docs/KERALA_ANIMATION_V5_RECEIPT.json
+            output/Kerala_Coconut_Realism_GodRays_FIXED_1080p30_5s.mp4
+            docs/KERALA_ANIMATION_V51_RECEIPT.json
+            docs/KERALA_ANIMATION_V51_VALIDATION.json
           retention-days: 30
