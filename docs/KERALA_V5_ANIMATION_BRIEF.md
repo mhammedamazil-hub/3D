@@ -15,3 +15,6 @@ Requested: use the uploaded coconut scene, improve god rays / shadows / lighting
 - `docs/KERALA_ANIMATION_V5_RECEIPT.json`
 
 The derived v5 blend is rebuilt on each runner from the tracked v4 blend to avoid committing another ~80 MB scene. Local preview stills are in `review/v5/` (ignored).
+
+## Completed render
+GitHub Actions run `42556110997` completed successfully on branch `arena/cd56b6ae-3d` (commit `4cac87c`). All 15 frame shards rendered, assembled, and ffprobe-verified: 1920×1080, 30/1 fps, 150 frames, 5.000000 s. Local validation: `docs/KERALA_ANIMATION_V5_VALIDATION.json` PASS.

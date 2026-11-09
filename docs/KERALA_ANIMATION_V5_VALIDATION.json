@@ -1,0 +1,14 @@
+{
+  "pass": true,
+  "checks": {
+    "mp4_exists": true,
+    "receipt_exists": true,
+    "sha_match": true,
+    "1920x1080": true,
+    "30fps": true,
+    "150_frames": true,
+    "5_seconds": true,
+    "revision": true
+  },
+  "mp4_sha256": "e93abd480eda31de1e6171e59d40272dbc88e8b6bfd159d2a8f1239a089564ac"
+}
