@@ -1,8 +1,9 @@
 name: Render Kerala 1080p30 animation
 
-# v5.1 bug-fix render: one sun, no emissive shaft cones, no shaft spotlights,
-# roof-vent grid parented correctly. Frames are sharded, verified, assembled,
-# and pushed back to the branch by CI.
+# v5.2 sunrise render: one animated sun rises from behind the Ghats; one
+# non-emissive mist volume and a world-space shadow-only cloud deck produce
+# physical crepuscular rays. Frames are sharded, verified, assembled, and
+# pushed back to the branch by CI. The rejected v5.1 MP4 is preserved.
 
 on:
   workflow_dispatch:
@@ -11,6 +12,8 @@ on:
       - '.github/workflows/render-kerala-animation.yml'
       - 'scripts/kerala_v5.py'
       - 'scripts/render_kerala_animation.py'
+      - 'scripts/proof_kerala_v52.py'
+      - 'scripts/verify_kerala_animation_v52.py'
       - 'scripts/animation-request.txt'
 
 permissions:
@@ -21,7 +24,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  SAMPLES: '20'
+  SAMPLES: '40'
   FPS: '30'
   WIDTH: '1920'
   HEIGHT: '1080'
@@ -88,12 +91,12 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends ffmpeg
-      - name: Verify frames and encode corrected MP4
+      - name: Verify frames and encode sunrise MP4
         shell: bash
         run: |
           set -euo pipefail
           python - <<'PY'
-          import json, hashlib
+          import json, hashlib, os
           from pathlib import Path
           frames=sorted(Path('frames').glob('frame_*.png'))
           expected=[f'frame_{i:04d}.png' for i in range(1,151)]
@@ -102,48 +105,73 @@ jobs:
           receipts=[json.loads(r.read_text()) for r in sorted(Path('frames').glob('receipt_*.json'))]
           assert receipts, 'missing shard receipts'
           for r in receipts:
-              assert r['revision']=='kerala-v5.1-single-sun-rays', r['revision']
+              assert r['revision']=='kerala-v5.2-sunrise-godrays', r['revision']
               assert r['lighting_audit']['pass'], r['lighting_audit']
-          info={'frame_count':len(frames),'expected_count':150,'fps':30,'width':1920,'height':1080,'duration_seconds':5.0,'frame_sha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in frames},'shard_receipts':receipts}
+          info={'frame_count':len(frames),'expected_count':150,'fps':30,'width':1920,'height':1080,'duration_seconds':5.0,'samples_max':int(os.environ['SAMPLES']),'frame_sha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in frames},'shard_receipts':receipts}
           Path('frames/animation_frames_receipt.json').write_text(json.dumps(info,indent=2))
-          print('Verified 150 frames and single-sun audits')
+          print('Verified 150 frames and v5.2 single-sun audits')
           PY
           mkdir -p output
           ffmpeg -y -framerate 30 -i frames/frame_%04d.png \
-            -c:v libx264 -preset slow -crf 18 -pix_fmt yuv420p -movflags +faststart \
-            output/Kerala_Coconut_Realism_GodRays_FIXED_1080p30_5s.mp4
+            -c:v libx264 -preset slow -crf 17 -pix_fmt yuv420p -movflags +faststart \
+            output/Kerala_Coconut_Sunrise_GodRays_1080p30_5s.mp4
           ffprobe -v error -select_streams v:0 -show_entries stream=width,height,r_frame_rate,nb_frames,duration -of json \
-            output/Kerala_Coconut_Realism_GodRays_FIXED_1080p30_5s.mp4 > frames/ffprobe.json
+            output/Kerala_Coconut_Sunrise_GodRays_1080p30_5s.mp4 > frames/ffprobe.json
           python - <<'PY'
-          import json,hashlib
+          import json,hashlib,os
           from pathlib import Path
           probe=json.loads(Path('frames/ffprobe.json').read_text()); st=probe['streams'][0]
           assert st['width']==1920 and st['height']==1080 and st['r_frame_rate']=='30/1'
           assert int(st['nb_frames'])==150 and abs(float(st['duration'])-5.0)<0.05
           receipts=[json.loads(r.read_text()) for r in sorted(Path('frames').glob('receipt_*.json'))]
-          mp4=Path('output/Kerala_Coconut_Realism_GodRays_FIXED_1080p30_5s.mp4')
-          receipt={'revision':'kerala-v5.1-single-sun-rays','file':str(mp4),'sha256':hashlib.sha256(mp4.read_bytes()).hexdigest(),'bytes':mp4.stat().st_size,'ffprobe':probe,'spec':{'seconds':5,'fps':30,'frames':150,'resolution':[1920,1080]},'source_blend':'output/Kerala_Coconut_Realism.blend','builder':'scripts/kerala_v5.py','renderer':'scripts/render_kerala_animation.py','engine':'CYCLES','samples_max':20,'lighting_audit':receipts[0]['lighting_audit'],'fixes':['removed three shaft spotlights','removed emissive beam cones','single directional sun with non-emissive mist','parented floating roof-vent ribs/caps to house','replaced snow-like distant ridge shader with matte forest/rock tones']}
-          Path('docs/KERALA_ANIMATION_V51_RECEIPT.json').write_text(json.dumps(receipt,indent=2))
+          mp4=Path('output/Kerala_Coconut_Sunrise_GodRays_1080p30_5s.mp4')
+          receipt={
+            'revision':'kerala-v5.2-sunrise-godrays',
+            'file':str(mp4),
+            'sha256':hashlib.sha256(mp4.read_bytes()).hexdigest(),
+            'bytes':mp4.stat().st_size,
+            'ffprobe':probe,
+            'spec':{'seconds':5,'fps':30,'frames':150,'resolution':[1920,1080]},
+            'source_blend':'output/Kerala_Coconut_Realism.blend',
+            'builder':'scripts/kerala_v5.py',
+            'renderer':'scripts/render_kerala_animation.py',
+            'engine':'CYCLES',
+            'samples_max':int(os.environ['SAMPLES']),
+            'lighting_audit':receipts[0]['lighting_audit'],
+            'causal_proofs':['no_mist','no_sun','no_clouds'],
+            'denoising':'RGB_ALBEDO_NORMAL frames 1-60; RGB_ALBEDO frames 61-150',
+            'changes':[
+              'one animated directional sun rises 5.0-9.5 degrees from behind the Ghats',
+              'procedural dawn gradient and keyframed sun disc; one physical sun',
+              'non-emissive height-faded mist volume with animated dawn density',
+              'world-space shadow-only cloud deck creates physical crepuscular rays',
+              'world-space gobo replaces ineffective object-coordinate aperture',
+              'parented floating roof-vent ribs/caps to house',
+              'matte distant ridge shader prevents snow-like white horizon patches',
+              'removed rejected emissive cones, shaft spotlights and compositor beams'
+            ]
+          }
+          Path('docs/KERALA_ANIMATION_V52_RECEIPT.json').write_text(json.dumps(receipt,indent=2))
           print(json.dumps(receipt,indent=2))
           PY
-          python scripts/verify_kerala_animation_v51.py
-      - name: Commit and push corrected animation
+          python scripts/verify_kerala_animation_v52.py
+      - name: Commit and push sunrise animation
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f output/Kerala_Coconut_Realism_GodRays_FIXED_1080p30_5s.mp4 docs/KERALA_ANIMATION_V51_RECEIPT.json docs/KERALA_ANIMATION_V51_VALIDATION.json
+          git add -f output/Kerala_Coconut_Sunrise_GodRays_1080p30_5s.mp4 docs/KERALA_ANIMATION_V52_RECEIPT.json docs/KERALA_ANIMATION_V52_VALIDATION.json
           if ! git diff --cached --quiet; then
-            git commit -m "ci: render corrected Kerala v5.1 single-sun 1080p30 5s animation"
+            git commit -m "ci: render Kerala v5.2 sunrise god-rays 1080p30 5s animation"
             git push origin HEAD:"$GITHUB_REF_NAME"
           fi
-      - name: Upload corrected video artifact
+      - name: Upload sunrise video artifact
         uses: actions/upload-artifact@v4
         with:
-          name: kerala-godrays-fixed-1080p30-5s
+          name: kerala-sunrise-godrays-1080p30-5s
           path: |
-            output/Kerala_Coconut_Realism_GodRays_FIXED_1080p30_5s.mp4
-            docs/KERALA_ANIMATION_V51_RECEIPT.json
-            docs/KERALA_ANIMATION_V51_VALIDATION.json
+            output/Kerala_Coconut_Sunrise_GodRays_1080p30_5s.mp4
+            docs/KERALA_ANIMATION_V52_RECEIPT.json
+            docs/KERALA_ANIMATION_V52_VALIDATION.json
           retention-days: 30

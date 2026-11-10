@@ -1,4 +1,6 @@
-Kerala v5 animation request
-5 seconds, 30 fps, 1920x1080, 150 frames.
-Use uploaded coconut GLB via v4 scene; improve god rays, shadows, lighting, textures.
+Kerala v5.2 sunrise animation request
+5 seconds, 30 fps, 1920x1080, 150 native frames.
+Use uploaded coconut GLB via frozen v4 scene; one sun rises from behind the Ghats.
+Readable physical god rays from mist plus a world-space shadow-only cloud deck.
+Keep vent-grid and snow-horizon fixes; no cones, spots, compositor beams or extra suns.
 Render via GitHub Actions workflow render-kerala-animation.yml.

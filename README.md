@@ -1,5 +1,23 @@
 # Monsoon Light — Kerala
 
+## Current v5.2 sunrise god-rays animation
+
+- `output/Kerala_Coconut_Sunrise_GodRays_1080p30_5s.mp4` — 5 s, 1920×1080, 30 fps, 150 native frames; one sun rises from behind the Ghats with physically shadow-shaped crepuscular rays.
+- `docs/KERALA_ANIMATION_V52_RECEIPT.json` / `docs/KERALA_ANIMATION_V52_VALIDATION.json` — encode, ffprobe, SHA-256 and lighting-audit proof.
+- `docs/KERALA_V52_SUNRISE_GODRAYS.md` — look-dev brief and A/B causality results.
+- `scripts/proof_kerala_v52.py` — `normal` / `no_mist` / `no_sun` / `no_clouds` visual proofs.
+- `scripts/verify_kerala_animation_v52.py` — independent delivery checks.
+
+Rebuild/verify locally:
+
+```bash
+sh scripts/blender-py scripts/proof_kerala_v52.py --mode normal --frame 75 --width 800 --height 450 --samples 40 --out review/v5_fix/sunrise_f075.png
+sh scripts/blender-py scripts/render_kerala_animation.py --start 1 --end 1 --out frames --samples 40 --width 1920 --height 1080
+python scripts/verify_kerala_animation_v52.py
+```
+
+The full 150-frame render is produced by `.github/workflows/render-kerala-animation.yml`. Prior v5 and v5.1 MP4s are preserved.
+
 An actual editable Blender landscape inspired by two user-supplied paddy-field references: flooded rice rows, a curved earthen bund, coconut palms and tropical tree belt, layered Western-Ghat-inspired mountains, and an old Kerala tharavad-inspired house at the path end.
 
 ## Quality-first v3 deliverables
