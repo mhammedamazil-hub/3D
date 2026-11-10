@@ -1,0 +1,80 @@
+{
+  "revision": "kerala-v5.2-sunrise-godrays",
+  "file": "output/Kerala_Coconut_Sunrise_GodRays_1080p30_5s.mp4",
+  "sha256": "ebb752bc978221c10095a374adfbed0da0cccbe5a26712807a54a5a6ddbe4ba7",
+  "bytes": 10655407,
+  "ffprobe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1",
+        "duration": "5.000000",
+        "nb_frames": "150"
+      }
+    ]
+  },
+  "spec": {
+    "seconds": 5,
+    "fps": 30,
+    "frames": 150,
+    "resolution": [
+      1920,
+      1080
+    ]
+  },
+  "source_blend": "output/Kerala_Coconut_Realism.blend",
+  "builder": "scripts/kerala_v5.py",
+  "renderer": "scripts/render_kerala_animation.py",
+  "engine": "CYCLES",
+  "samples_max": 40,
+  "lighting_audit": {
+    "revision": "kerala-v5.2-sunrise-godrays",
+    "sky_type": "SUNRISE_GRADIENT",
+    "sun_count": 1,
+    "sun_names": [
+      "LGT_V52_RisingSun"
+    ],
+    "spot_count": 0,
+    "fake_shaft_objects": [],
+    "unparented_vent_parts": [],
+    "emissive_volume_materials": [],
+    "mist_domains": [
+      "SM_V52_Sunrise_MistDomain"
+    ],
+    "cloud_deck": [
+      "SM_V52_CloudDeck"
+    ],
+    "volume_bounces": 0,
+    "sun_azimuth_deg": 20.0,
+    "sun_elevation_keys_deg": [
+      5.0,
+      7.0,
+      9.5
+    ],
+    "sun_direction_world_frame75": [
+      -0.339470773935318,
+      -0.932688295841217,
+      -0.12186934053897858
+    ],
+    "pass": true
+  },
+  "causal_proofs": [
+    "no_mist",
+    "no_sun",
+    "no_clouds"
+  ],
+  "denoising": "RGB_ALBEDO_NORMAL frames 1-60; RGB_ALBEDO frames 61-150",
+  "changes": [
+    "one animated directional sun rises 5.0-9.5 degrees from behind the Ghats",
+    "procedural dawn gradient and keyframed sun disc; one physical sun",
+    "non-emissive height-faded mist volume with animated dawn density",
+    "world-space shadow-only cloud deck creates physical crepuscular rays",
+    "world-space gobo replaces ineffective object-coordinate aperture",
+    "parented floating roof-vent ribs/caps to house",
+    "matte distant ridge shader prevents snow-like white horizon patches",
+    "removed rejected emissive cones, shaft spotlights and compositor beams"
+  ]
+}

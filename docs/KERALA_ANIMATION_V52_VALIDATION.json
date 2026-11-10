@@ -1,0 +1,27 @@
+{
+  "pass": true,
+  "checks": {
+    "mp4_exists": true,
+    "receipt_exists": true,
+    "sha_match": true,
+    "1920x1080": true,
+    "30fps": true,
+    "150_frames": true,
+    "5_seconds": true,
+    "revision": true,
+    "samples_at_least_40": true,
+    "lighting_audit_pass": true,
+    "one_sun": true,
+    "no_spot_shafts": true,
+    "no_fake_cones": true,
+    "no_emissive_volumes": true,
+    "vent_grid_fixed": true,
+    "one_mist_domain": true,
+    "cloud_deck_present": true,
+    "sunrise_gradient": true,
+    "sun_azimuth_20": true,
+    "sun_rises_5_to_9p5_deg": true,
+    "causal_proofs_listed": true
+  },
+  "mp4_sha256": "ebb752bc978221c10095a374adfbed0da0cccbe5a26712807a54a5a6ddbe4ba7"
+}
