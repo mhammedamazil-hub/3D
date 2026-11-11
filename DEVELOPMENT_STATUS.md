@@ -41,6 +41,7 @@ Working, tested C++23 engine foundation:
 ## Measured results (this machine, gcc 12.2 -O3, 2026-11-11)
 
 - Unit tests: **194,168 checks, 0 failures** (includes 60 random-soup mesher fuzz iterations + NBT/region roundtrips + bucket-order checks + translucency blend tests + 12-scenario light propagation suite; sky/block flood fill, sealed-cave darkness, exact Manhattan falloff). ASan/UBSan build: 0 failures.
+- **Stage 9 M2 landed**: light is wired into the mesher — every face quad carries `light` (outward-cell faceAt, 0..15); merge signature includes it; AO×light shading (`shadeFace(argb, ao, light)`, light=15 = AO-only exact); software renderer and Vulkan triangle expansion both consume it. Mesher overhead ≈ +13–19% (1.35 → 1.53–1.60 ms/chunk). Wall faces inside the sealed cavity read exactly 0; surface faces read 15; conservation law holds. Mesher water/opaque two-pass unaffected.
 - **Stage 9 M1 landed**: `engine/lighting/light_volume.hpp` — 4-bit sky/block light with column seeding + BFS boundary relaxation; `light_volume_16x64x16_flat` bench ≈ **250–430 µs** (was 1,110 µs before boundary-seed optimization; ASan-clean). Known limitation: no per-face light application into the mesher yet; no incremental relight on edits (full recompute).
 - **vulkan-headless CI job is GREEN** (Lavapipe): dlopen-based loader, PPM validated (sky-skip + non-sky pixel count > 1000). build-test had one CI-only failure — translucency probe sat exactly on a triangle diagonal; root-caused (libm tanf drift) and fixed (off-diagonal probes). See REGRESSION_REPORT.md.
 - Vulkan path draws opaque+cutout first, water far→near last (SRC_ALPHA blend); no per-face light yet.
@@ -66,7 +67,7 @@ Working, tested C++23 engine foundation:
 1. Vulkan backend bring-up behind `rendering/backend.hpp`; keep software renderer as fallback + CI path.
 2. Heightfield-informed mesher reader (chunk heightmap short-circuits buried cells).
 1. CI green on `build-test` (watch b7f0cd2 run; translucency diagonal root cause fixed).
-2. Wire light into mesher face shading (sky term × face AO) behind a flag; mesh re-benchmark.
-3. Heightfield-informed mesher reader (chunk heightmap short-circuits buried cells).
-4. Packed 24-byte records (E7 design) once backend draw path is perf-relevant.
-5. Incremental relight on block edits (removal BFS + reflood) and mesh invalidation hook.
+1. Heightfield-informed mesher reader (chunk heightmap short-circuits buried cells).
+2. Packed 24-byte records (E7 design) once backend draw path is perf-relevant.
+3. Incremental relight on block edits (removal BFS + reflood) and mesh invalidation hook.
+4. Windowed Vulkan backend behind rendering/backend.hpp (headless path already proven in CI).

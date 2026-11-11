@@ -133,8 +133,8 @@ private:
         float c[4][3];
         quadCorners(q, originX, originZ, c);
         const std::uint32_t base = vc::faceColor(q.block);
-        const std::uint32_t c0 = vc::shadeFace(base, q.ao[0]), c1 = vc::shadeFace(base, q.ao[1]);
-        const std::uint32_t c2 = vc::shadeFace(base, q.ao[2]), c3 = vc::shadeFace(base, q.ao[3]);
+        const std::uint32_t c0 = vc::shadeFace(base, q.ao[0], q.light), c1 = vc::shadeFace(base, q.ao[1], q.light);
+        const std::uint32_t c2 = vc::shadeFace(base, q.ao[2], q.light), c3 = vc::shadeFace(base, q.ao[3], q.light);
         drawTriangle(c[0], c[1], c[2], c0, c1, c2, blend);
         drawTriangle(c[0], c[2], c[3], c0, c2, c3, blend);
     }

@@ -58,6 +58,17 @@ int main() {
         auto r = mesher.meshWorld({0, 0}, w);
         if (r.quads.empty()) std::fprintf(stderr, "empty mesh!\n");
     });
+    run("greedy_mesh_with_light", 20, [] {
+        TerrainConfig cfg; cfg.seed = 1234;
+        TerrainGenerator gen(cfg);
+        World w;
+        gen.generate(w.getOrCreate({0, 0}));
+        const LightRegion region{0, 0, 0, 16, kChunkHeight, 16};
+        const LightVolume light = LightVolume::compute(w, region);
+        GreedyMesher mesher;
+        auto r = mesher.meshWorld({0, 0}, w, &light);
+        if (r.quads.empty()) std::fprintf(stderr, "empty mesh!\n");
+    });
     run("light_volume_16x64x16_flat", 100, [] {
         World w;
         for (int y = 0; y <= 20; ++y)

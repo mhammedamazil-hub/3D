@@ -434,6 +434,47 @@ static void testLightPropagation() {
     }
 }
 
+static void testMesherLightIntegration() {
+    // Sealed cavity in stone: wall faces (camera inside) sample face light == 0;
+    // surface-top faces sample face light == 15.
+    vc::World world;
+    for (int y = 0; y < 16; ++y)
+        for (int z = 0; z < 16; ++z)
+            for (int x = 0; x < 16; ++x)
+                world.setBlock(x, y, z, vc::blocks::Stone);
+    for (int y = 4; y <= 6; ++y)
+        for (int z = 4; z <= 10; ++z)
+            for (int x = 4; x <= 10; ++x)
+                world.setBlock(x, y, z, vc::blocks::Air);
+    const vc::LightRegion region{0, 0, 0, 16, 16, 16};
+    const vc::LightVolume light = vc::LightVolume::compute(world, region);
+    vc::GreedyMesher mesher;
+    const vc::CachedBlockReader reader(world);
+    // Camera-inside-cavity path (cave culling off; all faces emitted).
+    const auto r = mesher.meshTypedEx({0, 0}, reader, vc::NoCaveCuller{}, {6, 5, 6}, &light);
+    CHECK(!r.quads.empty());
+    bool sawLitSurface = false;
+    for (const auto& q : r.quads) {
+        CHECK(q.light <= 15);
+        if (q.dir == vc::FaceDir::PosY && q.y == 16.0f) sawLitSurface = (q.light == 15);
+    }
+    CHECK(sawLitSurface);
+    // Exact-dark probe: every ceiling (NegY) face points at cavity air -> light must be exactly 0.
+    bool foundCeiling = false;
+    for (const auto& q : r.quads) {
+        if (q.dir == vc::FaceDir::NegY) { foundCeiling = true; CHECK_EQ(q.light, 0); }
+    }
+    CHECK(foundCeiling);
+    // Conservation law still holds with light-augmented merge signature.
+    CHECK_EQ(r.stats.faceArea, r.stats.naiveFaces);
+    // shadeFace: full light reproduces AO-only; zero light dims strongly.
+    const std::uint32_t base = vc::faceColor(vc::blocks::Grass);
+    CHECK_EQ(vc::shadeFace(base, 3, 15), vc::shadeFace(base, 3));
+    const std::uint32_t dim = vc::shadeFace(base, 3, 0);
+    const std::uint32_t full = vc::shadeFace(base, 3, 15);
+    CHECK(((dim >> 16) & 0xFF) < ((full >> 16) & 0xFF));
+}
+
 static void testSideBuckets() {
     vc::World world;
     for (int y = 0; y <= 8; ++y)
@@ -538,6 +579,7 @@ int main() {
     testSideBuckets();
     testTranslucentWaterDraw();
     testLightPropagation();
+    testMesherLightIntegration();
     std::fprintf(stderr, "\n%d checks, %d failures\n", g_checks, g_failures);
     return g_failures == 0 ? 0 : 1;
 }

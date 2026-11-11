@@ -42,3 +42,9 @@ light_volume_16x64x16_flat,100,27.539,275.391   (best of 3; naive version: 1,110
 greedy_mesh_generated_chunk,20,28.428,1421.385   (unchanged; light not yet wired into mesher)
 ```
 ASan/UBSan: 194,168 checks, 0 failures.
+## 2026-11-11 — run 7 (light-integrated mesher, stage 9)
+```
+greedy_mesh_generated_chunk,20,27.125,1356.235  (no light)
+greedy_mesh_with_light,20,30.668,1533.399       (+~13%: face-light sample per cell + merge splits)
+```
+Software water pass confirmed visually identical RGB; Vulkan translucent draw ordered far→near.

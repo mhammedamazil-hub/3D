@@ -17,6 +17,7 @@
 #include "../world/world.hpp"
 #include "../world/block_reader.hpp"
 #include "../visibility/cave_culling.hpp"
+#include "../lighting/light_volume.hpp"
 #include <cstdint>
 #include <functional>
 #include <vector>
@@ -37,6 +38,7 @@ struct Quad {
     FaceDir dir = FaceDir::PosY;
     BlockId block = 0;
     std::array<std::uint8_t, 4> ao = {3, 3, 3, 3}; // per corner, 3 = unoccluded (order: (-u,-v),(+u,-v),(+u,+v),(-u,+v))
+    std::uint8_t light = 15;                        // face light 0..15 (Minecraft scale), sampled at the outward (air) cell; 15 = unlit default
 };
 
 // Horizon-compatible side buckets (mesher/sides.rs): +X, +Z, other, +Y, -Z, -X, -Y.
@@ -81,11 +83,12 @@ public:
         return meshTypedEx(pos, read, culler, {0, 0, 0});
     }
     template <typename Reader, typename Culler>
-    Result meshTypedEx(ChunkPos pos, const Reader& read, const Culler& culler, std::array<int,3> cameraCell) const {
+    Result meshTypedEx(ChunkPos pos, const Reader& read, const Culler& culler, std::array<int,3> cameraCell,
+                       const LightVolume* lightVol = nullptr) const {
         Result out;
         const int ox = pos.x * 16, oz = pos.z * 16;
         const int camComponent = culler.cameraComponent(cameraCell[0], cameraCell[1], cameraCell[2]);
-        for (int d = 0; d < 6; ++d) meshDirection(static_cast<FaceDir>(d), ox, oz, read, culler, camComponent, out);
+        for (int d = 0; d < 6; ++d) meshDirection(static_cast<FaceDir>(d), ox, oz, read, culler, camComponent, lightVol, out);
         // E6: stable 7-way partition into side buckets (single cursor scatter, O(n));
         // coplanar insertion order preserved inside each bucket.
         std::array<std::size_t, 7> cursor{};
@@ -105,24 +108,26 @@ public:
     }
 
     // Convenience: mesh a chunk of `world`, reading absolute coordinates from the world.
-    Result meshWorld(const ChunkPos pos, const World& world) const {
+    Result meshWorld(const ChunkPos pos, const World& world, const LightVolume* lightVol = nullptr) const {
         const CachedBlockReader reader(world);
-        return meshTyped(pos, reader);
+        const NoCaveCuller culler;
+        return meshTypedEx(pos, reader, culler, {0, 0, 0}, lightVol);
     }
 
 private:
     struct Cell {
         BlockId block = 0;
         std::array<std::uint8_t, 4> ao = {3, 3, 3, 3};
+        std::uint8_t light = 15;
         bool present = false;
     };
     static bool cellEqual(const Cell& a, const Cell& b) {
-        return a.present == b.present && a.block == b.block
+        return a.present == b.present && a.block == b.block && a.light == b.light
             && a.ao[0] == b.ao[0] && a.ao[1] == b.ao[1] && a.ao[2] == b.ao[2] && a.ao[3] == b.ao[3];
     }
 
     template <typename Reader, typename Culler>
-    void meshDirection(FaceDir dir, int ox, int oz, const Reader& read, const Culler& culler, int camComponent, Result& out) const {
+    void meshDirection(FaceDir dir, int ox, int oz, const Reader& read, const Culler& culler, int camComponent, const LightVolume* lightVol, Result& out) const {
         int axis = 0, sign = 1;
         switch (dir) {
             case FaceDir::PosX: axis = 0; sign = +1; break;
@@ -145,7 +150,7 @@ private:
                     if (axis == 0)      { wx = ox + slice; wz = oz + u; wy = v; }
                     else if (axis == 2) { wz = oz + slice; wx = ox + u; wy = v; }
                     else                { wy = slice;      wx = ox + u; wz = oz + v; }
-                    const Cell c = faceCell(wx, wy, wz, axis, sign, read, culler, camComponent);
+                    const Cell c = faceCell(wx, wy, wz, axis, sign, read, culler, camComponent, lightVol);
                     if (c.present) out.stats.naiveFaces += 1;
                     mask[static_cast<std::size_t>(v)][static_cast<std::size_t>(u)] = c;
                     used[static_cast<std::size_t>(v)][static_cast<std::size_t>(u)] = false;
@@ -182,6 +187,7 @@ private:
                     q.dir = dir;
                     q.block = base.block;
                     q.ao = base.ao;
+                    q.light = base.light;
                     q.u = static_cast<float>(w);
                     q.v = static_cast<float>(h);
                     if (axis == 0)      { q.x = plane; q.z = static_cast<float>(oz + u); q.y = static_cast<float>(v); }
@@ -195,7 +201,7 @@ private:
     }
 
     template <typename Reader, typename Culler>
-    Cell faceCell(int wx, int wy, int wz, int axis, int sign, const Reader& read, const Culler& culler, int camComponent) const {
+    Cell faceCell(int wx, int wy, int wz, int axis, int sign, const Reader& read, const Culler& culler, int camComponent, const LightVolume* lightVol) const {
         Cell cell;
         const BlockId self = read(wx, wy, wz);
         if (!blocks::renders(self)) return cell;
@@ -213,6 +219,8 @@ private:
         cell.block = self;
         cell.present = true;
         cell.ao = cornerAO(wx, wy, wz, axis, sign, read);
+        // Minecraft-style face light: sampled at the outward (air) cell of the face.
+        if (lightVol) cell.light = lightVol->faceAt(nx, ny, nz);
         return cell;
     }
 
