@@ -221,6 +221,89 @@ int main(int argc, char** argv) {
         }
     }
     rep << "bbox: x[" << minX << "," << maxX << "] y[" << minY << "," << maxY << "]\n";
+    // CPU-side coverage analysis for the first differing pixel: project every quad's triangles
+    // with the same matrices used for the renders and list which cover the pixel center.
+    {
+        const int cx = minX, cy = minY;
+        const float px = static_cast<float>(cx) + 0.5f, py = static_cast<float>(cy) + 0.5f;
+        auto project = [&](float x, float y, float z, float& sx, float& sy, float& sz) {
+            const float vx[4] = {x, y, z, 1.0f};
+            float clip[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+            for (int col = 0; col < 4; ++col)
+                for (int row = 0; row < 4; ++row) clip[row] += mvp[col * 4 + row] * vx[col];
+            const float invW = 1.0f / clip[3];
+            const float ndcX = clip[0] * invW, ndcY = clip[1] * invW;
+            sx = (ndcX + 1.0f) * 0.5f * static_cast<float>(wa);
+            sy = (1.0f - ndcY) * 0.5f * static_cast<float>(ha);
+            sz = clip[2] * invW;
+        };
+        auto covers = [&](const std::array<std::array<float,3>,3>& p) {
+            float e[3];
+            for (int i = 0; i < 3; ++i) {
+                const int j = (i + 1) % 3;
+                e[i] = (px - p[i][0]) * (p[j][1] - p[i][1]) - (py - p[i][1]) * (p[j][0] - p[i][0]);
+            }
+            const bool hasNeg = (e[0] < 0) || (e[1] < 0) || (e[2] < 0);
+            const bool hasPos = (e[0] > 0) || (e[1] > 0) || (e[2] > 0);
+            return !(hasNeg && hasPos);
+        };
+        auto emitTris = [&](const Quad& q, std::vector<std::array<std::array<float,3>,3>>& out) {
+            float c[4][3];
+            switch (q.dir) {
+                case FaceDir::PosX: case FaceDir::NegX: {
+                    const float x = q.x, z0 = q.z, y0 = q.y, z1 = z0 + q.u, y1 = y0 + q.v;
+                    c[0][0]=x; c[0][1]=y0; c[0][2]=z0; c[1][0]=x; c[1][1]=y0; c[1][2]=z1;
+                    c[2][0]=x; c[2][1]=y1; c[2][2]=z1; c[3][0]=x; c[3][1]=y1; c[3][2]=z0; break; }
+                case FaceDir::PosY: case FaceDir::NegY: {
+                    const float y = q.y, x0 = q.x, z0 = q.z, x1 = x0 + q.u, z1 = z0 + q.v;
+                    c[0][0]=x0; c[0][1]=y; c[0][2]=z0; c[1][0]=x1; c[1][1]=y; c[1][2]=z0;
+                    c[2][0]=x1; c[2][1]=y; c[2][2]=z1; c[3][0]=x0; c[3][1]=y; c[3][2]=z1; break; }
+                case FaceDir::PosZ: case FaceDir::NegZ: {
+                    const float z = q.z, x0 = q.x, y0 = q.y, x1 = x0 + q.u, y1 = y0 + q.v;
+                    c[0][0]=x0; c[0][1]=y0; c[0][2]=z; c[1][0]=x1; c[1][1]=y0; c[1][2]=z;
+                    c[2][0]=x1; c[2][1]=y1; c[2][2]=z; c[3][0]=x0; c[3][1]=y1; c[3][2]=z; break; }
+            }
+            const bool flip = (q.dir == FaceDir::NegX || q.dir == FaceDir::NegY || q.dir == FaceDir::PosZ);
+            const std::array<int,6> oArr = flip ? std::array<int,6>{0,2,1,0,3,2} : std::array<int,6>{0,1,2,0,2,3};
+            float sp[4][3];
+            for (int i = 0; i < 4; ++i) project(c[i][0], c[i][1], c[i][2], sp[i][0], sp[i][1], sp[i][2]);
+            auto toArr = [&sp](int i) { return std::array<float,3>{sp[i][0], sp[i][1], sp[i][2]}; };
+            std::array<std::array<float,3>,3> t1{{toArr(oArr[0]), toArr(oArr[1]), toArr(oArr[2])}};
+            std::array<std::array<float,3>,3> t2{{toArr(oArr[3]), toArr(oArr[4]), toArr(oArr[5])}};
+            out.push_back(t1);
+            out.push_back(t2);
+        };
+        std::size_t qi = 0, reported = 0;
+        for (const auto& [pos, quads] : chunkMeshes) { (void)pos;
+            for (const Quad& q : quads) {
+                ++qi;
+                std::vector<Quad> variants{q};
+                const bool side = (q.dir == FaceDir::PosX || q.dir == FaceDir::NegX || q.dir == FaceDir::PosZ || q.dir == FaceDir::NegZ);
+                if (side && q.v > 16.0f) {
+                    variants.clear();
+                    int remaining = static_cast<int>(q.v);
+                    float y = q.y;
+                    while (remaining > 16) { Quad sub = q; sub.y = y; sub.v = 16.0f; variants.push_back(sub); remaining -= 16; y += 16.0f; }
+                    Quad sub = q; sub.y = y; sub.v = static_cast<float>(remaining); variants.push_back(sub);
+                }
+                for (const Quad& v : variants) {
+                    std::vector<std::array<std::array<float,3>,3>> tris;
+                    emitTris(v, tris);
+                    for (std::size_t ti = 0; ti < tris.size(); ++ti) {
+                        if (covers(tris[ti])) {
+                            rep << "cover quad#" << qi << " tri" << ti << " dir=" << int(v.dir)
+                                << " block=" << unsigned(v.block) << " x=" << v.x << " y=" << v.y << " z=" << v.z
+                                << " u=" << v.u << " v=" << v.v
+                                << " ao=[" << int(v.ao[0]) << ',' << int(v.ao[1]) << ',' << int(v.ao[2]) << ',' << int(v.ao[3]) << ']'
+                                << " light=" << int(v.light) << "\n";
+                            ++reported;
+                        }
+                    }
+                }
+            }
+        }
+        rep << "coverage candidates: " << reported << "\n";
+    }
     // 7x7 neighborhood around the FIRST differing pixel as hex, for edge-sliver analysis.
     {
         const std::size_t o0 = static_cast<std::size_t>(minY) * wa + static_cast<std::size_t>(minX);
