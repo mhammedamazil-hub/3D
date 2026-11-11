@@ -40,7 +40,10 @@ Working, tested C++23 engine foundation:
 
 ## Measured results (this machine, gcc 12.2 -O3, 2026-11-11)
 
-- Unit tests: **193,870 checks, 0 failures** (includes 60 random-soup mesher fuzz iterations + NBT/region roundtrips + bucket-order checks + translucency blend tests). ASan/UBSan build: 0 failures.
+- Unit tests: **194,168 checks, 0 failures** (includes 60 random-soup mesher fuzz iterations + NBT/region roundtrips + bucket-order checks + translucency blend tests + 12-scenario light propagation suite; sky/block flood fill, sealed-cave darkness, exact Manhattan falloff). ASan/UBSan build: 0 failures.
+- **Stage 9 M1 landed**: `engine/lighting/light_volume.hpp` — 4-bit sky/block light with column seeding + BFS boundary relaxation; `light_volume_16x64x16_flat` bench ≈ **250–430 µs** (was 1,110 µs before boundary-seed optimization; ASan-clean). Known limitation: no per-face light application into the mesher yet; no incremental relight on edits (full recompute).
+- **vulkan-headless CI job is GREEN** (Lavapipe): dlopen-based loader, PPM validated (sky-skip + non-sky pixel count > 1000). build-test had one CI-only failure — translucency probe sat exactly on a triangle diagonal; root-caused (libm tanf drift) and fixed (off-diagonal probes). See REGRESSION_REPORT.md.
+- Vulkan path draws opaque+cutout first, water far→near last (SRC_ALPHA blend); no per-face light yet.
 - `terrain_gen_chunk`: ~170 µs/chunk. `greedy_mesh_generated_chunk`: **~1.37 ms/chunk** (cached block reader + O(n) E6 bucket partition; was 2.0–2.3 ms pre-E5, 1.36 ms pre-E6).
 - 9-chunk world mesh: 20.1 → **9.8 ms** (E5). Headless software frame: 32 → **21.9 ms** (backface culling).
 - 9-chunk world (r=1): gen 1.5 ms, mesh 20.1 ms; 11,636 naive faces → 1,296 quads (**11.1% of naive**), `faceArea == naiveFaces` PASS.
@@ -62,7 +65,8 @@ Working, tested C++23 engine foundation:
 
 1. Vulkan backend bring-up behind `rendering/backend.hpp`; keep software renderer as fallback + CI path.
 2. Heightfield-informed mesher reader (chunk heightmap short-circuits buried cells).
-3. Sky/block light propagation (stage 9 first milestone).
-4. Heightfield-informed mesher reader (chunk heightmap short-circuits buried cells).
-5. Packed 24-byte records (E7 design) once backend draw path is perf-relevant.
-6. CI green on the `vulkan-headless` job; then Windows/Android jobs reuse the same guard.
+1. CI green on `build-test` (watch b7f0cd2 run; translucency diagonal root cause fixed).
+2. Wire light into mesher face shading (sky term × face AO) behind a flag; mesh re-benchmark.
+3. Heightfield-informed mesher reader (chunk heightmap short-circuits buried cells).
+4. Packed 24-byte records (E7 design) once backend draw path is perf-relevant.
+5. Incremental relight on block edits (removal BFS + reflood) and mesh invalidation hook.
