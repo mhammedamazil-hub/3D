@@ -349,7 +349,7 @@ int main(int argc, char** argv) {
             const float invW = 1.0f / clip[3];
             const float ndcX = clip[0] * invW, ndcY = clip[1] * invW;
             sx = (ndcX + 1.0f) * 0.5f * static_cast<float>(wa);
-            sy = (1.0f - ndcY) * 0.5f * static_cast<float>(ha);
+            sy = (1.0f + ndcY) * 0.5f * static_cast<float>(ha); // Vulkan viewport y-down; projection already Y-flips
             sz = clip[2] * invW;
         };
         auto covers = [&](const std::array<std::array<float,3>,3>& p) {
