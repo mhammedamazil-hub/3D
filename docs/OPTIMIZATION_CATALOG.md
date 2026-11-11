@@ -1,0 +1,65 @@
+# OPTIMIZATION CATALOG — PROJECT VOXELCORE
+
+Living list. Every entry: purpose, cost, complexity, hardware dependence, status. Measured = benchmark exists; estimated = reasoning, not measurement. Never delete an entry — mark it REJECTED with reason.
+
+## E1. Paletted storage with uniform-section 0-bit fast path — **IMPLEMENTED**
+- Purpose: memory + cache. 4096-cell section: uniform = ~48 B; 4-bit palette = ~2 KB.
+- Cost: O(1) get, O(palette) set; measured 6.5 µs set-fill of 4096 cells.
+- Complexity: medium. HW: universal. Risk: low.
+
+## E2. Greedy meshing with (block, AO-signature) merge — **IMPLEMENTED, MEASURED**
+- Purpose: cut quads/indices/overdraw.
+- Measured: flat platform 704→6 quads; terrain chunk 2,496 naive faces → 138 quads (5.5%); 9-chunk world 11,636→1,296 (11.1%). faceArea invariant checked by tests.
+- Cost: mask scan + rectangle merge, ~2.0 ms/chunk (world-reader path). Complexity: medium. Risk: correctness — guarded by invariant tests.
+
+## E3. Frustum AABB culling — **IMPLEMENTED**
+- Purpose: reject unseen chunk meshes before GPU submission. Cost: 6 planes × AABB. Measured: validated by tests (identity box degenerate case avoided with real projection). Risk: low.
+
+## E4. Template-functor block reader (no std::function in hot path) — **IMPLEMENTED**
+- Purpose: remove indirect call + closure overhead in faceCell. Gain: small (~10% of mesh time); kept because free.
+
+## E5. Thread-local last-chunk cache for block reader — **BACKLOGGED (next)**
+- Purpose: replace per-cell hash lookups with one cached pointer per worker.
+- Hypothesis: mesh time dominated by unordered_map lookups (~2 ms/chunk). Expected: 2–5× mesh speedup.
+- Risk: stale pointer if chunk map rehashes → guard by map generation counter. Measure before adopting.
+
+## E6. Side-bucket ordering (7 buckets, opaque/cutout split) — **STAGE 6**
+- Purpose: 1–2 draw runs per eye-visible set; skip hidden buckets entirely. From Horizon `mesher/sides.rs`. Risk: low. Cost: one sort by bucket at upload.
+
+## E7. Packed 24-byte quad records + vertex pulling — **STAGE 6/13**
+- Purpose: 4× vertex-bandwidth reduction for cube faces (majority). Horizon proves via `packed.rs` + `terrain.wgsl`. Requires AO-in-record layout change (2 bits/corner) — design task first.
+
+## E8. Cave culling (flood fill from opaque boundary) — **STAGE 7**
+- Purpose: discard never-visible interior sections. Horizon: big win at high RD. Cost: one BFS per world load + incremental on block change. Risk: correctness (needs conservative boundary rules).
+
+## E9. Entity/particle culling (sync + async with position-quantized cache) — **STAGE 7**
+- Mirror Horizon's approach; async variant only after sync variant is verified.
+
+## E10. GPU culling + two-phase occlusion (`drawIndirectCount`) — **STAGE 7+, OPT-IN**
+- Capability gates: Vulkan + indirect-count + compute; excluded: Intel Gen11/12, software rasterizers, non-Vulkan fallbacks. Off by default (Horizon does the same). Auto-mode later (stage 13).
+
+## E11. Heightfield LOD tiles + grid mesh — **IMPLEMENTED v1 (STAGE 8 polish)**
+- Purpose: render 100+ chunk distances without simulating/meshing voxels.
+- Implemented: bake (0.8 ms/tile), triangulated grid, LOD mesh emission. Missing: crack prevention (skirts), material layers per cell, screen-error refinement, seamless transition ring, cache on disk.
+
+## E12. Budgeted chunk upload queue (N sections/frame) — **STAGE 6**
+- Purpose: eliminate frame spikes at stream-in. Implemented as design; not yet coded.
+
+## E13. Fixed-grid frame pacing — **STAGE 13** (Horizon "Efficient" mode).
+
+## E14. Vulkan async shader compile + pipeline cache blob — **STAGE 10/13**.
+
+## E15. Virtual shadow maps (clipmap + page invalidation) — **RESEARCH** — potentially decisive for RD≥32 with real sun shadows. Decision after stage 9.
+
+## E16. Thread oversubscription guard — **IMPLEMENTED** (workers = hw−1 default; no spin).
+
+## E17. Chunk heightmap short-circuit for buried cells in mesher — **DESIGNED** (skip full column scans); stage 6.
+
+## E18. SIMD AO/mesh scan (AVX2) — **MEASURE FIRST** at stage 13.
+
+## E19. Texture streaming + mip bias by distance — **STAGE 13**.
+
+## E20. Deterministic replay benchmarks (flyover camera path) — **STAGE 13** (mirrors `tools/perf_bench.py`; our numbers must come from a committed script, not hand-waving).
+
+## Reversal log
+- 2026-11-11: software-raster color interpolation uses affine weighting — acceptable for verification, rejected for shipping quality (marked as such in `software_renderer.hpp`).

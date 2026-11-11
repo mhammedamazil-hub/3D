@@ -1,0 +1,8 @@
+build/
+build-*/
+*.ppm
+*.o
+*.ninja
+.ninja_*
+__pycache__/
+unselected files/

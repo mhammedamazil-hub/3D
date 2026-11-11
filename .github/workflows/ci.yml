@@ -1,0 +1,55 @@
+name: voxelcore-ci
+on:
+  push:
+    branches: [arena/3e3c4ae6-3d, main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build tools
+        run: |
+          python3 -m pip install --break-system-packages cmake ninja || python3 -m pip install cmake ninja
+      - name: Configure
+        run: cmake -S voxelcore -B voxelcore/build -G Ninja -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: ninja -C voxelcore/build
+      - name: Unit tests
+        run: ./voxelcore/build/voxelcore_tests
+      - name: Benchmarks (smoke)
+        run: ./voxelcore/build/voxelcore_bench
+      - name: Headless render smoke test
+        run: ./voxelcore/build/voxelcore render /tmp/voxelcore_ci.ppm 1234 1 320
+
+  sanitizers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build tools
+        run: python3 -m pip install cmake ninja
+      - name: Configure ASan+UBSan
+        run: cmake -S voxelcore -B voxelcore/build-san -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer"
+      - name: Build
+        run: ninja -C voxelcore/build-san
+      - name: Unit tests under sanitizers
+        run: ASAN_OPTIONS=detect_leaks=1 ./voxelcore/build-san/voxelcore_tests
+
+  android-arm64-build:
+    # Compile-only check for Android (arm64-v8a) with the NDK preinstalled on GitHub runners.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure Android (arm64-v8a)
+        run: |
+          cmake -S voxelcore -B voxelcore/build-android -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK_LATEST_HOME:-$ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake" \
+            -DANDROID_ABI=arm64-v8a -DANDROID_PLATFORM=android-26 \
+            -DCMAKE_BUILD_TYPE=Release
+      - name: Build Android libraries/executables
+        run: ninja -C voxelcore/build-android
