@@ -117,7 +117,7 @@ int main(int argc, char** argv) {
             Quad sq = q;
             if (eastStone16 || eastDirt) {
                 const float stayY = eastStone16 ? 16.0f : 18.0f;
-                sq.y = stayY; sq.v = std::min(1.0f, q.y + q.v - stayY);
+                sq.y = stayY; sq.v = std::min(2.0f, q.y + q.v - stayY); // records are vE=2 (y16..17+y18..19 merged rows)
             }
             dumpLine("quad dir=%d x=%.1f y=%.1f z=%.1f u=%.1f v=%.1f hex x=%s y=%s z=%s u=%s v=%s",
                          static_cast<int>(q.dir), q.x, q.y, q.z, q.u, q.v, hex(q.x).c_str(), hex(q.y).c_str(), hex(q.z).c_str(), hex(q.u).c_str(), hex(q.v).c_str());
@@ -390,7 +390,7 @@ int main(int argc, char** argv) {
                     if (job.qi < 0) continue;
                     const Quad& mq = allQuads[static_cast<std::size_t>(job.qi)];
                     Quad sv = mq; const float stayY = static_cast<float>(job.yRec);
-                    sv.y = stayY; sv.v = std::min(1.0f, mq.y + mq.v - stayY);
+                    sv.y = stayY; sv.v = std::min(2.0f, mq.y + mq.v - stayY); // match record vE=2
                     const MeshTriangles st = expandQuads(std::vector<Quad>{sv});
                     std::vector<vk::Vertex> svertices;
                     {

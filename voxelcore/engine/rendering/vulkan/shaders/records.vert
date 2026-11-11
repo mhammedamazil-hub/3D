@@ -71,5 +71,11 @@ void main() {
     vec4 raw = (block <= 9u) ? kColor[block] : kColor[0];
     vec3 shaded = floor(raw.rgb * k);
     fragColor = vec4(shaded / 255.0, raw.a / 255.0);
-    gl_Position = pc.mvp * vec4(p, 1.0);
+    vec4 p4 = vec4(p, 1.0);
+    // See voxelcore.vert: explicit FMA chain for bitwise-identical gl_Position.
+    gl_Position = vec4(
+        fma(pc.mvp[0][0], p4.x, fma(pc.mvp[1][0], p4.y, fma(pc.mvp[2][0], p4.z, pc.mvp[3][0] * p4.w))),
+        fma(pc.mvp[0][1], p4.x, fma(pc.mvp[1][1], p4.y, fma(pc.mvp[2][1], p4.z, pc.mvp[3][1] * p4.w))),
+        fma(pc.mvp[0][2], p4.x, fma(pc.mvp[1][2], p4.y, fma(pc.mvp[2][2], p4.z, pc.mvp[3][2] * p4.w))),
+        fma(pc.mvp[0][3], p4.x, fma(pc.mvp[1][3], p4.y, fma(pc.mvp[2][3], p4.z, pc.mvp[3][3] * p4.w))));
 }

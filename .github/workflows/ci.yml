@@ -133,6 +133,8 @@ jobs:
           path: |
             /tmp/parity_expanded.ppm
             /tmp/parity_records.ppm
+            /tmp/parity_expanded.ppm.solo_*.ppm
+            /tmp/parity_records.ppm.solo_*.ppm
             /tmp/parity_expanded.ppm
             /tmp/parity_expanded.ppm.2.ppm
             /tmp/parity_records.ppm.2.ppm
