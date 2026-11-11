@@ -1,0 +1,205 @@
+{
+  "revision": "five-worlds-blender-v3-pure-3d",
+  "validated_at_utc": "2026-11-11T18:48:45.957613+00:00",
+  "pass": true,
+  "checks": {
+    "receipt_revision": true,
+    "ci_validation_pass": true,
+    "manifest_scene_count": true,
+    "manifest_no_image_policy": true,
+    "reference_visual_only": true,
+    "all_94_skills_rechecked": true,
+    "skill_review_exists": true,
+    "ci_no_image_shards": true,
+    "blend_audit_pass": true,
+    "blend_audit_five_scenes": true,
+    "blend_audit_zero_images": true,
+    "contact_sheet_exists": true,
+    "builder_exists": true,
+    "renderer_exists": true,
+    "finalizer_exists": true,
+    "workflow_exists": true
+  },
+  "blend_audit": {
+    "pass": true,
+    "scene_count": 5,
+    "image_datablocks": 0,
+    "image_texture_nodes": 0,
+    "report": "review/five_worlds_blender_v3/blend_audit.json"
+  },
+  "scenes": [
+    {
+      "index": 1,
+      "name": "Alpine Lake",
+      "checks": {
+        "mp4_exists": true,
+        "bytes": true,
+        "sha256": true,
+        "blend_exists": true,
+        "blend_sha256": true,
+        "reference_exists": true,
+        "reference_sha256": true,
+        "duration_10s": true,
+        "resolution_1080p": true,
+        "fps_30": true,
+        "h264": true,
+        "yuv420p": true,
+        "full_decode_rc0": true,
+        "decoded_300_frames": true,
+        "decode_stderr_empty": true,
+        "no_black_or_white_frames": true,
+        "frames_are_distinct": true,
+        "visible_motion": true,
+        "no_huge_jump": true
+      },
+      "metrics": {
+        "unique_frames": 300,
+        "min_frame_mean": 124.125,
+        "max_frame_mean": 127.037,
+        "mean_adjacent_diff": 0.3674,
+        "max_adjacent_diff": 0.4961
+      }
+    },
+    {
+      "index": 2,
+      "name": "Neon Rain Alley",
+      "checks": {
+        "mp4_exists": true,
+        "bytes": true,
+        "sha256": true,
+        "blend_exists": true,
+        "blend_sha256": true,
+        "reference_exists": true,
+        "reference_sha256": true,
+        "duration_10s": true,
+        "resolution_1080p": true,
+        "fps_30": true,
+        "h264": true,
+        "yuv420p": true,
+        "full_decode_rc0": true,
+        "decoded_300_frames": true,
+        "decode_stderr_empty": true,
+        "no_black_or_white_frames": true,
+        "frames_are_distinct": true,
+        "visible_motion": true,
+        "no_huge_jump": true
+      },
+      "metrics": {
+        "unique_frames": 300,
+        "min_frame_mean": 16.701,
+        "max_frame_mean": 24.75,
+        "mean_adjacent_diff": 0.9258,
+        "max_adjacent_diff": 10.23
+      }
+    },
+    {
+      "index": 3,
+      "name": "Sahara Dunes",
+      "checks": {
+        "mp4_exists": true,
+        "bytes": true,
+        "sha256": true,
+        "blend_exists": true,
+        "blend_sha256": true,
+        "reference_exists": true,
+        "reference_sha256": true,
+        "duration_10s": true,
+        "resolution_1080p": true,
+        "fps_30": true,
+        "h264": true,
+        "yuv420p": true,
+        "full_decode_rc0": true,
+        "decoded_300_frames": true,
+        "decode_stderr_empty": true,
+        "no_black_or_white_frames": true,
+        "frames_are_distinct": true,
+        "visible_motion": true,
+        "no_huge_jump": true
+      },
+      "metrics": {
+        "unique_frames": 300,
+        "min_frame_mean": 180.614,
+        "max_frame_mean": 183.428,
+        "mean_adjacent_diff": 0.1296,
+        "max_adjacent_diff": 0.2201
+      }
+    },
+    {
+      "index": 4,
+      "name": "Iceland Aurora",
+      "checks": {
+        "mp4_exists": true,
+        "bytes": true,
+        "sha256": true,
+        "blend_exists": true,
+        "blend_sha256": true,
+        "reference_exists": true,
+        "reference_sha256": true,
+        "duration_10s": true,
+        "resolution_1080p": true,
+        "fps_30": true,
+        "h264": true,
+        "yuv420p": true,
+        "full_decode_rc0": true,
+        "decoded_300_frames": true,
+        "decode_stderr_empty": true,
+        "no_black_or_white_frames": true,
+        "frames_are_distinct": true,
+        "visible_motion": true,
+        "no_huge_jump": true
+      },
+      "metrics": {
+        "unique_frames": 300,
+        "min_frame_mean": 24.929,
+        "max_frame_mean": 28.498,
+        "mean_adjacent_diff": 0.6945,
+        "max_adjacent_diff": 0.9032
+      }
+    },
+    {
+      "index": 5,
+      "name": "Rainforest Temple",
+      "checks": {
+        "mp4_exists": true,
+        "bytes": true,
+        "sha256": true,
+        "blend_exists": true,
+        "blend_sha256": true,
+        "reference_exists": true,
+        "reference_sha256": true,
+        "duration_10s": true,
+        "resolution_1080p": true,
+        "fps_30": true,
+        "h264": true,
+        "yuv420p": true,
+        "full_decode_rc0": true,
+        "decoded_300_frames": true,
+        "decode_stderr_empty": true,
+        "no_black_or_white_frames": true,
+        "frames_are_distinct": true,
+        "visible_motion": true,
+        "no_huge_jump": true
+      },
+      "metrics": {
+        "unique_frames": 300,
+        "min_frame_mean": 58.73,
+        "max_frame_mean": 61.785,
+        "mean_adjacent_diff": 0.7773,
+        "max_adjacent_diff": 1.105
+      }
+    }
+  ],
+  "combined": {
+    "exists": true,
+    "bytes": true,
+    "sha256": true,
+    "duration_50s": true,
+    "resolution_1080p": true,
+    "fps_30": true,
+    "h264": true,
+    "full_decode_rc0": true,
+    "decoded_1500_frames": true,
+    "decode_stderr_empty": true
+  },
+  "errors": []
+}
