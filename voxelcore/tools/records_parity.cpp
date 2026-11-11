@@ -171,6 +171,22 @@ int main(int argc, char** argv) {
             for (const auto& d : draws) totalRecords += d.recordCount;
             std::fprintf(stderr, "records_parity: path B (records) draws=%zu records=%zu (%.1f bytes/quad)\n",
                          draws.size(), totalRecords, totalRecords ? static_cast<double>(totalRecords) * 8.0 / static_cast<double>(expandCount) : 0.0);
+            // Reversed-order probes: are results order-dependent (depth ties) or coverage-dependent?
+            {
+                // A reversed: reverse triangle order in the index buffer
+                std::vector<std::uint32_t> ridx;
+                ridx.reserve(tris.indices.size());
+                for (std::size_t i = tris.indices.size(); i >= 3;) { i -= 3; ridx.push_back(tris.indices[i]); ridx.push_back(tris.indices[i + 1]); ridx.push_back(tris.indices[i + 2]); }
+                vk::HeadlessRenderer rr(1280, 960, std::string(VOXELCORE_SPV_DIR));
+                rr.init();
+                rr.renderToPpm(vertices, ridx, mvp, (pathA + ".rev.ppm").c_str());
+                // B reversed: reverse chunk draw order
+                std::vector<vk::HeadlessRenderer::RecordDraw> rdraws;
+                for (std::size_t i = draws.size(); i-- > 0;) rdraws.push_back(draws[i]);
+                vk::HeadlessRenderer rr2(1280, 960, std::string(VOXELCORE_SPV_DIR));
+                rr2.init();
+                rr2.renderRecordsToPpm(rdraws, mvp, (pathB + ".rev.ppm").c_str());
+            }
             vk::HeadlessRenderer renderer(1280, 960, std::string(VOXELCORE_SPV_DIR));
             renderer.init();
             renderer.renderRecordsToPpm(draws, mvp, pathB.c_str());
@@ -301,6 +317,12 @@ int main(int argc, char** argv) {
         }
     }
     rep << "determinism: " << determinism << "\n";
+    {
+        char mhex[16 * 12 + 32];
+        int off = 0;
+        for (int i = 0; i < 16; ++i) off += std::snprintf(mhex + off, sizeof(mhex) - off, "%s%08x", i ? "," : "", (int)__builtin_bit_cast(std::uint32_t, mvp.data()[i]));
+        rep << "mvp_bits: " << mhex << "\n";
+    }
     auto dumpPixel = [&](const std::string& f) {
         uint32_t w2 = 0, h2 = 0;
         const auto img = readPpm(f, w2, h2);
@@ -312,6 +334,7 @@ int main(int argc, char** argv) {
     };
     rep << "bisect (844,300): posy=" << dumpPixel(pathB + ".posy.ppm")
         << " notposy=" << dumpPixel(pathB + ".notposy.ppm") << "\n";
+    rep << "rev (844,300): A2A=" << dumpPixel(pathA + ".rev.ppm") << " B2B=" << dumpPixel(pathB + ".rev.ppm") << "\n";
     rep << "bbox: x[" << minX << "," << maxX << "] y[" << minY << "," << maxY << "]\n";
     // CPU-side coverage analysis for the first differing pixel: project every quad's triangles
     // with the same matrices used for the renders and list which cover the pixel center.
