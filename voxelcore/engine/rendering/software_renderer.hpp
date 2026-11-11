@@ -4,6 +4,7 @@
 #pragma once
 
 #include "../meshing/mesher.hpp"
+#include "face_colors.hpp"
 #include <vector>
 #include <cstdint>
 #include <cmath>
@@ -56,9 +57,9 @@ public:
             float c[4][3];
             quadCorners(q, originX, originZ, c);
             // Two triangles: 0,1,2 and 0,2,3. AO per corner.
-            const std::uint32_t base = faceColor(q.block);
-            const std::uint32_t c0 = shade(base, q.ao[0]), c1 = shade(base, q.ao[1]);
-            const std::uint32_t c2 = shade(base, q.ao[2]), c3 = shade(base, q.ao[3]);
+            const std::uint32_t base = vc::faceColor(q.block);
+            const std::uint32_t c0 = vc::shadeFace(base, q.ao[0]), c1 = vc::shadeFace(base, q.ao[1]);
+            const std::uint32_t c2 = vc::shadeFace(base, q.ao[2]), c3 = vc::shadeFace(base, q.ao[3]);
             drawTriangle(c[0], c[1], c[2], c0, c1, c2);
             drawTriangle(c[0], c[2], c[3], c0, c2, c3);
         }
@@ -85,28 +86,6 @@ public:
     }
 
 private:
-    static std::uint32_t shade(std::uint32_t argb, std::uint8_t ao) {
-        const float k = 0.35f + 0.2167f * static_cast<float>(ao); // ao 0..3 → 0.35..1.0
-        const std::uint32_t r = static_cast<std::uint32_t>(((argb >> 16) & 0xFF) * k);
-        const std::uint32_t g = static_cast<std::uint32_t>(((argb >> 8) & 0xFF) * k);
-        const std::uint32_t b = static_cast<std::uint32_t>((argb & 0xFF) * k);
-        return 0xFF000000u | (r << 16) | (g << 8) | b;
-    }
-    static std::uint32_t faceColor(BlockId b) {
-        switch (b) {
-            case blocks::Grass:  return 0xFF5E9C3F;
-            case blocks::Dirt:   return 0xFF79553A;
-            case blocks::Stone:  return 0xFF888888;
-            case blocks::Sand:   return 0xFFD6CCA1;
-            case blocks::Water:  return 0xFF3F6FD6;
-            case blocks::Log:    return 0xFF6B4A2B;
-            case blocks::Leaves: return 0xFF2F6B2F;
-            case blocks::Bedrock:return 0xFF333333;
-            case blocks::Snow:   return 0xFFF2F5F7;
-            default:             return 0xFFAA33AA;
-        }
-    }
-
     static void quadCorners(const Quad& q, float ox, float oz, float c[4][3]) {
         const float planeOff = 0.0f;
         switch (q.dir) {

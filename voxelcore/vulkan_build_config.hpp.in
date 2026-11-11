@@ -1,0 +1,2 @@
+#pragma once
+#define VOXELCORE_SPV_DIR "@VOXELCORE_SPV_DIR@"

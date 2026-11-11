@@ -53,3 +53,46 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release
       - name: Build Android libraries/executables
         run: ninja -C voxelcore/build-android
+
+  vulkan-headless:
+    # Renders a real frame through the Lavapipe CPU Vulkan driver (mesa-vulkan-drivers)
+    # and validates the PPM output. Runs the same code path a discrete/integrated GPU would.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build tools + Vulkan stack
+        run: |
+          python3 -m pip install --break-system-packages cmake ninja || python3 -m pip install cmake ninja
+          sudo apt-get update
+          sudo apt-get install -y libvulkan-dev mesa-vulkan-drivers glslang-tools vulkan-tools
+      - name: Show Vulkan driver
+        run: vulkaninfo --summary || true
+      - name: Configure
+        run: cmake -S voxelcore -B voxelcore/build-vk -G Ninja -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: ninja -C voxelcore/build-vk
+      - name: Headless Vulkan render
+        run: |
+          set +e
+          ./voxelcore/build-vk/vulkan_render /tmp/voxelcore_vulkan.ppm
+          rc=$?
+          set -e
+          echo "vulkan_render exit code: $rc"
+          if [ "$rc" = "0" ]; then
+            python3 - << 'PYEOF'
+            import sys
+            data = open('/tmp/voxelcore_vulkan.ppm','rb').read()
+            header, _, body = data.partition(b'255\n')
+            parts = header.split()
+            w, h = int(parts[1]), int(parts[2])
+            assert len(body) == w*h*3, f'PPM body {len(body)} != {w*h*3}'
+            non_sky = sum(1 for i in range(0, len(body), 3) if body[i:i+3] != bytes([89,140,213]))
+            print(f'PPM OK: {w}x{h}, bytes={len(body)}, non-sky-pixel-count={non_sky}')
+            assert non_sky > 1000, 'frame appears empty (all sky)'
+            PYEOF
+          elif [ "$rc" = "77" ]; then
+            echo "::warning::vulkan_render skipped — no Vulkan device on this runner"
+          else
+            echo "vulkan_render FAILED with exit $rc" >&2
+            exit "$rc"
+          fi

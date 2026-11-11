@@ -6,3 +6,4 @@ build-*/
 .ninja_*
 __pycache__/
 unselected files/
+.vulkan-headers/
