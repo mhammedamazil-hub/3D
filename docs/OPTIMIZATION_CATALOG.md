@@ -29,8 +29,10 @@ Living list. Every entry: purpose, cost, complexity, hardware dependence, status
 - Cost measured: 1.359 → 1.370 ms/chunk greedy mesh (<1%). Coplanar insertion order preserved per bucket.
 - Cutout/opaque split deferred to draw time (software renderer two passes; Vulkan single pass with alpha blend) — revisit with packed records (E7).
 
-## E7. Packed 24-byte quad records + vertex pulling — **STAGE 6/13**
-- Purpose: 4× vertex-bandwidth reduction for cube faces (majority). Horizon proves via `packed.rs` + `terrain.wgsl`. Requires AO-in-record layout change (2 bits/corner) — design task first.
+## E7. Packed quad records + vertex pulling — **DESIGN DONE (2026-11-11, `docs/design/E7_PACKED_RECORDS.md`)**
+- Horizon's 24-byte record redesigned to an 8-byte chunk-local record (`x4 z4 y7 u4 v4 dir3 | block16 ao8 light4`) covering 100% of our greedy output.
+- GPU vertex pulling via `gl_InstanceID` + instanced draw; CPU expansion kept as reference/fallback; CI parity gate planned (bitwise or documented ≤1 LSB).
+- Estimated: ≥10× fewer upload bytes per chunk rebuild (≈150 KB → ≈10 KB at current quad counts). Implementation gated on CI parity; unpacked remains default.
 
 ## E8. Cave culling (flood fill from opaque boundary) — **STAGE 7**
 - Purpose: discard never-visible interior sections. Horizon: big win at high RD. Cost: one BFS per world load + incremental on block change. Risk: correctness (needs conservative boundary rules).
