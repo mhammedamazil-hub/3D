@@ -21,7 +21,6 @@ using namespace vc;
 int main(int argc, char** argv) {
     const std::string outPath = argc > 1 ? argv[1] : "vulkan_render.ppm";
     World world;
-    const int ox = 40, oz = 40;
     for (int y = 0; y <= 20; ++y)
         for (int z = 0; z < 64; ++z)
             for (int x = 0; x < 64; ++x)
@@ -35,10 +34,15 @@ int main(int argc, char** argv) {
 
     const CachedBlockReader reader(world);
     const GreedyMesher mesher;
-    const auto mesh = mesher.mesh({ox / 16, oz / 16}, reader);
-    const MeshTriangles tris = expandQuads(mesh.quads);
+    std::vector<Quad> allQuads;
+    for (const auto& [pos, chunk] : world.chunks()) { (void)chunk;
+        const auto mesh = mesher.meshWorld(pos, world);
+        // (Side-bucket order is preserved per chunk; the Vulkan path draws in bucket order.)
+        allQuads.insert(allQuads.end(), mesh.quads.begin(), mesh.quads.end());
+    }
+    const MeshTriangles tris = expandQuads(allQuads);
     std::fprintf(stderr, "vulkan_render: quads=%zu vertices=%zu triangles=%zu\n",
-                 mesh.quads.size(), tris.positions.size() / 3, tris.indices.size() / 3);
+                 allQuads.size(), tris.positions.size() / 3, tris.indices.size() / 3);
 
     std::vector<std::uint32_t> indices = tris.indices;
 #if defined(VOXELCORE_WITH_VULKAN)

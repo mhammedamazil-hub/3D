@@ -52,7 +52,7 @@ Working, tested C++23 engine foundation:
 ## Honest gaps / blockers
 
 - Horizon not built locally (no Rust toolchain in sandbox, no network to rustup). Its tests were not run here.
-- No GPU/Vulkan in sandbox → GPU rendering can't be validated here; Vulkan backend is intentionally not claimed working until it runs in CI (Lavapipe) or real hardware. The new `vulkan-headless` CI job is the gate; watch its first run.
+- No GPU/Vulkan in sandbox → GPU rendering can't be validated here; Vulkan backend is intentionally not claimed working until it runs in CI (Lavapipe) or real hardware. The `vulkan-headless` CI job is the gate. First run failed at the PPM-validation step — root cause was a double-escaped `\n` in the inline Python (partition never matched, every frame was "empty"); fixed by moving validation to `voxelcore/scripts/validate_ppm.py` (unit-tested locally) and accepting only exit 0/77. The renderer now also dlopens libvulkan at runtime (`vulkan_loader.hpp`, Android-style) so builds never depend on a system loader.
 - Android app (stage 12) not started; CI only compile-checks the engine for arm64.
 - Minecraft compatibility: nothing claimed yet; world I/O is not Anvil yet.
 - Cross-chunk leaves are clipped at chunk edges (documented simplification).

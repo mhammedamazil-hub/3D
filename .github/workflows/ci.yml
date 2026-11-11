@@ -16,12 +16,21 @@ jobs:
       - name: Install build tools
         run: |
           python3 -m pip install --break-system-packages cmake ninja || python3 -m pip install cmake ninja
+          sudo apt-get update && sudo apt-get install -y zlib1g-dev
       - name: Configure
         run: cmake -S voxelcore -B voxelcore/build -G Ninja -DCMAKE_BUILD_TYPE=Release
       - name: Build
         run: ninja -C voxelcore/build
       - name: Unit tests
-        run: ./voxelcore/build/voxelcore_tests
+        run: |
+          set +e
+          ./voxelcore/build/voxelcore_tests 2>&1 | tee /tmp/voxelcore_test_out.log
+          rc=${PIPESTATUS[0]}
+          set -e
+          if [ "$rc" != "0" ]; then
+            grep -E 'FAIL|SKIP' /tmp/voxelcore_test_out.log | head -30 | while IFS= read -r line; do echo "::error::$line"; done
+          fi
+          exit $rc
       - name: Benchmarks (smoke)
         run: ./voxelcore/build/voxelcore_bench
       - name: Headless render smoke test
@@ -32,7 +41,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install build tools
-        run: python3 -m pip install cmake ninja
+        run: |
+          python3 -m pip install cmake ninja
+          sudo apt-get update && sudo apt-get install -y zlib1g-dev
       - name: Configure ASan+UBSan
         run: cmake -S voxelcore -B voxelcore/build-san -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer"
       - name: Build
@@ -79,20 +90,13 @@ jobs:
           set -e
           echo "vulkan_render exit code: $rc"
           if [ "$rc" = "0" ]; then
-            python3 - << 'PYEOF'
-            import sys
-            data = open('/tmp/voxelcore_vulkan.ppm','rb').read()
-            header, _, body = data.partition(b'255\n')
-            parts = header.split()
-            w, h = int(parts[1]), int(parts[2])
-            assert len(body) == w*h*3, f'PPM body {len(body)} != {w*h*3}'
-            non_sky = sum(1 for i in range(0, len(body), 3) if body[i:i+3] != bytes([89,140,213]))
-            print(f'PPM OK: {w}x{h}, bytes={len(body)}, non-sky-pixel-count={non_sky}')
-            assert non_sky > 1000, 'frame appears empty (all sky)'
-            PYEOF
+            python3 voxelcore/scripts/validate_ppm.py /tmp/voxelcore_vulkan.ppm
           elif [ "$rc" = "77" ]; then
             echo "::warning::vulkan_render skipped — no Vulkan device on this runner"
           else
             echo "vulkan_render FAILED with exit $rc" >&2
+            echo "--- diagnostics ---" >&2
+            ls -la /usr/share/vulkan/icd.d/ 2>&1 >&2 || true
+            cat /usr/share/vulkan/icd.d/*.json 2>&1 >&2 || true
             exit "$rc"
           fi

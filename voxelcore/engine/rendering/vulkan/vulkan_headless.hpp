@@ -16,6 +16,7 @@
 
 #include <vulkan/vulkan.h>
 #include "../math.hpp"
+#include "vulkan_loader.hpp"
 #include <cstdio>
 #include <cstring>
 #include <fstream>
@@ -46,6 +47,12 @@ public:
     HeadlessRenderer& operator=(const HeadlessRenderer&) = delete;
 
     void init() {
+        // --- dynamic loader (dlopen) so builds never require a system Vulkan dev package ---
+        try {
+            api_.loadPreInstance();
+        } catch (const VulkanLoadError& e) {
+            throw VulkanError(std::string("no Vulkan loader: ") + e.what());
+        }
         // --- instance ---
         VkApplicationInfo appInfo{}; appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
         appInfo.pApplicationName = "voxelcore-headless";
@@ -55,14 +62,19 @@ public:
         appInfo.apiVersion = VK_API_VERSION_1_2;
         VkInstanceCreateInfo instInfo{}; instInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         instInfo.pApplicationInfo = &appInfo;
-        VC_VK_TRY(vkCreateInstance(&instInfo, nullptr, &instance_), "vkCreateInstance");
+        VC_VK_TRY(api_.CreateInstance(&instInfo, nullptr, &instance_), "vkCreateInstance");
+        try {
+            api_.loadInstance(instance_);
+        } catch (const VulkanLoadError& e) {
+            throw VulkanError(std::string("Vulkan instance functions missing: ") + e.what());
+        }
 
         // --- physical device with a graphics queue ---
         uint32_t deviceCount = 0;
-        vkEnumeratePhysicalDevices(instance_, &deviceCount, nullptr);
+        api_.EnumeratePhysicalDevices(instance_, &deviceCount, nullptr);
         if (deviceCount == 0) throw VulkanError("no Vulkan physical device found (driver missing?)");
         std::vector<VkPhysicalDevice> devices(deviceCount);
-        vkEnumeratePhysicalDevices(instance_, &deviceCount, devices.data());
+        api_.EnumeratePhysicalDevices(instance_, &deviceCount, devices.data());
         // Prefer discrete, then integrated, then anything (lavapipe = CPU type).
         auto score = [](const VkPhysicalDeviceProperties& p) {
             switch (p.deviceType) {
@@ -75,12 +87,12 @@ public:
         int best = -1; uint32_t bestScore = 0;
         for (uint32_t i = 0; i < deviceCount; ++i) {
             VkPhysicalDeviceProperties props{};
-            vkGetPhysicalDeviceProperties(devices[i], &props);
+            api_.GetPhysicalDeviceProperties(devices[i], &props);
             // Need a graphics-capable queue family.
             uint32_t qfCount = 0;
-            vkGetPhysicalDeviceQueueFamilyProperties(devices[i], &qfCount, nullptr);
+            api_.GetPhysicalDeviceQueueFamilyProperties(devices[i], &qfCount, nullptr);
             std::vector<VkQueueFamilyProperties> qfs(qfCount);
-            vkGetPhysicalDeviceQueueFamilyProperties(devices[i], &qfCount, qfs.data());
+            api_.GetPhysicalDeviceQueueFamilyProperties(devices[i], &qfCount, qfs.data());
             uint32_t graphicsFamily = VK_QUEUE_FAMILY_IGNORED;
             for (uint32_t q = 0; q < qfCount; ++q) {
                 if (qfs[q].queueFlags & VK_QUEUE_GRAPHICS_BIT) { graphicsFamily = q; break; }
@@ -92,7 +104,7 @@ public:
         if (best < 0) throw VulkanError("no graphics-capable Vulkan device found");
         physicalDevice_ = devices[static_cast<std::size_t>(best)];
         VkPhysicalDeviceProperties props{};
-        vkGetPhysicalDeviceProperties(physicalDevice_, &props);
+        api_.GetPhysicalDeviceProperties(physicalDevice_, &props);
         std::fprintf(stderr, "vulkan: using device '%s' (type %d)\n", props.deviceName, props.deviceType);
 
         float queuePriority = 1.0f;
@@ -105,14 +117,19 @@ public:
         devInfo.queueCreateInfoCount = 1;
         devInfo.pQueueCreateInfos = &queueInfo;
         devInfo.pEnabledFeatures = &features;
-        VC_VK_TRY(vkCreateDevice(physicalDevice_, &devInfo, nullptr, &device_), "vkCreateDevice");
-        vkGetDeviceQueue(device_, graphicsFamily_, 0, &queue_);
+        VC_VK_TRY(api_.CreateDevice(physicalDevice_, &devInfo, nullptr, &device_), "vkCreateDevice");
+        try {
+            api_.loadDevice(device_, instance_);
+        } catch (const VulkanLoadError& e) {
+            throw VulkanError(std::string("Vulkan device functions missing: ") + e.what());
+        }
+        api_.GetDeviceQueue(device_, graphicsFamily_, 0, &queue_);
 
         // --- command pool ---
         VkCommandPoolCreateInfo poolInfo{}; poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
         poolInfo.queueFamilyIndex = graphicsFamily_;
         poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-        VC_VK_TRY(vkCreateCommandPool(device_, &poolInfo, nullptr, &commandPool_), "vkCreateCommandPool");
+        VC_VK_TRY(api_.CreateCommandPool(device_, &poolInfo, nullptr, &commandPool_), "vkCreateCommandPool");
 
         // --- images: color (R8G8B8A8_UNORM, TRANSFER_SRC) + depth ---
         colorImage_ = createImage(VK_FORMAT_R8G8B8A8_UNORM,
@@ -163,7 +180,7 @@ public:
         rpInfo.pSubpasses = &subpass;
         rpInfo.dependencyCount = 1;
         rpInfo.pDependencies = &dependency;
-        VC_VK_TRY(vkCreateRenderPass(device_, &rpInfo, nullptr, &renderPass_), "vkCreateRenderPass");
+        VC_VK_TRY(api_.CreateRenderPass(device_, &rpInfo, nullptr, &renderPass_), "vkCreateRenderPass");
 
         // --- framebuffer ---
         VkImageView attachmentsView[2] = {colorImage_.view, depthImage_.view};
@@ -174,7 +191,7 @@ public:
         fbInfo.width = width_;
         fbInfo.height = height_;
         fbInfo.layers = 1;
-        VC_VK_TRY(vkCreateFramebuffer(device_, &fbInfo, nullptr, &framebuffer_), "vkCreateFramebuffer");
+        VC_VK_TRY(api_.CreateFramebuffer(device_, &fbInfo, nullptr, &framebuffer_), "vkCreateFramebuffer");
 
         // --- graphics pipeline ---
         createPipeline();
@@ -184,11 +201,11 @@ public:
         cmdInfo.commandPool = commandPool_;
         cmdInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
         cmdInfo.commandBufferCount = 1;
-        VC_VK_TRY(vkAllocateCommandBuffers(device_, &cmdInfo, &commandBuffer_), "vkAllocateCommandBuffers");
+        VC_VK_TRY(api_.AllocateCommandBuffers(device_, &cmdInfo, &commandBuffer_), "vkAllocateCommandBuffers");
 
         VkFenceCreateInfo fenceInfo{}; fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
         fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-        VC_VK_TRY(vkCreateFence(device_, &fenceInfo, nullptr, &fence_), "vkCreateFence");
+        VC_VK_TRY(api_.CreateFence(device_, &fenceInfo, nullptr, &fence_), "vkCreateFence");
     }
 
     // Draws `vertices`/`indices` with the given view-projection and writes a binary PPM.
@@ -205,7 +222,7 @@ private:
 
     uint32_t findMemoryType(uint32_t typeBits, VkMemoryPropertyFlags properties) const {
         VkPhysicalDeviceMemoryProperties memProps{};
-        vkGetPhysicalDeviceMemoryProperties(physicalDevice_, &memProps);
+        api_.GetPhysicalDeviceMemoryProperties(physicalDevice_, &memProps);
         for (uint32_t i = 0; i < memProps.memoryTypeCount; ++i)
             if ((typeBits & (1u << i)) && (memProps.memoryTypes[i].propertyFlags & properties) == properties) return i;
         throw VulkanError("no suitable memory type");
@@ -224,14 +241,14 @@ private:
         imgInfo.usage = usage;
         imgInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
         imgInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-        VC_VK_TRY(vkCreateImage(device_, &imgInfo, nullptr, &b.image), "vkCreateImage");
+        VC_VK_TRY(api_.CreateImage(device_, &imgInfo, nullptr, &b.image), "vkCreateImage");
         VkMemoryRequirements req{};
-        vkGetImageMemoryRequirements(device_, b.image, &req);
+        api_.GetImageMemoryRequirements(device_, b.image, &req);
         VkMemoryAllocateInfo alloc{}; alloc.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         alloc.allocationSize = req.size;
         alloc.memoryTypeIndex = findMemoryType(req.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-        VC_VK_TRY(vkAllocateMemory(device_, &alloc, nullptr, &b.memory), "vkAllocateMemory(image)");
-        VC_VK_TRY(vkBindImageMemory(device_, b.image, b.memory, 0), "vkBindImageMemory");
+        VC_VK_TRY(api_.AllocateMemory(device_, &alloc, nullptr, &b.memory), "api_.AllocateMemory(image)");
+        VC_VK_TRY(api_.BindImageMemory(device_, b.image, b.memory, 0), "vkBindImageMemory");
         VkImageViewCreateInfo viewInfo{}; viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         viewInfo.image = b.image;
         viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
@@ -239,7 +256,7 @@ private:
         viewInfo.subresourceRange.aspectMask = aspect;
         viewInfo.subresourceRange.levelCount = 1;
         viewInfo.subresourceRange.layerCount = 1;
-        VC_VK_TRY(vkCreateImageView(device_, &viewInfo, nullptr, &b.view), "vkCreateImageView");
+        VC_VK_TRY(api_.CreateImageView(device_, &viewInfo, nullptr, &b.view), "vkCreateImageView");
         return b;
     }
 
@@ -249,14 +266,14 @@ private:
         bufInfo.usage = usage;
         bufInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
         VkBuffer buffer = VK_NULL_HANDLE;
-        VC_VK_TRY(vkCreateBuffer(device_, &bufInfo, nullptr, &buffer), "vkCreateBuffer");
+        VC_VK_TRY(api_.CreateBuffer(device_, &bufInfo, nullptr, &buffer), "vkCreateBuffer");
         VkMemoryRequirements req{};
-        vkGetBufferMemoryRequirements(device_, buffer, &req);
+        api_.GetBufferMemoryRequirements(device_, buffer, &req);
         VkMemoryAllocateInfo alloc{}; alloc.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         alloc.allocationSize = req.size;
         alloc.memoryTypeIndex = findMemoryType(req.memoryTypeBits, properties);
-        VC_VK_TRY(vkAllocateMemory(device_, &alloc, nullptr, &outMemory), "vkAllocateMemory(buffer)");
-        VC_VK_TRY(vkBindBufferMemory(device_, buffer, outMemory, 0), "vkBindBufferMemory");
+        VC_VK_TRY(api_.AllocateMemory(device_, &alloc, nullptr, &outMemory), "api_.AllocateMemory(buffer)");
+        VC_VK_TRY(api_.BindBufferMemory(device_, buffer, outMemory, 0), "vkBindBufferMemory");
         return buffer;
     }
 
@@ -267,12 +284,12 @@ private:
         indexBuffer_ = createBuffer(indices.size() * sizeof(std::uint32_t), VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
                                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, indexMemory_);
         void* data = nullptr;
-        VC_VK_TRY(vkMapMemory(device_, vertexMemory_, 0, vertices.size() * sizeof(Vertex), 0, &data), "vkMapMemory(vertex)");
+        VC_VK_TRY(api_.MapMemory(device_, vertexMemory_, 0, vertices.size() * sizeof(Vertex), 0, &data), "api_.MapMemory(vertex)");
         std::memcpy(data, vertices.data(), vertices.size() * sizeof(Vertex));
-        vkUnmapMemory(device_, vertexMemory_);
-        VC_VK_TRY(vkMapMemory(device_, indexMemory_, 0, indices.size() * sizeof(std::uint32_t), 0, &data), "vkMapMemory(index)");
+        api_.UnmapMemory(device_, vertexMemory_);
+        VC_VK_TRY(api_.MapMemory(device_, indexMemory_, 0, indices.size() * sizeof(std::uint32_t), 0, &data), "api_.MapMemory(index)");
         std::memcpy(data, indices.data(), indices.size() * sizeof(std::uint32_t));
-        vkUnmapMemory(device_, indexMemory_);
+        api_.UnmapMemory(device_, indexMemory_);
         // Readback buffer.
         readbackBuffer_ = createBuffer(static_cast<VkDeviceSize>(width_) * height_ * 4, VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, readbackMemory_);
@@ -361,7 +378,7 @@ private:
         VkPipelineLayoutCreateInfo layoutInfo{}; layoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
         layoutInfo.pushConstantRangeCount = 1;
         layoutInfo.pPushConstantRanges = &pushRange;
-        VC_VK_TRY(vkCreatePipelineLayout(device_, &layoutInfo, nullptr, &pipelineLayout_), "vkCreatePipelineLayout");
+        VC_VK_TRY(api_.CreatePipelineLayout(device_, &layoutInfo, nullptr, &pipelineLayout_), "vkCreatePipelineLayout");
 
         VkGraphicsPipelineCreateInfo pipelineInfo{}; pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
         pipelineInfo.stageCount = 2;
@@ -376,9 +393,9 @@ private:
         pipelineInfo.layout = pipelineLayout_;
         pipelineInfo.renderPass = renderPass_;
         pipelineInfo.subpass = 0;
-        VC_VK_TRY(vkCreateGraphicsPipelines(device_, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline_), "vkCreateGraphicsPipelines");
-        vkDestroyShaderModule(device_, vertModule, nullptr);
-        vkDestroyShaderModule(device_, fragModule, nullptr);
+        VC_VK_TRY(api_.CreateGraphicsPipelines(device_, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline_), "vkCreateGraphicsPipelines");
+        api_.DestroyShaderModule(device_, vertModule, nullptr);
+        api_.DestroyShaderModule(device_, fragModule, nullptr);
     }
 
     VkShaderModule createShaderModule(const std::vector<std::uint32_t>& words) {
@@ -386,19 +403,19 @@ private:
         info.codeSize = words.size() * sizeof(std::uint32_t);
         info.pCode = words.data();
         VkShaderModule module = VK_NULL_HANDLE;
-        VC_VK_TRY(vkCreateShaderModule(device_, &info, nullptr, &module), "vkCreateShaderModule");
+        VC_VK_TRY(api_.CreateShaderModule(device_, &info, nullptr, &module), "vkCreateShaderModule");
         return module;
     }
 
     void recordAndSubmit(const math::Mat4& viewProj, std::size_t indexCount) {
         // Wait for any previous frame.
-        VC_VK_TRY(vkWaitForFences(device_, 1, &fence_, VK_TRUE, UINT64_MAX), "vkWaitForFences");
-        VC_VK_TRY(vkResetFences(device_, 1, &fence_), "vkResetFences");
-        VC_VK_TRY(vkResetCommandBuffer(commandBuffer_, 0), "vkResetCommandBuffer");
+        VC_VK_TRY(api_.WaitForFences(device_, 1, &fence_, VK_TRUE, UINT64_MAX), "vkWaitForFences");
+        VC_VK_TRY(api_.ResetFences(device_, 1, &fence_), "vkResetFences");
+        VC_VK_TRY(api_.ResetCommandBuffer(commandBuffer_, 0), "vkResetCommandBuffer");
 
         VkCommandBufferBeginInfo beginInfo{}; beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-        VC_VK_TRY(vkBeginCommandBuffer(commandBuffer_, &beginInfo), "vkBeginCommandBuffer");
+        VC_VK_TRY(api_.BeginCommandBuffer(commandBuffer_, &beginInfo), "vkBeginCommandBuffer");
 
         VkClearValue clearValues[2]{};
         clearValues[0].color = {{0.35f, 0.55f, 0.85f, 1.0f}}; // sky
@@ -409,15 +426,15 @@ private:
         rpBegin.renderArea.extent = {width_, height_};
         rpBegin.clearValueCount = 2;
         rpBegin.pClearValues = clearValues;
-        vkCmdBeginRenderPass(commandBuffer_, &rpBegin, VK_SUBPASS_CONTENTS_INLINE);
-        vkCmdBindPipeline(commandBuffer_, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_);
+        api_.CmdBeginRenderPass(commandBuffer_, &rpBegin, VK_SUBPASS_CONTENTS_INLINE);
+        api_.CmdBindPipeline(commandBuffer_, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_);
         VkBuffer vertexBuffers[] = {vertexBuffer_};
         VkDeviceSize offsets[] = {0};
-        vkCmdBindVertexBuffers(commandBuffer_, 0, 1, vertexBuffers, offsets);
-        vkCmdBindIndexBuffer(commandBuffer_, indexBuffer_, 0, VK_INDEX_TYPE_UINT32);
-        vkCmdPushConstants(commandBuffer_, pipelineLayout_, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(float) * 16, viewProj.data());
-        vkCmdDrawIndexed(commandBuffer_, static_cast<uint32_t>(indexCount), 1, 0, 0, 0);
-        vkCmdEndRenderPass(commandBuffer_);
+        api_.CmdBindVertexBuffers(commandBuffer_, 0, 1, vertexBuffers, offsets);
+        api_.CmdBindIndexBuffer(commandBuffer_, indexBuffer_, 0, VK_INDEX_TYPE_UINT32);
+        api_.CmdPushConstants(commandBuffer_, pipelineLayout_, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(float) * 16, viewProj.data());
+        api_.CmdDrawIndexed(commandBuffer_, static_cast<uint32_t>(indexCount), 1, 0, 0, 0);
+        api_.CmdEndRenderPass(commandBuffer_);
 
         // Copy image to the readback buffer.
         VkBufferImageCopy region{};
@@ -426,21 +443,21 @@ private:
         region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         region.imageSubresource.layerCount = 1;
         region.imageExtent = {width_, height_, 1};
-        vkCmdCopyImageToBuffer(commandBuffer_, colorImage_.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, readbackBuffer_, 1, &region);
+        api_.CmdCopyImageToBuffer(commandBuffer_, colorImage_.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, readbackBuffer_, 1, &region);
 
-        VC_VK_TRY(vkEndCommandBuffer(commandBuffer_), "vkEndCommandBuffer");
+        VC_VK_TRY(api_.EndCommandBuffer(commandBuffer_), "vkEndCommandBuffer");
         VkSubmitInfo submit{}; submit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
         submit.commandBufferCount = 1;
         submit.pCommandBuffers = &commandBuffer_;
-        VC_VK_TRY(vkQueueSubmit(queue_, 1, &submit, fence_), "vkQueueSubmit");
-        VC_VK_TRY(vkWaitForFences(device_, 1, &fence_, VK_TRUE, UINT64_MAX), "vkQueueSubmit(wait)");
+        VC_VK_TRY(api_.QueueSubmit(queue_, 1, &submit, fence_), "vkQueueSubmit");
+        VC_VK_TRY(api_.WaitForFences(device_, 1, &fence_, VK_TRUE, UINT64_MAX), "api_.QueueSubmit(wait)");
     }
 
     void readBackAndWritePpm(const char* path) {
         void* data = nullptr;
-        VC_VK_TRY(vkMapMemory(device_, readbackMemory_, 0, static_cast<VkDeviceSize>(width_) * height_ * 4, 0, &data), "vkMapMemory(readback)");
+        VC_VK_TRY(api_.MapMemory(device_, readbackMemory_, 0, static_cast<VkDeviceSize>(width_) * height_ * 4, 0, &data), "api_.MapMemory(readback)");
         std::FILE* f = std::fopen(path, "wb");
-        if (!f) { vkUnmapMemory(device_, readbackMemory_); throw VulkanError(std::string("cannot write ") + path); }
+        if (!f) { api_.UnmapMemory(device_, readbackMemory_); throw VulkanError(std::string("cannot write ") + path); }
         std::fprintf(f, "P6\n%u %u\n255\n", width_, height_);
         const std::uint8_t* px = static_cast<const std::uint8_t*>(data);
         for (std::size_t i = 0; i < static_cast<std::size_t>(width_) * height_; ++i) {
@@ -448,45 +465,46 @@ private:
             std::fwrite(rgb, 1, 3, f);
         }
         std::fclose(f);
-        vkUnmapMemory(device_, readbackMemory_);
+        api_.UnmapMemory(device_, readbackMemory_);
     }
 
     void destroyBuffers() {
-        if (indexBuffer_) vkDestroyBuffer(device_, indexBuffer_, nullptr);
-        if (indexMemory_) vkFreeMemory(device_, indexMemory_, nullptr);
-        if (vertexBuffer_) vkDestroyBuffer(device_, vertexBuffer_, nullptr);
-        if (vertexMemory_) vkFreeMemory(device_, vertexMemory_, nullptr);
-        if (readbackBuffer_) vkDestroyBuffer(device_, readbackBuffer_, nullptr);
-        if (readbackMemory_) vkFreeMemory(device_, readbackMemory_, nullptr);
+        if (indexBuffer_) api_.DestroyBuffer(device_, indexBuffer_, nullptr);
+        if (indexMemory_) api_.FreeMemory(device_, indexMemory_, nullptr);
+        if (vertexBuffer_) api_.DestroyBuffer(device_, vertexBuffer_, nullptr);
+        if (vertexMemory_) api_.FreeMemory(device_, vertexMemory_, nullptr);
+        if (readbackBuffer_) api_.DestroyBuffer(device_, readbackBuffer_, nullptr);
+        if (readbackMemory_) api_.FreeMemory(device_, readbackMemory_, nullptr);
         indexBuffer_ = vertexBuffer_ = readbackBuffer_ = VK_NULL_HANDLE;
         indexMemory_ = vertexMemory_ = readbackMemory_ = VK_NULL_HANDLE;
     }
 
     void destroy() {
         if (!device_) return;
-        vkDeviceWaitIdle(device_);
+        api_.DeviceWaitIdle(device_);
         destroyBuffers();
-        if (fence_) vkDestroyFence(device_, fence_, nullptr);
-        if (commandBuffer_) vkFreeCommandBuffers(device_, commandPool_, 1, &commandBuffer_);
-        if (framebuffer_) vkDestroyFramebuffer(device_, framebuffer_, nullptr);
-        if (pipeline_) vkDestroyPipeline(device_, pipeline_, nullptr);
-        if (pipelineLayout_) vkDestroyPipelineLayout(device_, pipelineLayout_, nullptr);
-        if (renderPass_) vkDestroyRenderPass(device_, renderPass_, nullptr);
-        vkDestroyImageView(device_, colorImage_.view, nullptr);
-        vkDestroyImage(device_, colorImage_.image, nullptr);
-        vkFreeMemory(device_, colorImage_.memory, nullptr);
-        vkDestroyImageView(device_, depthImage_.view, nullptr);
-        vkDestroyImage(device_, depthImage_.image, nullptr);
-        vkFreeMemory(device_, depthImage_.memory, nullptr);
-        if (commandPool_) vkDestroyCommandPool(device_, commandPool_, nullptr);
-        vkDestroyDevice(device_, nullptr);
-        if (instance_) vkDestroyInstance(instance_, nullptr);
+        if (fence_) api_.DestroyFence(device_, fence_, nullptr);
+        if (commandBuffer_) api_.FreeCommandBuffers(device_, commandPool_, 1, &commandBuffer_);
+        if (framebuffer_) api_.DestroyFramebuffer(device_, framebuffer_, nullptr);
+        if (pipeline_) api_.DestroyPipeline(device_, pipeline_, nullptr);
+        if (pipelineLayout_) api_.DestroyPipelineLayout(device_, pipelineLayout_, nullptr);
+        if (renderPass_) api_.DestroyRenderPass(device_, renderPass_, nullptr);
+        api_.DestroyImageView(device_, colorImage_.view, nullptr);
+        api_.DestroyImage(device_, colorImage_.image, nullptr);
+        api_.FreeMemory(device_, colorImage_.memory, nullptr);
+        api_.DestroyImageView(device_, depthImage_.view, nullptr);
+        api_.DestroyImage(device_, depthImage_.image, nullptr);
+        api_.FreeMemory(device_, depthImage_.memory, nullptr);
+        if (commandPool_) api_.DestroyCommandPool(device_, commandPool_, nullptr);
+        api_.DestroyDevice(device_, nullptr);
+        if (instance_) api_.DestroyInstance(instance_, nullptr);
         device_ = VK_NULL_HANDLE;
         instance_ = VK_NULL_HANDLE;
     }
 
     uint32_t width_, height_;
     std::string spvDir_;
+    VulkanAPI api_;
     VkInstance instance_ = VK_NULL_HANDLE;
     VkPhysicalDevice physicalDevice_ = VK_NULL_HANDLE;
     uint32_t graphicsFamily_ = 0;

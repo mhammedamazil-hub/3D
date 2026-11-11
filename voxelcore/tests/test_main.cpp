@@ -236,6 +236,10 @@ static void testNbtRoundtrip() {
 }
 
 static void testChunkSaveLoadRoundtrip() {
+#ifndef VOXELCORE_HAVE_ZLIB
+    std::fprintf(stderr, "SKIP testChunkSaveLoadRoundtrip: zlib not available at configure time\n");
+    return;
+#endif
     const std::string dir = "/tmp/voxelcore_test_region";
     std::filesystem::create_directories(dir);
     const std::string path = dir + "/r.0.0.mca";

@@ -112,22 +112,15 @@ if(VOXELCORE_WITH_VULKAN)
         add_custom_target(voxelcore_shaders ALL COMMAND ${CMAKE_COMMAND} -E echo "voxelcore_shaders: no compiler — runtime will report shader missing")
     endif()
 
-    find_library(VOXELCORE_VULKAN_LIB vulkan)
-    if(VOXELCORE_VULKAN_LIB)
-        add_executable(vulkan_render tools/vulkan_render.cpp)
-        add_dependencies(vulkan_render voxelcore_shaders)
-        target_compile_definitions(vulkan_render PRIVATE VOXELCORE_WITH_VULKAN VOXELCORE_SPV_CONFIG)
-        target_include_directories(vulkan_render PRIVATE "${VOXELCORE_VK_HEADERS_DIR}/include" "${VOXELCORE_SPV_CONFIG_INC}")
-        target_link_libraries(vulkan_render PRIVATE voxelcore_engine "${VOXELCORE_VULKAN_LIB}")
-        message(STATUS "Vulkan loader: ${VOXELCORE_VULKAN_LIB} — vulkan_render enabled")
-    else()
-        message(STATUS "Vulkan loader (libvulkan) not found — vulkan_render target skipped; compile-checking vulkan_headless.hpp instead")
-        add_custom_target(vulkan_headless_check ALL
-            COMMAND ${CMAKE_CXX_COMPILER} -DVOXELCORE_WITH_VULKAN -DVOXELCORE_SPV_CONFIG
-                    -I"${VOXELCORE_VK_HEADERS_DIR}/include" -I"${VOXELCORE_SPV_CONFIG_INC}" -Iengine -O2 -std=c++23 -fsyntax-only
-                    ${CMAKE_CURRENT_SOURCE_DIR}/tools/vulkan_render.cpp
-            DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/tools/vulkan_render.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/engine/rendering/vulkan/vulkan_headless.hpp")
-    endif()
+    # The renderer dlopens libvulkan at runtime (like Android), so the build itself never
+    # requires a system Vulkan loader — only the headers. Runtime absence degrades to a
+    # clean skip (exit 77) instead of a configure/link failure.
+    add_executable(vulkan_render tools/vulkan_render.cpp)
+    add_dependencies(vulkan_render voxelcore_shaders)
+    target_compile_definitions(vulkan_render PRIVATE VOXELCORE_WITH_VULKAN VOXELCORE_SPV_CONFIG)
+    target_include_directories(vulkan_render PRIVATE "${VOXELCORE_VK_HEADERS_DIR}/include" "${VOXELCORE_SPV_CONFIG_INC}")
+    target_link_libraries(vulkan_render PRIVATE voxelcore_engine ${CMAKE_DL_LIBS})
+    message(STATUS "Vulkan: dlopen-based runtime loader — vulkan_render always builds")
 endif()
 
 enable_testing()
