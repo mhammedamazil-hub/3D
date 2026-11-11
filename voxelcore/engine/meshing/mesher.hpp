@@ -194,7 +194,8 @@ private:
                     out.stats.indices += 6;
                     out.stats.faceArea += static_cast<std::uint64_t>(w) * static_cast<std::uint64_t>(h);
 
-                    const float plane = static_cast<float>(slice) + (sign > 0 ? 1.0f : 0.0f);
+                    const int planeOrigin = (axis == 0) ? ox : (axis == 2 ? oz : 0);
+                    const float plane = static_cast<float>(planeOrigin + slice) + (sign > 0 ? 1.0f : 0.0f);
                     Quad q;
                     q.dir = dir;
                     q.block = base.block;

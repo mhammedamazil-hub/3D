@@ -1,5 +1,17 @@
 # REGRESSION REPORT — PROJECT VOXELCORE
 
+## 2026-11-11 — mesher emitted MIXED coordinates for non-origin chunks (fixed in-session, found by E7 records pack)
+Baseline symptom: `packQuadLocal` rejected 48/115 quads when meshing the 64×64 test world across its
+16 chunks (e.g. log side face at absolute (50,21,50) emitted with x=3.0).
+Root cause: `meshDirection` built the plane coordinate as `slice + (sign>0)` — chunk-LOCAL — while the
+in-plane axes used `ox/oz + u/v` — ABSOLUTE — for every axis. Chunk (0,0) was unaffected, which is why the
+entire suite (all mesh tests use pos {0,0}) never caught it; `vulkan_render` over a 4×4-chunk world drew
+all far-chunk side faces stacked in the x/z ∈ [0,16] slab (CI PPM still passed `validate_ppm` non-sky > 1000).
+Fix: `plane = (axis==0 ? ox : axis==2 ? oz : 0) + slice + (sign>0 ? 1 : 0)` in `mesher.hpp`.
+Verified: 64×64 world probe re-run (48 → 0 coordinate-induced rejects), suite 499,210 checks / 0 failures
+(origin-chunk outputs byte-identical). Non-origin chunk meshes are now absolute as documented.
+Lesson: extend internal mesh tests to a non-origin chunk (records_parity now covers the 16-chunk world).
+
 ## 2026-11-11 — greedy mesher `used[]` initialization bug (fixed in-session)
 Baseline symptom: `faceArea (1312) != naiveFaces (704)` on the flat-platform test; buried 9³ cube reported 438 quads instead of 6; tests caught it before commit.
 Root cause: outer greedy-merge loop checked `mask.present` but not `used`, re-emitting already-merged cells as 1×1 quads. Fix: base-cell `used` check. Verified: 6-quad flat platform, 6-quad cube, invariant holds; suite 33,435 checks / 0 failures.

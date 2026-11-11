@@ -126,14 +126,13 @@ int main(int argc, char** argv) {
                 std::vector<std::uint32_t> words;
                 words.reserve(run.size() * 2);
                 for (const Quad& q : run) {
-                    const auto packed = packQuadLocal(q, iOriginX, iOriginZ);
+                    const auto packed = packQuadLocalMulti(q, iOriginX, iOriginZ);
                     if (!packed) {
-                        std::fprintf(stderr, "records_parity: packQuadLocal rejected quad dir=%d x=%.1f y=%.1f z=%.1f u=%.1f v=%.1f\n",
+                        std::fprintf(stderr, "records_parity: packQuadLocalMulti rejected quad dir=%d x=%.1f y=%.1f z=%.1f u=%.1f v=%.1f\n",
                                      static_cast<int>(q.dir), q.x, q.y, q.z, q.u, q.v);
                         return false;
                     }
-                    words.push_back(packed->w0);
-                    words.push_back(packed->w1);
+                    for (const auto& rec : *packed) { words.push_back(rec.w0); words.push_back(rec.w1); }
                 }
                 addDraw(ox, oz, std::move(words));
                 return true;

@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <array>
 #include <optional>
+#include <vector>
 
 namespace vc {
 
@@ -102,6 +103,31 @@ struct PackedRecord { std::uint32_t w0 = 0, w1 = 0; };
     r.ao = q.ao;
     r.light = q.light;
     return packRecord(r);
+}
+
+// Side faces may merge taller than 16 blocks vertically (v up to 64) but records store 4-bit extents.
+// Every cell in a greedy-merged rectangle is cellEqual (block/light/ao all identical), so a vertical
+// split into <=16-row sub-rects reuses q.ao[4]/q.light verbatim — the split is exact, not approximate.
+[[nodiscard]] inline std::optional<std::vector<PackedRecord>> packQuadLocalMulti(const Quad& q, int chunkOriginX, int chunkOriginZ) {
+    std::vector<PackedRecord> out;
+    const bool sideFace = (q.dir == FaceDir::PosX || q.dir == FaceDir::NegX ||
+                           q.dir == FaceDir::PosZ || q.dir == FaceDir::NegZ);
+    if (!sideFace || q.v <= 16.0f) {
+        if (const auto p = packQuadLocal(q, chunkOriginX, chunkOriginZ)) out.push_back(*p); else return std::nullopt;
+        return out;
+    }
+    int remaining = static_cast<int>(q.v);
+    float y = q.y;
+    while (remaining > 16) {
+        Quad sub = q; sub.y = y; sub.v = 16.0f;
+        if (const auto p = packQuadLocal(sub, chunkOriginX, chunkOriginZ)) out.push_back(*p); else return std::nullopt;
+        remaining -= 16; y += 16.0f;
+    }
+    if (remaining > 0) {
+        Quad sub = q; sub.y = y; sub.v = static_cast<float>(remaining);
+        if (const auto p = packQuadLocal(sub, chunkOriginX, chunkOriginZ)) out.push_back(*p); else return std::nullopt;
+    }
+    return out;
 }
 
 } // namespace vc

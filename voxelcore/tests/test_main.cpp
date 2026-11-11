@@ -521,6 +521,32 @@ static void testPackedRecordRoundtrip() {
     CHECK_EQ(back.vExt, 5);
     CHECK_EQ(back.light, 9);
     CHECK_EQ(back.ao[0], 1); CHECK_EQ(back.ao[3], 0);
+    // Tall side face (v=18 merged wall, e.g. world boundary): split into <=16-row records,
+    // preserving ao/light verbatim and advancing y per sub-rect (exactness via greedy cellEqual).
+    vc::Quad wall;
+    wall.dir = vc::FaceDir::PosX; wall.x = 64.0f; wall.y = 0.0f; wall.z = 48.0f; wall.u = 16.0f; wall.v = 18.0f;
+    wall.block = vc::blocks::Stone; wall.ao = {3, 1, 2, 0}; wall.light = 12;
+    const auto split = vc::packQuadLocalMulti(wall, 48, 48);
+    CHECK(split.has_value());
+    CHECK_EQ(split->size(), 2u);
+    if (split && split->size() == 2) {
+        const vc::QuadRecord s0 = vc::unpackRecord((*split)[0]);
+        const vc::QuadRecord s1 = vc::unpackRecord((*split)[1]);
+        CHECK_EQ(s0.uExt, 16); CHECK_EQ(s0.vExt, 16); CHECK_EQ(s0.y, 0);
+        CHECK_EQ(s1.uExt, 16); CHECK_EQ(s1.vExt, 2);  CHECK_EQ(s1.y, 16);
+        CHECK_EQ(static_cast<int>(s0.dir), static_cast<int>(vc::FaceDir::PosX));
+        CHECK_EQ(static_cast<int>(s1.dir), static_cast<int>(vc::FaceDir::PosX));
+        CHECK_EQ(s0.x, 15); CHECK_EQ(s1.x, 15);  // plane x=64 => slice 15 (PosX)
+        CHECK_EQ(s0.light, 12); CHECK_EQ(s1.light, 12);
+        CHECK_EQ(s0.ao[0], 3); CHECK_EQ(s0.ao[3], 0);
+        CHECK_EQ(s1.ao[0], 3); CHECK_EQ(s1.ao[3], 0); // identical AO reused for sub-rects (greedy cellEqual)
+        CHECK_EQ(vc::planeLocal(s0.dir, s0), 16.0f);
+    }
+    // Sub-16 side faces pass through unchanged (single record).
+    vc::Quad wall17 = wall; wall17.v = 16.0f;
+    const auto one = vc::packQuadLocalMulti(wall17, 48, 48);
+    CHECK(one.has_value());
+    CHECK_EQ(one->size(), 1u);
 }
 
 static void testMesherLightIntegration() {
