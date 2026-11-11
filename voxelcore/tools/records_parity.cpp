@@ -221,6 +221,36 @@ int main(int argc, char** argv) {
         }
     }
     rep << "bbox: x[" << minX << "," << maxX << "] y[" << minY << "," << maxY << "]\n";
+    // 7x7 neighborhood around the FIRST differing pixel as hex, for edge-sliver analysis.
+    {
+        const std::size_t o0 = static_cast<std::size_t>(minY) * wa + static_cast<std::size_t>(minX);
+        int cx = minX, cy = minY;
+        (void)o0;
+        const int R = 3;
+        for (int dy = -R; dy <= R; ++dy) {
+            const int py = cy + dy;
+            if (py < 0 || static_cast<std::uint32_t>(py) >= ha) continue;
+            rep << "row y=" << py << " A:";
+            for (int dx = -R; dx <= R; ++dx) {
+                const int px = cx + dx;
+                if (px < 0 || static_cast<std::uint32_t>(px) >= wa) { rep << " ......"; continue; }
+                const std::size_t o = (static_cast<std::size_t>(py) * wa + static_cast<std::size_t>(px)) * 3;
+                char buf[8];
+                std::snprintf(buf, sizeof(buf), " %02x%02x%02x", a[o], a[o + 1], a[o + 2]);
+                rep << buf;
+            }
+            rep << " | B:";
+            for (int dx = -R; dx <= R; ++dx) {
+                const int px = cx + dx;
+                if (px < 0 || static_cast<std::uint32_t>(px) >= wa) { rep << " ......"; continue; }
+                const std::size_t o = (static_cast<std::size_t>(py) * wa + static_cast<std::size_t>(px)) * 3;
+                char buf[8];
+                std::snprintf(buf, sizeof(buf), " %02x%02x%02x", b[o], b[o + 1], b[o + 2]);
+                rep << buf;
+            }
+            rep << "\n";
+        }
+    }
     rep.close();
     std::fprintf(stderr, "records_parity: wrote diagnostic report to %s\n", reportPath.c_str());
     return 1;
