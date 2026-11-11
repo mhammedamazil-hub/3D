@@ -110,15 +110,16 @@ int main(int argc, char** argv) {
     };
     dumpLine("skyline bytes dump:");
         for (const Quad& q : allQuads) {
-            const bool eastSky  = (q.dir == FaceDir::PosX && q.x == 64.0f && q.y == 20.0f && q.z == 0.0f && q.u == 16.0f);
-            const bool topSky   = (q.dir == FaceDir::PosY && q.y == 21.0f && q.x == 48.0f && q.z == 0.0f && q.u == 16.0f && q.v == 16.0f);
-            const bool eastStone16 = (q.dir == FaceDir::PosX && q.x == 64.0f && q.y == 16.0f && q.z == 0.0f);
-            const bool eastDirt    = (q.dir == FaceDir::PosX && q.x == 64.0f && q.y == 18.0f && q.z == 0.0f);
-            if (!eastSky && !topSky && !eastStone16 && !eastDirt) continue;
+            const bool eastStone16 = (q.dir == FaceDir::PosX && q.x == 64.0f && q.block == 1 && q.y <= 16.0f && 16.0f < q.y + q.v);
+            const bool eastDirt    = (q.dir == FaceDir::PosX && q.x == 64.0f && q.block == 2 && q.y <= 18.0f && 18.0f < q.y + q.v);
+            if (!eastStone16 && !eastDirt) continue;
+            Quad sq = q; const float stayY = eastStone16 ? 16.0f : 18.0f;
+            sq.y = stayY; sq.v = std::min(1.0f, q.y + q.v - stayY);
             dumpLine("quad dir=%d x=%.1f y=%.1f z=%.1f u=%.1f v=%.1f hex x=%s y=%s z=%s u=%s v=%s",
                          static_cast<int>(q.dir), q.x, q.y, q.z, q.u, q.v, hex(q.x).c_str(), hex(q.y).c_str(), hex(q.z).c_str(), hex(q.u).c_str(), hex(q.v).c_str());
+            dumpLine("  solo variant: y=%.1f v=%.1f (merged y=%.1f v=%.1f)", sq.y, sq.v, q.y, q.v);
             // expanded path positions
-            const MeshTriangles et = expandQuads(std::vector<Quad>{q});
+            const MeshTriangles et = expandQuads(std::vector<Quad>{sq});
             dumpLine("  expanded verts:");
             for (std::size_t i = 0; i < et.positions.size() / 3; ++i) {
                 dumpLine("    v%zu pos=(%s %s %s)", i, hex(et.positions[i*3+0]).c_str(), hex(et.positions[i*3+1]).c_str(), hex(et.positions[i*3+2]).c_str());
@@ -127,27 +128,26 @@ int main(int argc, char** argv) {
             for (std::uint32_t ix : et.indices) { char b[12]; std::snprintf(b, sizeof(b), " %u", ix); skylineDump += b; }
             dumpLine("");
             // records path reconstruction (mirror of records.vert math, ints -> floats)
-            int ix0 = static_cast<int>(q.x) - 48, iz0 = static_cast<int>(q.z) - 0, iy = (q.dir == FaceDir::PosY) ? static_cast<int>(q.y) - 1 : static_cast<int>(q.y);
-            // for PosX, x stored as slice-1; for PosY, y stored as slice-1, x/z as-is
-            int recX = (q.dir == FaceDir::PosX) ? ix0 - 1 : ix0;
-            int recZ = (q.dir == FaceDir::PosZ) ? iz0 - 1 : iz0;
-            if (q.dir != FaceDir::PosY) iy = static_cast<int>(q.y);
+            const int ix0 = static_cast<int>(sq.x) - 48, iz0 = static_cast<int>(sq.z) - 0;
+            const int iy = static_cast<int>(sq.y);
+            const int recX = (sq.dir == FaceDir::PosX) ? ix0 - 1 : ix0;
+            const int recZ = (sq.dir == FaceDir::PosZ) ? iz0 - 1 : iz0;
             dumpLine("  record decode: rx=%d rz=%d ry=%d uE=%d vE=%d dir=%d block=%u ao=%u,%u,%u,%u light=%u",
-                         recX, recZ, iy, static_cast<int>(q.u), static_cast<int>(q.v), static_cast<int>(q.dir), unsigned(q.block),
-                         unsigned(q.ao[0]), unsigned(q.ao[1]), unsigned(q.ao[2]), unsigned(q.ao[3]), unsigned(q.light));
+                         recX, recZ, iy, static_cast<int>(sq.u), static_cast<int>(sq.v), static_cast<int>(sq.dir), unsigned(sq.block),
+                         unsigned(sq.ao[0]), unsigned(sq.ao[1]), unsigned(sq.ao[2]), unsigned(sq.ao[3]), unsigned(sq.light));
             const float ox = 48.0f, oz = 0.0f;
             dumpLine("  records reconstruct:");
-            if (q.dir == FaceDir::PosX) {
+            if (sq.dir == FaceDir::PosX) {
                 const float xp = static_cast<float>(recX) + 1.0f;
-                const float y0 = static_cast<float>(iy), y1 = y0 + q.v;
-                const float z0 = static_cast<float>(recZ), z1 = z0 + q.u;
+                const float y0 = static_cast<float>(iy), y1 = y0 + sq.v;
+                const float z0 = static_cast<float>(recZ), z1 = z0 + sq.u;
                 const float c[4][3] = {{xp, y0, z0}, {xp, y0, z1}, {xp, y1, z1}, {xp, y1, z0}};
                 for (int i = 0; i < 4; ++i)
                     dumpLine("    c%d absolute=(%s %s %s)", i, hex(c[i][0] + ox).c_str(), hex(c[i][1]).c_str(), hex(c[i][2] + oz).c_str());
-            } else if (q.dir == FaceDir::PosY) {
+            } else if (sq.dir == FaceDir::PosY) {
                 const float yp = static_cast<float>(iy) + 1.0f;
-                const float x0 = static_cast<float>(recX), x1 = x0 + q.u;
-                const float z0 = static_cast<float>(recZ), z1 = z0 + q.v;
+                const float x0 = static_cast<float>(recX), x1 = x0 + sq.u;
+                const float z0 = static_cast<float>(recZ), z1 = z0 + sq.v;
                 const float c[4][3] = {{x0, yp, z0}, {x1, yp, z0}, {x1, yp, z1}, {x0, yp, z1}};
                 for (int i = 0; i < 4; ++i)
                     dumpLine("    c%d absolute=(%s %s %s)", i, hex(c[i][0] + ox).c_str(), hex(c[i][1]).c_str(), hex(c[i][2] + oz).c_str());
@@ -171,6 +171,7 @@ int main(int argc, char** argv) {
     std::uint32_t depthA = 0xdeadbeefu, depthB = 0xdeadbeefu;
     std::uint32_t soloDepthAStone16 = 0xdeadbeefu, soloDepthBStone16 = 0xdeadbeefu;
     std::uint32_t soloDepthADirt = 0xdeadbeefu, soloDepthBDirt = 0xdeadbeefu;
+    std::string soloCandDump;
     try {
         {   // Path A: expanded vertices
             vk::HeadlessRenderer renderer(1280, 960, std::string(VOXELCORE_SPV_DIR));
@@ -353,25 +354,51 @@ int main(int argc, char** argv) {
             // --- Solo probes: render ONLY the deciding east quad in each pipeline ---
             // (ULP-knife sliver; measures whether identical vertex bits rasterize identically)
             {
-                auto findQuad = [&](auto&& pred) -> int {
-                    for (std::size_t i = 0; i < allQuads.size(); ++i)
-                        if (pred(allQuads[i])) return static_cast<int>(i);
+                auto findContaining = [&](std::uint16_t block, std::uint32_t yAbs) -> int {
+                    for (std::size_t i = 0; i < allQuads.size(); ++i) {
+                        const Quad& q = allQuads[i];
+                        if (q.dir == FaceDir::PosX && q.block == block && q.x == 64.0f &&
+                            q.y <= static_cast<float>(yAbs) && static_cast<float>(yAbs) < q.y + q.v)
+                            return static_cast<int>(i);
+                    }
                     return -1;
                 };
                 struct SoloJob { const char* label; std::uint32_t yRec; int qi; };
                 const SoloJob jobs[] = {
-                    {"stone16", 16u, findQuad([](const Quad& q) { return q.dir == FaceDir::PosX && q.x == 64.0f && q.y == 16.0f && q.z == 0.0f && q.block == 1; })},
-                    {"dirt",    18u, findQuad([](const Quad& q) { return q.dir == FaceDir::PosX && q.x == 64.0f && q.y == 18.0f && q.z == 0.0f && q.block == 2; })},
+                    {"stone16", 16u, findContaining(1, 16)},
+                    {"dirt",    18u, findContaining(2, 18)},
                 };
+                for (const SoloJob& job : jobs) {
+                    char buf[256];
+                    if (job.qi >= 0) {
+                        const Quad& q = allQuads[static_cast<std::size_t>(job.qi)];
+                        std::snprintf(buf, sizeof(buf), "solo cand %s qi=%d x=%.1f y=%.1f z=%.1f u=%.1f v=%.1f block=%u ao=%u,%u,%u,%u light=%u\n",
+                                      job.label, job.qi, q.x, q.y, q.z, q.u, q.v, unsigned(q.block),
+                                      unsigned(q.ao[0]), unsigned(q.ao[1]), unsigned(q.ao[2]), unsigned(q.ao[3]), unsigned(q.light));
+                    } else {
+                        std::snprintf(buf, sizeof(buf), "solo cand %s qi=-1 NOT FOUND\n", job.label);
+                    }
+                    soloCandDump += buf;
+                }
                 for (const SoloJob& job : jobs) {
                     std::fprintf(stderr, "records_parity: solo %s quad index=%d\n", job.label, job.qi);
                     if (job.qi < 0) continue;
-                    const std::size_t triOff = static_cast<std::size_t>(job.qi) * 6;
-                    auto sidx = std::vector<std::uint32_t>(tris.indices.begin() + triOff, tris.indices.begin() + triOff + 6);
+                    const Quad& mq = allQuads[static_cast<std::size_t>(job.qi)];
+                    Quad sv = mq; const float stayY = static_cast<float>(job.yRec);
+                    sv.y = stayY; sv.v = std::min(1.0f, mq.y + mq.v - stayY);
+                    const MeshTriangles st = expandQuads(std::vector<Quad>{sv});
+                    std::vector<vk::Vertex> svertices;
+                    {
+                        const std::size_t sn = st.positions.size() / 3;
+                        svertices.reserve(sn);
+                        for (std::size_t i = 0; i < sn; ++i)
+                            svertices.push_back({st.positions[i * 3 + 0], st.positions[i * 3 + 1], st.positions[i * 3 + 2],
+                                                 st.colors[i * 4 + 0], st.colors[i * 4 + 1], st.colors[i * 4 + 2], st.colors[i * 4 + 3]});
+                    }
                     {
                         vk::HeadlessRenderer rs(1280, 960, std::string(VOXELCORE_SPV_DIR));
                         rs.init();
-                        rs.renderToPpm(vertices, sidx, mvp, (pathA + ".solo_" + job.label + ".ppm").c_str());
+                        rs.renderToPpm(svertices, st.indices, mvp, (pathA + ".solo_" + job.label + ".ppm").c_str());
                         const std::uint32_t d = rs.depthAt(844, 300);
                         if (job.yRec == 16u) soloDepthAStone16 = d; else soloDepthADirt = d;
                     }
@@ -548,41 +575,7 @@ int main(int argc, char** argv) {
                       dumpPixel(pathB + ".solo_dirt.ppm").c_str(), soloDepthBDirt);
         rep << sline;
     }
-    // Knife-edge neighborhood dump (the single mismatch pixel sits on a hairline sliver):
-    // print a 13x5 patch around the differing pixel for the key images so the CI annotation
-    // shows WHICH sliver line covers the pixel in each render.
-    {
-        auto dumpPatch = [&](const char* label, const std::string& f, int cx, int cy) {
-            uint32_t w2 = 0, h2 = 0;
-            const auto img = readPpm(f, w2, h2);
-            if (img.empty()) { rep << "patch " << label << ": unreadable\n"; return; }
-            rep << "patch " << label << " (" << cx << "," << cy << "):\n";
-            for (int y = cy - 2; y <= cy + 2; ++y) {
-                rep << "  y=" << y << " ";
-                for (int x = cx - 6; x <= cx + 6; ++x) {
-                    if (x < 0 || y < 0 || static_cast<uint32_t>(x) >= w2 || static_cast<uint32_t>(y) >= h2) { rep << "...... "; continue; }
-                    const std::size_t o = (static_cast<std::size_t>(y) * w2 + x) * 3;
-                    char bfr[8];
-                    std::snprintf(bfr, sizeof(bfr), "%02x%02x%02x ", img[o], img[o + 1], img[o + 2]);
-                    rep << bfr;
-                }
-                rep << "\n";
-            }
-        };
-        if (minX != wa) { // at least one differing pixel
-            const int cx = minX, cy = minY;
-            dumpPatch("A", pathA, cx, cy);
-            dumpPatch("B", pathB, cx, cy);
-            dumpPatch("chunk30", pathB + ".chunk30.ppm", cx, cy);
-            dumpPatch("noeast", pathB + ".noc30_noeast.ppm", cx, cy);
-            dumpPatch("east", pathB + ".east.ppm", cx, cy);
-            dumpPatch("e_grass", pathB + ".east_grass.ppm", cx, cy);
-            dumpPatch("e_dirt", pathB + ".east_dirt.ppm", cx, cy);
-            dumpPatch("e_stone16", pathB + ".east_stone16.ppm", cx, cy);
-            dumpPatch("stone", pathB + ".stone.ppm", cx, cy);
-            dumpPatch("posy", pathB + ".posy.ppm", cx, cy);
-        }
-    }
+    rep << soloCandDump;
     rep << skylineDump;
     rep << "determinism: " << determinism << "\n";
     {
@@ -591,186 +584,11 @@ int main(int argc, char** argv) {
         for (int i = 0; i < 16; ++i) off += std::snprintf(mhex + off, sizeof(mhex) - off, "%s%08x", i ? "," : "", (int)__builtin_bit_cast(std::uint32_t, mvp.data()[i]));
         rep << "mvp_bits: " << mhex << "\n";
     }
-    rep << "bisect (844,300): posy=" << dumpPixel(pathB + ".posy.ppm")
-        << " notposy=" << dumpPixel(pathB + ".notposy.ppm") << "\n";
-    rep << "rev (844,300): A2A=" << dumpPixel(pathA + ".rev.ppm") << " B2B=" << dumpPixel(pathB + ".rev.ppm") << "\n";
-    rep << "targeted (844,300): top=" << dumpPixel(pathB + ".top.ppm")
-        << " stone=" << dumpPixel(pathB + ".stone.ppm")
-        << " topstone=" << dumpPixel(pathB + ".topstone.ppm") << "\n";
-    rep << "surgical (844,300): east=" << dumpPixel(pathB + ".east.ppm")
-        << " chunk30=" << dumpPixel(pathB + ".chunk30.ppm")
-        << " noc30=" << dumpPixel(pathB + ".noc30.ppm")
-        << " noc30_noeast=" << dumpPixel(pathB + ".noc30_noeast.ppm") << "\n";
     rep << "eastrec (844,300): grass=" << dumpPixel(pathB + ".east_grass.ppm")
         << " dirt=" << dumpPixel(pathB + ".east_dirt.ppm")
         << " stone16=" << dumpPixel(pathB + ".east_stone16.ppm")
         << " stone0=" << dumpPixel(pathB + ".east_stone0.ppm") << "\n";
     rep << "bbox: x[" << minX << "," << maxX << "] y[" << minY << "," << maxY << "]\n";
-    // CPU-side coverage analysis for the first differing pixel: project every quad's triangles
-    // with the same matrices used for the renders and list which cover the pixel center.
-    {
-        const int cx = minX, cy = minY;
-        const float px = static_cast<float>(cx) + 0.5f, py = static_cast<float>(cy) + 0.5f;
-        auto project = [&](float x, float y, float z, float& sx, float& sy, float& sz) {
-            const float vx[4] = {x, y, z, 1.0f};
-            float clip[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-            for (int col = 0; col < 4; ++col)
-                for (int row = 0; row < 4; ++row) clip[row] += mvp[col * 4 + row] * vx[col];
-            const float invW = 1.0f / clip[3];
-            const float ndcX = clip[0] * invW, ndcY = clip[1] * invW;
-            sx = (ndcX + 1.0f) * 0.5f * static_cast<float>(wa);
-            sy = (1.0f + ndcY) * 0.5f * static_cast<float>(ha); // Vulkan viewport y-down; projection already Y-flips
-            sz = clip[2] * invW;
-        };
-        auto covers = [&](const std::array<std::array<float,3>,3>& p) {
-            float e[3];
-            for (int i = 0; i < 3; ++i) {
-                const int j = (i + 1) % 3;
-                e[i] = (px - p[i][0]) * (p[j][1] - p[i][1]) - (py - p[i][1]) * (p[j][0] - p[i][0]);
-            }
-            const bool hasNeg = (e[0] < 0) || (e[1] < 0) || (e[2] < 0);
-            const bool hasPos = (e[0] > 0) || (e[1] > 0) || (e[2] > 0);
-            return !(hasNeg && hasPos);
-        };
-        auto emitTris = [&](const Quad& q, std::vector<std::array<std::array<float,3>,3>>& out) {
-            float c[4][3];
-            switch (q.dir) {
-                case FaceDir::PosX: case FaceDir::NegX: {
-                    const float x = q.x, z0 = q.z, y0 = q.y, z1 = z0 + q.u, y1 = y0 + q.v;
-                    c[0][0]=x; c[0][1]=y0; c[0][2]=z0; c[1][0]=x; c[1][1]=y0; c[1][2]=z1;
-                    c[2][0]=x; c[2][1]=y1; c[2][2]=z1; c[3][0]=x; c[3][1]=y1; c[3][2]=z0; break; }
-                case FaceDir::PosY: case FaceDir::NegY: {
-                    const float y = q.y, x0 = q.x, z0 = q.z, x1 = x0 + q.u, z1 = z0 + q.v;
-                    c[0][0]=x0; c[0][1]=y; c[0][2]=z0; c[1][0]=x1; c[1][1]=y; c[1][2]=z0;
-                    c[2][0]=x1; c[2][1]=y; c[2][2]=z1; c[3][0]=x0; c[3][1]=y; c[3][2]=z1; break; }
-                case FaceDir::PosZ: case FaceDir::NegZ: {
-                    const float z = q.z, x0 = q.x, y0 = q.y, x1 = x0 + q.u, y1 = y0 + q.v;
-                    c[0][0]=x0; c[0][1]=y0; c[0][2]=z; c[1][0]=x1; c[1][1]=y0; c[1][2]=z;
-                    c[2][0]=x1; c[2][1]=y1; c[2][2]=z; c[3][0]=x0; c[3][1]=y1; c[3][2]=z; break; }
-            }
-            const bool flip = (q.dir == FaceDir::NegX || q.dir == FaceDir::NegY || q.dir == FaceDir::PosZ);
-            const std::array<int,6> oArr = flip ? std::array<int,6>{0,2,1,0,3,2} : std::array<int,6>{0,1,2,0,2,3};
-            float sp[4][3];
-            for (int i = 0; i < 4; ++i) project(c[i][0], c[i][1], c[i][2], sp[i][0], sp[i][1], sp[i][2]);
-            auto toArr = [&sp](int i) { return std::array<float,3>{sp[i][0], sp[i][1], sp[i][2]}; };
-            std::array<std::array<float,3>,3> t1{{toArr(oArr[0]), toArr(oArr[1]), toArr(oArr[2])}};
-            std::array<std::array<float,3>,3> t2{{toArr(oArr[3]), toArr(oArr[4]), toArr(oArr[5])}};
-            out.push_back(t1);
-            out.push_back(t2);
-        };
-        // Instead of binary coverage, report the N triangles with an edge closest to the pixel center
-        // (lavapipe's fixed-point snap can include a pixel that exact float math excludes).
-        struct EdgeCand { float dist; std::size_t qi, ti; Quad v; };
-        std::vector<EdgeCand> cands;
-        std::size_t qi = 0;
-        for (const auto& [pos, quads] : chunkMeshes) { (void)pos;
-            for (const Quad& q : quads) {
-                ++qi;
-                std::vector<Quad> variants{q};
-                const bool side = (q.dir == FaceDir::PosX || q.dir == FaceDir::NegX || q.dir == FaceDir::PosZ || q.dir == FaceDir::NegZ);
-                if (side && q.v > 16.0f) {
-                    variants.clear();
-                    int remaining = static_cast<int>(q.v);
-                    float y = q.y;
-                    while (remaining > 16) { Quad sub = q; sub.y = y; sub.v = 16.0f; variants.push_back(sub); remaining -= 16; y += 16.0f; }
-                    Quad sub = q; sub.y = y; sub.v = static_cast<float>(remaining); variants.push_back(sub);
-                }
-                for (const Quad& v : variants) {
-                    std::vector<std::array<std::array<float,3>,3>> tris;
-                    emitTris(v, tris);
-                    for (std::size_t ti = 0; ti < tris.size(); ++ti) {
-                        const auto& t = tris[ti];
-                        // distance from pixel center to each triangle edge (2D)
-                        float maxd = 1e30f, mind = 0.0f;
-                        for (int i = 0; i < 3; ++i) {
-                            const int j = (i + 1) % 3;
-                            const float ax = t[i][0], ay = t[i][1], bx = t[j][0], by = t[j][1];
-                            const float ex = bx - ax, ey = by - ay;
-                            const float len = std::sqrt(ex * ex + ey * ey);
-                            const float d = std::fabs((px - ax) * ey - (py - ay) * ex) / std::max(len, 1e-9f);
-                            mind = std::max(mind, 0.0f);
-                            maxd = std::min(maxd, d);
-                        }
-                        (void)mind;
-                        if (maxd < 3.0f) cands.push_back({maxd, qi, ti, v});
-                    }
-                }
-            }
-        }
-        // Coverage list with the (now fixed) projection: EVERY triangle containing the pixel center.
-        std::size_t covCount = 0;
-        rep << "containing triangles:\n";
-        qi = 0;
-        for (const auto& [pos, quads] : chunkMeshes) { (void)pos;
-            for (const Quad& q : quads) {
-                ++qi;
-                std::vector<Quad> variants{q};
-                const bool side = (q.dir == FaceDir::PosX || q.dir == FaceDir::NegX || q.dir == FaceDir::PosZ || q.dir == FaceDir::NegZ);
-                if (side && q.v > 16.0f) {
-                    variants.clear();
-                    int remaining = static_cast<int>(q.v);
-                    float y = q.y;
-                    while (remaining > 16) { Quad sub = q; sub.y = y; sub.v = 16.0f; variants.push_back(sub); remaining -= 16; y += 16.0f; }
-                    Quad sub = q; sub.y = y; sub.v = static_cast<float>(remaining); variants.push_back(sub);
-                }
-                for (const Quad& v : variants) {
-                    std::vector<std::array<std::array<float,3>,3>> tris;
-                    emitTris(v, tris);
-                    for (std::size_t ti = 0; ti < tris.size(); ++ti) {
-                        if (covers(tris[ti])) {
-                            rep << "  cover quad#" << qi << " tri" << ti << " dir=" << int(v.dir)
-                                << " block=" << unsigned(v.block) << " x=" << v.x << " y=" << v.y << " z=" << v.z
-                                << " u=" << v.u << " v=" << v.v
-                                << " ao=[" << int(v.ao[0]) << ',' << int(v.ao[1]) << ',' << int(v.ao[2]) << ',' << int(v.ao[3]) << ']'
-                                << " light=" << int(v.light) << "\n";
-                            ++covCount;
-                        }
-                    }
-                }
-            }
-        }
-        rep << "containing triangles: " << covCount << "\n";
-        std::sort(cands.begin(), cands.end(), [](const EdgeCand& a, const EdgeCand& b) { return a.dist < b.dist; });
-        rep << "nearest-edge triangles (dist px):\n";
-        for (std::size_t k = 0; k < cands.size() && k < 10; ++k) {
-            const Quad& v = cands[k].v;
-            rep << "  quad#" << cands[k].qi << " tri" << cands[k].ti << " dist=" << cands[k].dist
-                << " dir=" << int(v.dir) << " block=" << unsigned(v.block)
-                << " x=" << v.x << " y=" << v.y << " z=" << v.z << " u=" << v.u << " v=" << v.v
-                << " ao=[" << int(v.ao[0]) << ',' << int(v.ao[1]) << ',' << int(v.ao[2]) << ',' << int(v.ao[3]) << ']'
-                << " light=" << int(v.light) << "\n";
-        }
-    }
-    // 7x7 neighborhood around the FIRST differing pixel as hex, for edge-sliver analysis.
-    {
-        const std::size_t o0 = static_cast<std::size_t>(minY) * wa + static_cast<std::size_t>(minX);
-        int cx = minX, cy = minY;
-        (void)o0;
-        const int R = 3;
-        for (int dy = -R; dy <= R; ++dy) {
-            const int py = cy + dy;
-            if (py < 0 || static_cast<std::uint32_t>(py) >= ha) continue;
-            rep << "row y=" << py << " A:";
-            for (int dx = -R; dx <= R; ++dx) {
-                const int px = cx + dx;
-                if (px < 0 || static_cast<std::uint32_t>(px) >= wa) { rep << " ......"; continue; }
-                const std::size_t o = (static_cast<std::size_t>(py) * wa + static_cast<std::size_t>(px)) * 3;
-                char buf[8];
-                std::snprintf(buf, sizeof(buf), " %02x%02x%02x", a[o], a[o + 1], a[o + 2]);
-                rep << buf;
-            }
-            rep << " | B:";
-            for (int dx = -R; dx <= R; ++dx) {
-                const int px = cx + dx;
-                if (px < 0 || static_cast<std::uint32_t>(px) >= wa) { rep << " ......"; continue; }
-                const std::size_t o = (static_cast<std::size_t>(py) * wa + static_cast<std::size_t>(px)) * 3;
-                char buf[8];
-                std::snprintf(buf, sizeof(buf), " %02x%02x%02x", b[o], b[o + 1], b[o + 2]);
-                rep << buf;
-            }
-            rep << "\n";
-        }
-    }
     rep.close();
     std::fprintf(stderr, "records_parity: wrote diagnostic report to %s\n", reportPath.c_str());
     return 1;
