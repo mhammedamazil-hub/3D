@@ -23,8 +23,11 @@ Living list. Every entry: purpose, cost, complexity, hardware dependence, status
 - Hypothesis: mesh time dominated by unordered_map lookups (~2 ms/chunk). Expected: 2–5× mesh speedup.
 - Risk: stale pointer if chunk map rehashes → guard by map generation counter. Measure before adopting.
 
-## E6. Side-bucket ordering (7 buckets, opaque/cutout split) — **STAGE 6**
-- Purpose: 1–2 draw runs per eye-visible set; skip hidden buckets entirely. From Horizon `mesher/sides.rs`. Risk: low. Cost: one sort by bucket at upload.
+## E6. Side-bucket ordering (7 buckets, opaque/cutout split) — **DONE (2026-11-11)**
+- Implemented: mesh output stably 7-way partitioned into buckets (+X=0, +Z=1, other=2 reserved, +Y=3, −Z=4, −X=5, −Y=6) with `bucketEnd[8]` exclusive-offset table in `Result`; single-cursor scatter (O(n), one temp vector) instead of `std::stable_sort` after measurement showed +7.5% → +0.8%.
+- Tests: non-decreasing bucket order; `bucketEnd` boundaries match the sorted layout exactly; suite green (193,870 checks).
+- Cost measured: 1.359 → 1.370 ms/chunk greedy mesh (<1%). Coplanar insertion order preserved per bucket.
+- Cutout/opaque split deferred to draw time (software renderer two passes; Vulkan single pass with alpha blend) — revisit with packed records (E7).
 
 ## E7. Packed 24-byte quad records + vertex pulling — **STAGE 6/13**
 - Purpose: 4× vertex-bandwidth reduction for cube faces (majority). Horizon proves via `packed.rs` + `terrain.wgsl`. Requires AO-in-record layout change (2 bits/corner) — design task first.

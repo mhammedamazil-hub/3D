@@ -37,13 +37,16 @@ public:
     }
 
     // Draw the quads of one chunk mesh with per-corner AO shading.
-    // Opaque quads facing away from the camera are skipped (backface culling);
-    // cutout/translucent quads draw both sides.
+    // Pass 1 (opaque + cutout): backface-culled, z-buffered with depth writes.
+    // Pass 2 (water/translucent): both-sided, depth-tested (against pass-1 depth) but no depth
+    // writes, alpha-blended back-to-front (painter's algorithm) so nested water sorts correctly.
     void drawQuads(const std::vector<Quad>& quads, float originX, float originZ) {
         const float fwdX = camera.targetX - camera.eyeX, fwdY = camera.targetY - camera.eyeY, fwdZ = camera.targetZ - camera.eyeZ;
+        // --- Pass 1: opaque + cutout ---
         for (const Quad& q : quads) {
-            const bool open = (q.block == blocks::Leaves || q.block == blocks::Water);
-            if (!open) {
+            if (q.block == blocks::Water) continue; // deferred to pass 2
+            const bool cutout = (q.block == blocks::Leaves);
+            if (!cutout) {
                 float nx = 0, ny = 0, nz = 0;
                 switch (q.dir) {
                     case FaceDir::PosX: nx = 1; break; case FaceDir::NegX: nx = -1; break;
@@ -53,16 +56,34 @@ public:
                 // Skip if the face normal points away from the camera.
                 if (nx * fwdX + ny * fwdY + nz * fwdZ >= 0.0f) continue;
             }
-            // 4 corners of the rect in absolute coords.
-            float c[4][3];
-            quadCorners(q, originX, originZ, c);
-            // Two triangles: 0,1,2 and 0,2,3. AO per corner.
-            const std::uint32_t base = vc::faceColor(q.block);
-            const std::uint32_t c0 = vc::shadeFace(base, q.ao[0]), c1 = vc::shadeFace(base, q.ao[1]);
-            const std::uint32_t c2 = vc::shadeFace(base, q.ao[2]), c3 = vc::shadeFace(base, q.ao[3]);
-            drawTriangle(c[0], c[1], c[2], c0, c1, c2);
-            drawTriangle(c[0], c[2], c[3], c0, c2, c3);
+            drawOneQuad(q, originX, originZ, /*blend=*/false);
         }
+        // --- Pass 2: translucent (water), far to near ---
+        struct WaterItem { const Quad* q; float distSq; };
+        std::vector<WaterItem> water;
+        for (const Quad& q : quads) {
+            if (q.block != blocks::Water) continue;
+            float cx = q.x, cy = q.y, cz = q.z;
+            switch (q.dir) {
+                case FaceDir::PosX: case FaceDir::NegX: cx += 0.0f; cy += q.v * 0.5f; cz += q.u * 0.5f; break;
+                case FaceDir::PosY: case FaceDir::NegY: cx += q.u * 0.5f; cz += q.v * 0.5f; break;
+                case FaceDir::PosZ: case FaceDir::NegZ: cx += q.u * 0.5f; cy += q.v * 0.5f; break;
+            }
+            // Quad coords are absolute world coords (originX/originZ unused by the mesher today).
+            const float dx = cx - camera.eyeX, dy = cy - camera.eyeY, dz = cz - camera.eyeZ;
+            water.push_back({&q, dx * dx + dy * dy + dz * dz});
+        }
+        std::stable_sort(water.begin(), water.end(), [](const WaterItem& a, const WaterItem& b) { return a.distSq > b.distSq; });
+        for (const WaterItem& w : water) drawOneQuad(*w.q, originX, originZ, /*blend=*/true);
+    }
+
+    static std::uint32_t blendOver(std::uint32_t src, std::uint32_t dst) {
+        const float a = static_cast<float>((src >> 24) & 0xFF) / 255.0f;
+        const float inv = 1.0f - a;
+        const std::uint32_t r = static_cast<std::uint32_t>(((src >> 16) & 0xFF) * a + ((dst >> 16) & 0xFF) * inv + 0.5f);
+        const std::uint32_t g = static_cast<std::uint32_t>(((src >> 8) & 0xFF) * a + ((dst >> 8) & 0xFF) * inv + 0.5f);
+        const std::uint32_t b = static_cast<std::uint32_t>((src & 0xFF) * a + (dst & 0xFF) * inv + 0.5f);
+        return 0xFF000000u | (r << 16) | (g << 8) | b;
     }
 
     const std::vector<std::uint32_t>& pixels() const { return color_; }
@@ -108,6 +129,16 @@ private:
         (void)ox; (void)oz;
     }
 
+    void drawOneQuad(const Quad& q, float originX, float originZ, bool blend) {
+        float c[4][3];
+        quadCorners(q, originX, originZ, c);
+        const std::uint32_t base = vc::faceColor(q.block);
+        const std::uint32_t c0 = vc::shadeFace(base, q.ao[0]), c1 = vc::shadeFace(base, q.ao[1]);
+        const std::uint32_t c2 = vc::shadeFace(base, q.ao[2]), c3 = vc::shadeFace(base, q.ao[3]);
+        drawTriangle(c[0], c[1], c[2], c0, c1, c2, blend);
+        drawTriangle(c[0], c[2], c[3], c0, c2, c3, blend);
+    }
+
     // --- projection (simple look-at, row-major, right-handed) ---
     void buildBasis(float fwd[3], float right[3], float up[3]) const {
         const float fx = camera.targetX - camera.eyeX, fy = camera.targetY - camera.eyeY, fz = camera.targetZ - camera.eyeZ;
@@ -139,14 +170,14 @@ private:
     }
 
     std::uint32_t lerpColor(std::uint32_t a, std::uint32_t b, float t) const {
-        const int ar=(a>>16)&0xFF, ag=(a>>8)&0xFF, ab=a&0xFF;
-        const int br=(b>>16)&0xFF, bg=(b>>8)&0xFF, bb=b&0xFF;
-        const int r=static_cast<int>(ar+(br-ar)*t), g=static_cast<int>(ag+(bg-ag)*t), bl=static_cast<int>(ab+(bb-ab)*t);
-        return 0xFF000000u | (static_cast<std::uint32_t>(r)<<16) | (static_cast<std::uint32_t>(g)<<8) | static_cast<std::uint32_t>(bl);
+        const int ar=(a>>16)&0xFF, ag=(a>>8)&0xFF, ab=a&0xFF, aa=(a>>24)&0xFF;
+        const int br=(b>>16)&0xFF, bg=(b>>8)&0xFF, bb=b&0xFF, ba=(b>>24)&0xFF;
+        const int r=static_cast<int>(ar+(br-ar)*t), g=static_cast<int>(ag+(bg-ag)*t), bl=static_cast<int>(ab+(bb-ab)*t), al=static_cast<int>(aa+(ba-aa)*t);
+        return (static_cast<std::uint32_t>(al)<<24) | (static_cast<std::uint32_t>(r)<<16) | (static_cast<std::uint32_t>(g)<<8) | static_cast<std::uint32_t>(bl);
     }
 
     void drawTriangle(const float p0[3], const float p1[3], const float p2[3],
-                      std::uint32_t c0, std::uint32_t c1, std::uint32_t c2) {
+                      std::uint32_t c0, std::uint32_t c1, std::uint32_t c2, bool blend = false) {
         float sx0, sy0, d0, sx1, sy1, d1, sx2, sy2, d2;
         if (!project(p0, sx0, sy0, d0)) return;
         if (!project(p1, sx1, sy1, d1)) return;
@@ -165,11 +196,15 @@ private:
                 if (w0 < 0 || w1 < 0 || w2 < 0) continue;
                 const float z = w0 * d0 + w1 * d1 + w2 * d2;
                 const std::size_t idx = static_cast<std::size_t>(py) * width_ + px;
-                if (z >= depth_[idx]) continue;
-                depth_[idx] = z;
+                if (z >= depth_[idx]) continue; // already occluded
                 // Perspective-correct-ish color interp (affine is fine for tiny tris).
-                std::uint32_t col = lerpColor(lerpColor(c0, c1, w1 / (w0 + w1 + 1e-9f)), c2, w2);
-                color_[idx] = col;
+                const std::uint32_t col = lerpColor(lerpColor(c0, c1, w1 / (w0 + w1 + 1e-9f)), c2, w2);
+                if (blend) {
+                    color_[idx] = blendOver(col, color_[idx]); // no depth write: water is transparent
+                } else {
+                    depth_[idx] = z;
+                    color_[idx] = col;
+                }
             }
         }
     }

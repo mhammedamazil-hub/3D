@@ -27,3 +27,12 @@ job_system_parallel_for_1M: 24468 -> 23657 us
 ```
 ## 2026-11-11 — run 4 (software renderer backface culling)
 Headless 640x360 frame: ~32 -> ~22 ms (opaque quads only).
+## 2026-11-11 — run 5 (after E6 side-bucket partition, commit pending)
+```
+greedy_mesh_generated_chunk,20,27.398,1369.885
+greedy_mesh_generated_chunk,20,27.415,1370.735
+greedy_mesh_generated_chunk,20,27.410,1370.517
+```
+Notes: E6 partition (O(n) cursor scatter, one temp vector) costs ≈ +0.8% vs 1359 us pre-E6.
+An earlier `std::stable_sort` implementation measured +7.5% (1460-1514 us) and was replaced.
+ASan/UBSan: 193,870 checks, 0 failures.

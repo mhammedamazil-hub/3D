@@ -12,7 +12,7 @@ inline std::uint32_t faceColor(BlockId b) {
         case blocks::Dirt:   return 0xFF79553A;
         case blocks::Stone:  return 0xFF888888;
         case blocks::Sand:   return 0xFFD6CCA1;
-        case blocks::Water:  return 0xFF3F6FD6;
+        case blocks::Water:  return 0x9F3F6FD6; // translucent (alpha ~0.62)
         case blocks::Log:    return 0xFF6B4A2B;
         case blocks::Leaves: return 0xFF2F6B2F;
         case blocks::Bedrock:return 0xFF333333;
@@ -26,7 +26,7 @@ inline std::uint32_t shadeFace(std::uint32_t argb, std::uint8_t ao) {
     const std::uint32_t r = static_cast<std::uint32_t>(((argb >> 16) & 0xFF) * k);
     const std::uint32_t g = static_cast<std::uint32_t>(((argb >> 8) & 0xFF) * k);
     const std::uint32_t b = static_cast<std::uint32_t>((argb & 0xFF) * k);
-    return 0xFF000000u | (r << 16) | (g << 8) | b;
+    return (argb & 0xFF000000u) | (r << 16) | (g << 8) | b; // preserve source alpha
 }
 
 // Opaque face vs open (cutout/translucent) block.

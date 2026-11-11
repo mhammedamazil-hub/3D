@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
     vertices.reserve(vcount);
     for (std::size_t i = 0; i < vcount; ++i) {
         vertices.push_back({tris.positions[i * 3 + 0], tris.positions[i * 3 + 1], tris.positions[i * 3 + 2],
-                            tris.colors[i * 3 + 0], tris.colors[i * 3 + 1], tris.colors[i * 3 + 2], 1.0f});
+                            tris.colors[i * 4 + 0], tris.colors[i * 4 + 1], tris.colors[i * 4 + 2], tris.colors[i * 4 + 3]});
     }
     const math::Vec3 eye{64.0f, 42.0f, 90.0f}, target{54.0f, 20.0f, 50.0f}, up{0.0f, 1.0f, 0.0f};
     const math::Mat4 view = math::lookAtRH(eye, target, up);

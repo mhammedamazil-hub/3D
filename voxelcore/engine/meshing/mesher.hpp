@@ -20,6 +20,7 @@
 #include <cstdint>
 #include <functional>
 #include <vector>
+#include <algorithm>
 #include <array>
 
 namespace vc {
@@ -38,6 +39,20 @@ struct Quad {
     std::array<std::uint8_t, 4> ao = {3, 3, 3, 3}; // per corner, 3 = unoccluded (order: (-u,-v),(+u,-v),(+u,+v),(-u,+v))
 };
 
+// Horizon-compatible side buckets (mesher/sides.rs): +X, +Z, other, +Y, -Z, -X, -Y.
+// Ordering mesh output by bucket keeps the eye-facing runs to ~1-2 buckets per frame.
+// "other" (index 2) is reserved for future non-cube faces (E7/E9); the loop below never emits it.
+inline std::uint32_t sideBucket(FaceDir d) {
+    switch (d) {
+        case FaceDir::PosX: return 0;
+        case FaceDir::PosZ: return 1;
+        case FaceDir::PosY: return 3;
+        case FaceDir::NegZ: return 4;
+        case FaceDir::NegX: return 5;
+        case FaceDir::NegY: return 6;
+    }
+    return 2;
+}
 struct MeshStats {
     std::uint64_t quads = 0;
     std::uint64_t vertices = 0;
@@ -51,6 +66,10 @@ public:
     struct Result {
         std::vector<Quad> quads;
         MeshStats stats;
+        // 8 boundaries: bucketEnd[b] = exclusive end offset of bucket b (sideBucket(dir), 0..6).
+        // Bucket b occupies quads[bucketEnd[b-1] .. bucketEnd[b]) (bucketEnd[-1] treated as 0).
+        // bucketEnd[7] == quads.size(). quads are stably sorted by bucket (coplanar order preserved).
+        std::array<std::size_t, 8> bucketEnd = {0, 0, 0, 0, 0, 0, 0, 0};
     };
 
     Result mesh(ChunkPos pos, const BlockReader& read) const {
@@ -67,6 +86,21 @@ public:
         const int ox = pos.x * 16, oz = pos.z * 16;
         const int camComponent = culler.cameraComponent(cameraCell[0], cameraCell[1], cameraCell[2]);
         for (int d = 0; d < 6; ++d) meshDirection(static_cast<FaceDir>(d), ox, oz, read, culler, camComponent, out);
+        // E6: stable 7-way partition into side buckets (single cursor scatter, O(n));
+        // coplanar insertion order preserved inside each bucket.
+        std::array<std::size_t, 7> cursor{};
+        for (const Quad& q : out.quads) cursor[sideBucket(q.dir)]++;
+        std::size_t acc = 0;
+        for (std::size_t b = 0; b < 7; ++b) { const std::size_t c = cursor[b]; cursor[b] = acc; acc += c; }
+        std::vector<Quad> sorted(out.quads.size());
+        for (const Quad& q : out.quads) sorted[cursor[sideBucket(q.dir)]++] = q;
+        out.quads = std::move(sorted);
+        std::size_t qi = 0;
+        for (std::size_t b = 0; b < 7; ++b) {
+            while (qi < out.quads.size() && sideBucket(out.quads[qi].dir) == b) ++qi;
+            out.bucketEnd[b] = qi;
+        }
+        out.bucketEnd[7] = out.quads.size();
         return out;
     }
 

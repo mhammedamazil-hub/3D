@@ -8,14 +8,14 @@ namespace vc {
 
 struct MeshTriangles {
     std::vector<float> positions; // xyz triplets
-    std::vector<float> colors;    // rgb triplets, AO-shaded
+    std::vector<float> colors;    // rgba quadruplets, AO-shaded (alpha < 1 for water)
     std::vector<std::uint32_t> indices;
 };
 
 inline MeshTriangles expandQuads(const std::vector<Quad>& quads) {
     MeshTriangles out;
     out.positions.reserve(quads.size() * 12);
-    out.colors.reserve(quads.size() * 12);
+    out.colors.reserve(quads.size() * 16);
     out.indices.reserve(quads.size() * 6);
     for (const Quad& q : quads) {
         float c[4][3];
@@ -48,6 +48,7 @@ inline MeshTriangles expandQuads(const std::vector<Quad>& quads) {
             out.colors.push_back(((col >> 16) & 0xFF) / 255.0f);
             out.colors.push_back(((col >> 8) & 0xFF) / 255.0f);
             out.colors.push_back((col & 0xFF) / 255.0f);
+            out.colors.push_back(((col >> 24) & 0xFF) / 255.0f);
         }
         // Consistent winding per face so a future backface-culling pass is well-defined.
         const bool flip = (q.dir == FaceDir::NegX || q.dir == FaceDir::NegY || q.dir == FaceDir::PosZ);

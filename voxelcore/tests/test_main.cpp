@@ -14,6 +14,7 @@
 #include "../engine/storage/chunk_io.hpp"
 #include "../engine/storage/zlib.hpp"
 #include "../engine/visibility/cave_culling.hpp"
+#include "../engine/rendering/software_renderer.hpp"
 #include <fstream>
 #include <filesystem>
 #include <cstdio>
@@ -340,6 +341,70 @@ static void testCaveCulling() {
              expectedSealedFaces);
 }
 
+static void testSideBuckets() {
+    vc::World world;
+    for (int y = 0; y <= 8; ++y)
+        for (int z = 0; z < 16; ++z)
+            for (int x = 0; x < 16; ++x)
+                world.setBlock(x, y, z, y == 8 ? vc::blocks::Grass : vc::blocks::Stone);
+    const vc::CachedBlockReader reader(world);
+    const vc::GreedyMesher mesher;
+    const auto mesh = mesher.mesh({0, 0}, reader);
+    CHECK(!mesh.quads.empty());
+    // Non-decreasing bucket order.
+    for (std::size_t i = 1; i < mesh.quads.size(); ++i)
+        CHECK(vc::sideBucket(mesh.quads[i - 1].dir) <= vc::sideBucket(mesh.quads[i].dir));
+    // bucketEnd is consistent with the sorted order.
+    std::size_t prev = 0;
+    for (std::size_t b = 0; b < 7; ++b) {
+        CHECK(mesh.bucketEnd[b] >= prev);
+        for (std::size_t i = prev; i < mesh.bucketEnd[b]; ++i)
+            CHECK_EQ(vc::sideBucket(mesh.quads[i].dir), (std::uint32_t)b);
+        prev = mesh.bucketEnd[b];
+    }
+    CHECK_EQ(mesh.bucketEnd[7], mesh.quads.size());
+    // +Y bucket must be non-trivial here (flat grass top).
+    CHECK(mesh.bucketEnd[3] > mesh.bucketEnd[2]);
+}
+
+static void testTranslucentWaterDraw() {
+    // Sky-colored buffer + a single water quad facing the camera: the result must be a
+    // blend of sky and water, strictly between the two on every channel.
+    vc::SoftwareRenderer renderer;
+    renderer.resize(64, 64);
+    renderer.clear(0xFF202830u);
+    renderer.camera.eyeX = 8; renderer.camera.eyeY = 2; renderer.camera.eyeZ = -8;
+    renderer.camera.targetX = 8; renderer.camera.targetY = 2; renderer.camera.targetZ = 16;
+    renderer.camera.fovDeg = 90; renderer.camera.aspect = 1.0f;
+    vc::Quad water;
+    water.dir = vc::FaceDir::PosZ;
+    water.x = 4; water.y = -2; water.z = 4; water.u = 8; water.v = 8; // 8x8 face
+    water.block = vc::blocks::Water;
+    water.ao = {3, 3, 3, 3};
+    renderer.drawQuads({water}, 0, 0);
+    const auto& px = renderer.pixels();
+    const std::uint32_t center = px[32 * 64 + 32];
+    // Must differ from clear sky and not equal the raw water color (it is blended).
+    CHECK(center != 0xFF202830u);
+    const int cr = (center >> 16) & 0xFF, cg = (center >> 8) & 0xFF, cb = center & 0xFF;
+    const int sky_r = 0x20, sky_g = 0x28, sky_b = 0x30;
+    const int wat_r = 0x3F, wat_g = 0x6F, wat_b = 0xD6;
+    const int lo_r = std::min(sky_r, wat_r) - 1, hi_r = std::max(sky_r, wat_r) + 1;
+    const int lo_g = std::min(sky_g, wat_g) - 1, hi_g = std::max(sky_g, wat_g) + 1;
+    const int lo_b = std::min(sky_b, wat_b) - 1, hi_b = std::max(sky_b, wat_b) + 1;
+    CHECK(cr >= lo_r && cr <= hi_r);
+    CHECK(cg >= lo_g && cg <= hi_g);
+    CHECK(cb >= lo_b && cb <= hi_b);
+    // Blend sanity: blendOver(src over dst) matches manual alpha composite.
+    const std::uint32_t src = 0xFF000000u | (0x10u << 16) | (0x20u << 8) | 0x30u; // opaque red-ish src alpha handled below
+    const std::uint32_t blended = vc::SoftwareRenderer::blendOver(0x80102030u, 0xFF405060u);
+    CHECK_EQ((blended >> 24) & 0xFF, 0xFFu);
+    CHECK_EQ((blended >> 16) & 0xFF, (0x10 + 0x40) / 2); // exact 50/50
+    CHECK_EQ((blended >> 8) & 0xFF, (0x20 + 0x50) / 2);
+    CHECK_EQ(blended & 0xFF, (0x30 + 0x60) / 2);
+    (void)src;
+}
+
 static void testChunkMemory() {
     vc::Chunk c({0, 0});
     const std::size_t airBytes = c.approxBytes();
@@ -370,6 +435,8 @@ int main() {
     testChunkSaveLoadRoundtrip();
     testMesherFuzz();
     testCaveCulling();
+    testSideBuckets();
+    testTranslucentWaterDraw();
     std::fprintf(stderr, "\n%d checks, %d failures\n", g_checks, g_failures);
     return g_failures == 0 ? 0 : 1;
 }
