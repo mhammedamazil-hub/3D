@@ -199,6 +199,30 @@ int main(int argc, char** argv) {
     }
     std::fprintf(stderr, "records_parity: FAIL — %zu/%zu bytes differ (%zu/%zu pixels), max channel delta %d\n",
                  diffBytes, a.size(), diffPixels, static_cast<std::size_t>(wa) * ha, maxDelta);
+    // Detailed report for CI artifact upload: first mismatching pixels + bounding box.
+    std::string reportPath = pathB + ".report.txt";
+    std::ofstream rep(reportPath);
+    rep << "records_parity FAIL\n";
+    rep << "dimensions: " << wa << "x" << ha << "\n";
+    rep << "diff_bytes=" << diffBytes << " diff_pixels=" << diffPixels << " max_channel_delta=" << maxDelta << "\n";
+    const std::size_t pixels = static_cast<std::size_t>(wa) * ha;
+    int minX = wa, minY = ha, maxX = -1, maxY = -1;
+    std::size_t printed = 0;
+    for (std::size_t i = 0; i < pixels; ++i) {
+        const std::size_t o = i * 3;
+        if (a[o] == b[o] && a[o + 1] == b[o + 1] && a[o + 2] == b[o + 2]) continue;
+        const int px = static_cast<int>(i % wa), py = static_cast<int>(i / wa);
+        if (px < minX) minX = px; if (px > maxX) maxX = px;
+        if (py < minY) minY = py; if (py > maxY) maxY = py;
+        if (printed < 24) {
+            rep << "pixel(" << px << "," << py << ") A=(" << int(a[o]) << "," << int(a[o + 1]) << "," << int(a[o + 2])
+                << ") B=(" << int(b[o]) << "," << int(b[o + 1]) << "," << int(b[o + 2]) << ")\n";
+            ++printed;
+        }
+    }
+    rep << "bbox: x[" << minX << "," << maxX << "] y[" << minY << "," << maxY << "]\n";
+    rep.close();
+    std::fprintf(stderr, "records_parity: wrote diagnostic report to %s\n", reportPath.c_str());
     return 1;
 #else
     (void)pathA; (void)pathB;

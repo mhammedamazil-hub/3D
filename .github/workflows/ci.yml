@@ -120,3 +120,13 @@ jobs:
             cat /usr/share/vulkan/icd.d/*.json 2>&1 >&2 || true
             exit "$rc"
           fi
+      - name: Upload parity PPMs (diagnostics)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: parity-ppm
+          path: |
+            /tmp/parity_expanded.ppm
+            /tmp/parity_records.ppm
+            /tmp/parity_records.ppm.report.txt
+          retention-days: 3
