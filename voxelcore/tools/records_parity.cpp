@@ -13,6 +13,7 @@
 #include "../engine/rendering/packed_record.hpp"
 #include <cstdio>
 #include <cstring>
+#include <cstdarg>
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -93,6 +94,64 @@ int main(int argc, char** argv) {
                      [&centroidDistSq](const Quad& a, const Quad& b) { return centroidDistSq(a) > centroidDistSq(b); });
     allQuads.insert(allQuads.end(), waterPart.begin(), waterPart.end());
     std::fprintf(stderr, "records_parity: quads=%zu\n", allQuads.size());
+    // SMOKING-GUN DUMP: byte-compare the skyline quad corners between the expanded-vertex path
+    // and the records-shader reconstruction (exact-integer planes, but verify empirically).
+    std::string skylineDump;
+    {
+        auto hex = [](float f) { std::uint32_t b; std::memcpy(&b, &f, 4); char buf[12]; std::snprintf(buf, sizeof(buf), "%08x", b); return std::string(buf); };
+    auto dumpLine = [&skylineDump](const char* fmt, ...) {
+        char buf[512];
+        va_list args;
+        va_start(args, fmt);
+        std::vsnprintf(buf, sizeof(buf), fmt, args);
+        va_end(args);
+        skylineDump += buf;
+        skylineDump += '\n';
+    };
+    dumpLine("skyline bytes dump:");
+        for (const Quad& q : allQuads) {
+            const bool eastSky  = (q.dir == FaceDir::PosX && q.x == 64.0f && q.y == 20.0f && q.z == 0.0f && q.u == 16.0f);
+            const bool topSky   = (q.dir == FaceDir::PosY && q.y == 21.0f && q.x == 48.0f && q.z == 0.0f && q.u == 16.0f && q.v == 16.0f);
+            if (!eastSky && !topSky) continue;
+            dumpLine("quad dir=%d x=%.1f y=%.1f z=%.1f u=%.1f v=%.1f hex x=%s y=%s z=%s u=%s v=%s",
+                         static_cast<int>(q.dir), q.x, q.y, q.z, q.u, q.v, hex(q.x).c_str(), hex(q.y).c_str(), hex(q.z).c_str(), hex(q.u).c_str(), hex(q.v).c_str());
+            // expanded path positions
+            const MeshTriangles et = expandQuads(std::vector<Quad>{q});
+            dumpLine("  expanded verts:");
+            for (std::size_t i = 0; i < et.positions.size() / 3; ++i) {
+                dumpLine("    v%zu pos=(%s %s %s)", i, hex(et.positions[i*3+0]).c_str(), hex(et.positions[i*3+1]).c_str(), hex(et.positions[i*3+2]).c_str());
+            }
+            dumpLine("  expanded indices:");
+            for (std::uint32_t ix : et.indices) { char b[12]; std::snprintf(b, sizeof(b), " %u", ix); skylineDump += b; }
+            dumpLine("");
+            // records path reconstruction (mirror of records.vert math, ints -> floats)
+            int ix0 = static_cast<int>(q.x) - 48, iz0 = static_cast<int>(q.z) - 0, iy = (q.dir == FaceDir::PosY) ? static_cast<int>(q.y) - 1 : static_cast<int>(q.y);
+            // for PosX, x stored as slice-1; for PosY, y stored as slice-1, x/z as-is
+            int recX = (q.dir == FaceDir::PosX) ? ix0 - 1 : ix0;
+            int recZ = (q.dir == FaceDir::PosZ) ? iz0 - 1 : iz0;
+            if (q.dir != FaceDir::PosY) iy = static_cast<int>(q.y);
+            dumpLine("  record decode: rx=%d rz=%d ry=%d uE=%d vE=%d dir=%d block=%u ao=%u,%u,%u,%u light=%u",
+                         recX, recZ, iy, static_cast<int>(q.u), static_cast<int>(q.v), static_cast<int>(q.dir), unsigned(q.block),
+                         unsigned(q.ao[0]), unsigned(q.ao[1]), unsigned(q.ao[2]), unsigned(q.ao[3]), unsigned(q.light));
+            const float ox = 48.0f, oz = 0.0f;
+            dumpLine("  records reconstruct:");
+            if (q.dir == FaceDir::PosX) {
+                const float xp = static_cast<float>(recX) + 1.0f;
+                const float y0 = static_cast<float>(iy), y1 = y0 + q.v;
+                const float z0 = static_cast<float>(recZ), z1 = z0 + q.u;
+                const float c[4][3] = {{xp, y0, z0}, {xp, y0, z1}, {xp, y1, z1}, {xp, y1, z0}};
+                for (int i = 0; i < 4; ++i)
+                    dumpLine("    c%d absolute=(%s %s %s)", i, hex(c[i][0] + ox).c_str(), hex(c[i][1]).c_str(), hex(c[i][2] + oz).c_str());
+            } else if (q.dir == FaceDir::PosY) {
+                const float yp = static_cast<float>(iy) + 1.0f;
+                const float x0 = static_cast<float>(recX), x1 = x0 + q.u;
+                const float z0 = static_cast<float>(recZ), z1 = z0 + q.v;
+                const float c[4][3] = {{x0, yp, z0}, {x1, yp, z0}, {x1, yp, z1}, {x0, yp, z1}};
+                for (int i = 0; i < 4; ++i)
+                    dumpLine("    c%d absolute=(%s %s %s)", i, hex(c[i][0] + ox).c_str(), hex(c[i][1]).c_str(), hex(c[i][2] + oz).c_str());
+            }
+        }
+    }
 
 #if defined(VOXELCORE_WITH_VULKAN)
     const std::size_t expandCount = allQuads.size();
@@ -379,6 +438,7 @@ int main(int argc, char** argv) {
             ++printed;
         }
     }
+    rep << skylineDump;
     rep << "determinism: " << determinism << "\n";
     {
         char mhex[16 * 12 + 32];
