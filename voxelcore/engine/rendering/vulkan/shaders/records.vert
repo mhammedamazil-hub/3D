@@ -10,6 +10,9 @@
 layout(std430, set = 0, binding = 0) readonly buffer RecordBuffer { uvec2 records[]; } buf;
 layout(push_constant) uniform PushConstants { mat4 mvp; vec4 origin; } pc;
 layout(location = 0) out vec4 fragColor;
+// See voxelcore.vert: keep gl_Position bitwise identical to the CPU-expanded path
+// (multi-pass invariance) so hairline slivers rasterize identically.
+invariant gl_Position;
 
 const float kSun[6] = float[](0.72, 0.72, 1.0, 0.5, 0.8, 0.8);
 const vec4 kColor[10] = vec4[](
