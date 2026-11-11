@@ -293,7 +293,11 @@ int main(int argc, char** argv) {
             out.push_back(t1);
             out.push_back(t2);
         };
-        std::size_t qi = 0, reported = 0;
+        // Instead of binary coverage, report the N triangles with an edge closest to the pixel center
+        // (lavapipe's fixed-point snap can include a pixel that exact float math excludes).
+        struct EdgeCand { float dist; std::size_t qi, ti; Quad v; };
+        std::vector<EdgeCand> cands;
+        std::size_t qi = 0;
         for (const auto& [pos, quads] : chunkMeshes) { (void)pos;
             for (const Quad& q : quads) {
                 ++qi;
@@ -310,19 +314,34 @@ int main(int argc, char** argv) {
                     std::vector<std::array<std::array<float,3>,3>> tris;
                     emitTris(v, tris);
                     for (std::size_t ti = 0; ti < tris.size(); ++ti) {
-                        if (covers(tris[ti])) {
-                            rep << "cover quad#" << qi << " tri" << ti << " dir=" << int(v.dir)
-                                << " block=" << unsigned(v.block) << " x=" << v.x << " y=" << v.y << " z=" << v.z
-                                << " u=" << v.u << " v=" << v.v
-                                << " ao=[" << int(v.ao[0]) << ',' << int(v.ao[1]) << ',' << int(v.ao[2]) << ',' << int(v.ao[3]) << ']'
-                                << " light=" << int(v.light) << "\n";
-                            ++reported;
+                        const auto& t = tris[ti];
+                        // distance from pixel center to each triangle edge (2D)
+                        float maxd = 1e30f, mind = 0.0f;
+                        for (int i = 0; i < 3; ++i) {
+                            const int j = (i + 1) % 3;
+                            const float ax = t[i][0], ay = t[i][1], bx = t[j][0], by = t[j][1];
+                            const float ex = bx - ax, ey = by - ay;
+                            const float len = std::sqrt(ex * ex + ey * ey);
+                            const float d = std::fabs((px - ax) * ey - (py - ay) * ex) / std::max(len, 1e-9f);
+                            mind = std::max(mind, 0.0f);
+                            maxd = std::min(maxd, d);
                         }
+                        (void)mind;
+                        if (maxd < 3.0f) cands.push_back({maxd, qi, ti, v});
                     }
                 }
             }
         }
-        rep << "coverage candidates: " << reported << "\n";
+        std::sort(cands.begin(), cands.end(), [](const EdgeCand& a, const EdgeCand& b) { return a.dist < b.dist; });
+        rep << "nearest-edge triangles (dist px):\n";
+        for (std::size_t k = 0; k < cands.size() && k < 10; ++k) {
+            const Quad& v = cands[k].v;
+            rep << "  quad#" << cands[k].qi << " tri" << cands[k].ti << " dist=" << cands[k].dist
+                << " dir=" << int(v.dir) << " block=" << unsigned(v.block)
+                << " x=" << v.x << " y=" << v.y << " z=" << v.z << " u=" << v.u << " v=" << v.v
+                << " ao=[" << int(v.ao[0]) << ',' << int(v.ao[1]) << ',' << int(v.ao[2]) << ',' << int(v.ao[3]) << ']'
+                << " light=" << int(v.light) << "\n";
+        }
     }
     // 7x7 neighborhood around the FIRST differing pixel as hex, for edge-sliver analysis.
     {
