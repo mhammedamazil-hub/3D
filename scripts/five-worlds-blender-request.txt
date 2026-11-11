@@ -1,0 +1,4 @@
+Render request: recreate all five generated-reference worlds as actual Blender
+scenes and render five 10-second 1080p30 videos using the Cycles CPU workflow,
+like the prior Kerala animation. Trigger token updated for the Blender v2
+correction.

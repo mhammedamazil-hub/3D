@@ -1,0 +1,81 @@
+{
+  "revision": "five-worlds-blender-v2-cycles",
+  "generated_at_utc": "2026-11-11T07:53:38.208228+00:00",
+  "blender": "4.2.23 LTS",
+  "engine": "CYCLES",
+  "device": "CPU",
+  "spec": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "frames_per_scene": 300,
+    "duration_seconds": 10.0,
+    "samples": 4,
+    "denoising": "OpenImageDenoise RGB_ALBEDO_NORMAL",
+    "view_transform": "AgX - Medium High Contrast"
+  },
+  "route": "Blender Cycles CPU scenes rendered in 15 GitHub Actions shards, like the Kerala animation workflow",
+  "reference_usage": "Packed photographic backplates plus animated UV-distorted ground/reflection textures; procedural 3D foreground geometry and physical lights",
+  "scenes": [
+    {
+      "index": 1,
+      "name": "Alpine Lake",
+      "slug": "AlpineLake",
+      "reference": "assets/references/v6/01_alpine_lake_16x9.jpg",
+      "reference_original": "assets/references/v6/01_alpine_lake.jpg",
+      "reference_sha256": "83c7fff4eea79537300490fa4e236ce38d119280a7d12e3cbd751885ced2f166",
+      "motion": "mist, rippled lake, pine/rock foreground, golden-hour dolly",
+      "blend": "output/FiveWorlds_Blender_01_AlpineLake.blend",
+      "blend_bytes": 369825,
+      "blend_sha256": "68d2fc8bc55c464867a0cfe8ca0344d17db22d656d9341739786c219f9183e3b"
+    },
+    {
+      "index": 2,
+      "name": "Neon Rain Alley",
+      "slug": "NeonRainAlley",
+      "reference": "assets/references/v6/02_neon_rain_alley_16x9.jpg",
+      "reference_original": "assets/references/v6/02_neon_rain_alley.jpg",
+      "reference_sha256": "5cb272967e8fe084d3f0ed2377e2ab7c3d917d93cb21a3be11f8867b43aa1c88",
+      "motion": "falling rain, flickering neon, wet pavement, tracking move",
+      "blend": "output/FiveWorlds_Blender_02_NeonRainAlley.blend",
+      "blend_bytes": 503123,
+      "blend_sha256": "8900943a5b09d594be05de471036aca8c0203e8abe717045620abcd388a3a7a0"
+    },
+    {
+      "index": 3,
+      "name": "Sahara Dunes",
+      "slug": "SaharaDunes",
+      "reference": "assets/references/v6/03_sahara_dunes_16x9.jpg",
+      "reference_original": "assets/references/v6/03_sahara_dunes.jpg",
+      "reference_sha256": "8a8980e2728f9ca60039cce9a2e38496218acca09567d24d6228a3ba4aa51fc8",
+      "motion": "wind-blown sand, dune ripples, heat shimmer, lateral drift",
+      "blend": "output/FiveWorlds_Blender_03_SaharaDunes.blend",
+      "blend_bytes": 442052,
+      "blend_sha256": "e4a091b5d9ba6c22462f08b142f55dc1ab4c9615ed76664918ef6cb56f874cb6"
+    },
+    {
+      "index": 4,
+      "name": "Iceland Aurora",
+      "slug": "IcelandAurora",
+      "reference": "assets/references/v6/04_iceland_aurora_16x9.jpg",
+      "reference_original": "assets/references/v6/04_iceland_aurora.jpg",
+      "reference_sha256": "fbd472200536ffa86207c9a4a0ae9da3a0a1882e9bcaf3e394dd0f75ad82d88c",
+      "motion": "animated aurora, stars, surf foam, basalt columns, tilt up",
+      "blend": "output/FiveWorlds_Blender_04_IcelandAurora.blend",
+      "blend_bytes": 418225,
+      "blend_sha256": "c5e618a3ce077cd6938d440672d2b1059f2996577cc11d3e58082277cef3e7f1"
+    },
+    {
+      "index": 5,
+      "name": "Rainforest Temple",
+      "slug": "RainforestTemple",
+      "reference": "assets/references/v6/05_rainforest_temple_16x9.jpg",
+      "reference_original": "assets/references/v6/05_rainforest_temple.jpg",
+      "reference_sha256": "f84cd3f4e35fc73e4b194d5e2753fab339889cd49dae5ae1d1cdb04759c526e9",
+      "motion": "waterfall, floating dust, temple stones, slow dolly",
+      "blend": "output/FiveWorlds_Blender_05_RainforestTemple.blend",
+      "blend_bytes": 592204,
+      "blend_sha256": "2be9ac9c3ade01130481c2b8c7e34b02153d2981dc13e4814a3ee379fbd797ab"
+    }
+  ]
+}

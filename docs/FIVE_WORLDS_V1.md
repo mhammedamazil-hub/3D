@@ -1,3 +1,5 @@
+> **Superseded:** the WebGL screenshot-capture route below was rejected by the user. Use `docs/FIVE_WORLDS_BLENDER_V2.md` and the Blender/Cycles renders instead.
+
 # Five Worlds v1 — five different 10-second scenes
 
 This delivery is **not** the prior Kerala/coconut/paddy/house sunrise scene. It is a new set of five assistant-invented worlds. References were generated first, then loaded as actual scene inputs.

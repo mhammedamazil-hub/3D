@@ -1,6 +1,26 @@
 # Monsoon Light — Kerala
 
-## Current Five Worlds v1 — five different 10-second scenes
+## Current Five Worlds Blender v2 — user-corrected Blender/Cycles renders
+
+The user rejected the earlier WebGL screenshot-capture route. All five scenes are now **actual Blender `.blend` scenes**, rendered as videos with **Blender Cycles CPU** in a 15-shard GitHub Actions workflow like the Kerala animation.
+
+- `output/FiveWorlds_Blender_01_AlpineLake.blend` … `output/FiveWorlds_Blender_05_RainforestTemple.blend` — five editable, packed Blender scenes using the generated references as real backplates and animated ground textures.
+- `output/FiveWorlds_Blender_01_AlpineLake_1080p30_10s.mp4` … `output/FiveWorlds_Blender_05_RainforestTemple_1080p30_10s.mp4` — five Blender-rendered 1920×1080, 30 fps, exactly 10 s videos.
+- `output/FiveWorlds_Blender_AllScenes_1080p30_50s.mp4` — all five back-to-back.
+- `assets/references/v6/00_five_worlds_blender_contact.jpg` — contact sheet extracted from the Blender MP4s.
+- `docs/FIVE_WORLDS_BLENDER_MANIFEST.json`, `docs/FIVE_WORLDS_BLENDER_RECEIPT.json`, `docs/FIVE_WORLDS_BLENDER_VALIDATION.json`, `docs/FIVE_WORLDS_BLENDER_V2.md` — packed-scene manifest, route/render proof, validation and method notes.
+- `scripts/build_five_worlds_blender.py`, `scripts/render_five_worlds_blender.py`, `scripts/finalize_five_worlds_blender.py`, `scripts/verify_five_worlds_blender.py` — Blender builder, shard renderer, assembler and independent verifier.
+- `.github/workflows/render-five-worlds-blender.yml` — 15-shard Cycles CPU render and commit-back.
+
+Reproduce/verify locally:
+
+```bash
+sh scripts/setup_sandbox.sh
+sh scripts/blender-py scripts/build_five_worlds_blender.py --out output --manifest docs/FIVE_WORLDS_BLENDER_MANIFEST.json
+python scripts/verify_five_worlds_blender.py
+```
+
+## Earlier Five Worlds v1 WebGL prototype — superseded
 
 Five assistant-invented, reference-driven worlds replace the Kerala/coconut/paddy/house scene. Each is a photorealistic 1280×720, 30 fps, 300-frame H.264 render lasting exactly 10 seconds; the 50-second montage joins all five.
 

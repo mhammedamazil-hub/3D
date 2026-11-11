@@ -1,0 +1,128 @@
+name: Render Five Worlds Blender 1080p30 animations
+
+# User correction: recreate all five scenes in Blender and render them as
+# videos like the Kerala animation. Five .blend scenes are built locally and
+# committed; this workflow renders 300 frames per scene with Cycles CPU in
+# 15 shards, assembles five 10-second H.264 MP4s and pushes them back.
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/render-five-worlds-blender.yml'
+      - 'scripts/build_five_worlds_blender.py'
+      - 'scripts/render_five_worlds_blender.py'
+      - 'scripts/finalize_five_worlds_blender.py'
+      - 'scripts/verify_five_worlds_blender.py'
+      - 'scripts/five-worlds-blender-request.txt'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: five-worlds-blender-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SAMPLES: '4'
+  FPS: '30'
+  WIDTH: '1920'
+  HEIGHT: '1080'
+  TOTAL_FRAMES: '300'
+  FRAMES_PER_SHARD: '100'
+  SHARDS_PER_SCENE: '3'
+
+jobs:
+  render-shard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 15
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Blender Python module and OS libraries
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libxrender1 libxxf86vm1 libxfixes3 libxi6 libxkbcommon0 \
+            libsm6 libice6 libgl1 libglx-mesa0 libgl1-mesa-dri libegl1 libegl-mesa0
+          python -m pip install --disable-pip-version-check bpy==4.2.23 numpy==1.26.4 pillow
+      - name: Render frame shard
+        shell: bash
+        run: |
+          set -euo pipefail
+          SCENE=$(( matrix_shard / shards_per_scene + 1 ))
+          LOCAL=$(( matrix_shard % shards_per_scene ))
+          START=$(( LOCAL * frames_per_shard + 1 ))
+          END=$(( START + frames_per_shard - 1 ))
+          echo "Rendering scene $SCENE frames $START-$END at ${WIDTH}x${HEIGHT}, $SAMPLES samples"
+          python scripts/render_five_worlds_blender.py \
+            --scene "$SCENE" --start "$START" --end "$END" --out frames \
+            --width "$WIDTH" --height "$HEIGHT" --samples "$SAMPLES" --threads 2
+        env:
+          matrix_shard: ${{ matrix.shard }}
+          shards_per_scene: ${{ env.SHARDS_PER_SCENE }}
+          frames_per_shard: ${{ env.FRAMES_PER_SHARD }}
+      - name: Upload frame artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: five-worlds-blender-frames-${{ matrix.shard }}
+          path: frames/
+          retention-days: 7
+          if-no-files-found: error
+
+  assemble:
+    needs: render-shard
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Download all frame shards
+        uses: actions/download-artifact@v4
+        with:
+          pattern: five-worlds-blender-frames-*
+          merge-multiple: true
+          path: frames
+      - name: Install ffmpeg and Pillow
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          python -m pip install --disable-pip-version-check pillow
+      - name: Verify frames, encode videos, write receipts
+        run: |
+          set -euo pipefail
+          python scripts/finalize_five_worlds_blender.py
+      - name: Commit and push Blender animations
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f output/FiveWorlds_Blender_* docs/FIVE_WORLDS_BLENDER_RECEIPT.json docs/FIVE_WORLDS_BLENDER_VALIDATION.json assets/references/v6/00_five_worlds_blender_contact.jpg
+          if ! git diff --cached --quiet; then
+            git commit -m "ci: render Five Worlds Blender 1080p30 5x10s animations"
+            git push origin HEAD:"$GITHUB_REF_NAME"
+          fi
+      - name: Upload Blender video artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: five-worlds-blender-1080p30-5x10s
+          path: |
+            output/FiveWorlds_Blender_*.mp4
+            docs/FIVE_WORLDS_BLENDER_RECEIPT.json
+            docs/FIVE_WORLDS_BLENDER_VALIDATION.json
+            assets/references/v6/00_five_worlds_blender_contact.jpg
+          retention-days: 30
