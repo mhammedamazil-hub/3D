@@ -13,6 +13,7 @@
 #include "../engine/storage/nbt.hpp"
 #include "../engine/storage/chunk_io.hpp"
 #include "../engine/storage/zlib.hpp"
+#include "../engine/visibility/cave_culling.hpp"
 #include <fstream>
 #include <filesystem>
 #include <cstdio>
@@ -295,6 +296,50 @@ static void testMesherFuzz() {
     }
 }
 
+static void testCaveCulling() {
+    // Solid stone world with a sealed air cavity; camera outside vs inside.
+    vc::World world;
+    for (int y = 0; y < 16; ++y)
+        for (int z = 0; z < 16; ++z)
+            for (int x = 0; x < 16; ++x)
+                world.setBlock(x, y, z, vc::blocks::Stone);
+    // Carve sealed cavity y=4..7, z=4..11, x=4..11.
+    for (int y = 4; y <= 7; ++y)
+        for (int z = 4; z <= 11; ++z)
+            for (int x = 4; x <= 11; ++x)
+                world.setBlock(x, y, z, vc::blocks::Air);
+    // Surface above y>=16 is open (world AABB boundary); cavity is sealed.
+    const vc::CaveCuller culler = vc::CaveCuller::analyze(world);
+    CHECK(culler.valid());
+    const int sealed = culler.componentOf(6, 6, 6);
+    CHECK(sealed > 0);
+    CHECK(culler.componentOf(0, 15, 0) == 0); // open surface
+    std::fprintf(stderr, "cave culling: sealed cells=%zu components=%zu\n",
+                 culler.sealedCells(), culler.componentCount());
+
+    vc::GreedyMesher mesher;
+    const vc::CachedBlockReader reader(world);
+    // Camera outside (in open air above the stone): sealed faces skipped.
+    auto outside = mesher.meshTypedEx({0, 0}, reader, culler, {8, 20, 8});
+    // Camera inside the sealed cavity: those faces are kept.
+    auto inside = mesher.meshTypedEx({0, 0}, reader, culler, {6, 6, 6});
+    // No culler baseline.
+    const vc::NoCaveCuller noCull;
+    auto plain = mesher.meshTypedEx({0, 0}, reader, noCull, {8, 20, 8});
+    std::fprintf(stderr, "mesher faces: plain=%llu outside=%llu inside=%llu\n",
+                 (unsigned long long)plain.stats.naiveFaces,
+                 (unsigned long long)outside.stats.naiveFaces,
+                 (unsigned long long)inside.stats.naiveFaces);
+    CHECK(outside.stats.naiveFaces < plain.stats.naiveFaces);
+    CHECK_EQ(inside.stats.naiveFaces, plain.stats.naiveFaces);
+    CHECK_EQ(outside.stats.faceArea, outside.stats.naiveFaces);
+    CHECK_EQ(inside.stats.faceArea, inside.stats.naiveFaces);
+    // Sanity: the sealed cavity would produce faces on the 8x8x4 inner box walls.
+    const std::uint64_t expectedSealedFaces = 4ull * 8 * 4 + 2ull * 8 * 8; // 4 walls + floor + ceiling
+    CHECK_EQ(plain.stats.naiveFaces - inside.stats.naiveFaces + inside.stats.naiveFaces - outside.stats.naiveFaces,
+             expectedSealedFaces);
+}
+
 static void testChunkMemory() {
     vc::Chunk c({0, 0});
     const std::size_t airBytes = c.approxBytes();
@@ -324,6 +369,7 @@ int main() {
     testNbtRoundtrip();
     testChunkSaveLoadRoundtrip();
     testMesherFuzz();
+    testCaveCulling();
     std::fprintf(stderr, "\n%d checks, %d failures\n", g_checks, g_failures);
     return g_failures == 0 ? 0 : 1;
 }

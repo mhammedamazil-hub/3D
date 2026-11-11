@@ -16,6 +16,7 @@
 #include "../chunks/chunk.hpp"
 #include "../world/world.hpp"
 #include "../world/block_reader.hpp"
+#include "../visibility/cave_culling.hpp"
 #include <cstdint>
 #include <functional>
 #include <vector>
@@ -57,9 +58,15 @@ public:
     }
     template <typename Reader>
     Result meshTyped(ChunkPos pos, const Reader& read) const {
+        const NoCaveCuller culler;
+        return meshTypedEx(pos, read, culler, {0, 0, 0});
+    }
+    template <typename Reader, typename Culler>
+    Result meshTypedEx(ChunkPos pos, const Reader& read, const Culler& culler, std::array<int,3> cameraCell) const {
         Result out;
         const int ox = pos.x * 16, oz = pos.z * 16;
-        for (int d = 0; d < 6; ++d) meshDirection(static_cast<FaceDir>(d), ox, oz, read, out);
+        const int camComponent = culler.cameraComponent(cameraCell[0], cameraCell[1], cameraCell[2]);
+        for (int d = 0; d < 6; ++d) meshDirection(static_cast<FaceDir>(d), ox, oz, read, culler, camComponent, out);
         return out;
     }
 
@@ -80,8 +87,8 @@ private:
             && a.ao[0] == b.ao[0] && a.ao[1] == b.ao[1] && a.ao[2] == b.ao[2] && a.ao[3] == b.ao[3];
     }
 
-    template <typename Reader>
-    void meshDirection(FaceDir dir, int ox, int oz, const Reader& read, Result& out) const {
+    template <typename Reader, typename Culler>
+    void meshDirection(FaceDir dir, int ox, int oz, const Reader& read, const Culler& culler, int camComponent, Result& out) const {
         int axis = 0, sign = 1;
         switch (dir) {
             case FaceDir::PosX: axis = 0; sign = +1; break;
@@ -104,7 +111,7 @@ private:
                     if (axis == 0)      { wx = ox + slice; wz = oz + u; wy = v; }
                     else if (axis == 2) { wz = oz + slice; wx = ox + u; wy = v; }
                     else                { wy = slice;      wx = ox + u; wz = oz + v; }
-                    const Cell c = faceCell(wx, wy, wz, axis, sign, read);
+                    const Cell c = faceCell(wx, wy, wz, axis, sign, read, culler, camComponent);
                     if (c.present) out.stats.naiveFaces += 1;
                     mask[static_cast<std::size_t>(v)][static_cast<std::size_t>(u)] = c;
                     used[static_cast<std::size_t>(v)][static_cast<std::size_t>(u)] = false;
@@ -153,8 +160,8 @@ private:
         }
     }
 
-    template <typename Reader>
-    Cell faceCell(int wx, int wy, int wz, int axis, int sign, const Reader& read) const {
+    template <typename Reader, typename Culler>
+    Cell faceCell(int wx, int wy, int wz, int axis, int sign, const Reader& read, const Culler& culler, int camComponent) const {
         Cell cell;
         const BlockId self = read(wx, wy, wz);
         if (!blocks::renders(self)) return cell;
@@ -164,6 +171,11 @@ private:
         if (blocks::opaque(other)) return cell;
         if (self == blocks::Leaves && other == blocks::Leaves) return cell;
         if (self == blocks::Water && other == blocks::Water) return cell;
+        // Cave culling: a face against sealed non-opaque cells is visible only
+        // from inside that same sealed component (camera already in it -> componentOf matches).
+        if (const int sealedComp = culler.componentOf(nx, ny, nz); sealedComp > 0 && sealedComp != camComponent) {
+            return cell;
+        }
         cell.block = self;
         cell.present = true;
         cell.ao = cornerAO(wx, wy, wz, axis, sign, read);
