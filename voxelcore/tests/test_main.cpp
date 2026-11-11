@@ -16,6 +16,7 @@
 #include "../engine/visibility/cave_culling.hpp"
 #include "../engine/rendering/software_renderer.hpp"
 #include "../engine/lighting/light_volume.hpp"
+#include "../engine/rendering/packed_record.hpp"
 #include <fstream>
 #include <filesystem>
 #include <cstdio>
@@ -434,6 +435,94 @@ static void testLightPropagation() {
     }
 }
 
+static void testPackedRecordRoundtrip() {
+    const vc::FaceDir dirs[6] = {vc::FaceDir::PosX, vc::FaceDir::NegX, vc::FaceDir::PosY,
+                                 vc::FaceDir::NegY, vc::FaceDir::PosZ, vc::FaceDir::NegZ};
+    const std::uint8_t extents[6] = {1, 2, 3, 5, 8, 16};
+    const std::array<std::uint8_t,4> aoPats[4] = {{0,0,0,0}, {3,3,3,3}, {0,1,2,3}, {3,0,2,1}};
+    const std::uint8_t lights[3] = {0, 7, 15};
+    int checked = 0;
+    for (vc::FaceDir dir : dirs)
+        for (std::uint8_t u : extents)
+            for (std::uint8_t v : extents)
+                for (int slice = 0; slice <= 63; slice += 21) {
+                    for (int p = 0; p < 4; ++p) {
+                        vc::QuadRecord r;
+                        r.dir = dir; r.uExt = u; r.vExt = v;
+                        r.x = static_cast<std::uint8_t>(slice & 0xF);
+                        r.z = static_cast<std::uint8_t>((slice * 7 + 5) & 0xF);
+                        r.y = static_cast<std::uint8_t>(slice & 0x3F);
+                        r.block = static_cast<vc::BlockId>(1 + (p * 7 + 3) % 9);
+                        r.ao = aoPats[p];
+                        r.light = lights[p % 3];
+                        const auto packed = vc::packRecord(r);
+                        CHECK(packed.has_value());
+                        const vc::QuadRecord back = vc::unpackRecord(*packed);
+                        CHECK_EQ(back.x, r.x); CHECK_EQ(back.z, r.z); CHECK_EQ(back.y, r.y);
+                        CHECK_EQ(back.uExt, r.uExt); CHECK_EQ(back.vExt, r.vExt);
+                        CHECK_EQ(static_cast<int>(back.dir), static_cast<int>(r.dir));
+                        CHECK_EQ(back.block, r.block);
+                        for (int k = 0; k < 4; ++k) CHECK_EQ(back.ao[k], r.ao[k]);
+                        CHECK_EQ(back.light, r.light);
+                        ++checked;
+                    }
+                }
+    std::fprintf(stderr, "packed_record roundtrip cases: %d\n", checked);
+    // Deterministic fuzz: pack/unpack preserves fields exactly for arbitrary quads.
+    std::uint64_t seed = 0xC0FFEE;
+    auto rnd = [&]() { seed = seed * 6364136223846793005ULL + 1442695040888963407ULL; return seed >> 33; };
+    for (int i = 0; i < 20000; ++i) {
+        vc::QuadRecord r;
+        r.dir = dirs[rnd() % 6];
+        r.x = static_cast<std::uint8_t>(rnd() % 16);
+        r.z = static_cast<std::uint8_t>(rnd() % 16);
+        r.y = static_cast<std::uint8_t>(rnd() % 64);
+        r.uExt = static_cast<std::uint8_t>(1 + rnd() % 16);
+        r.vExt = static_cast<std::uint8_t>(1 + rnd() % 16);
+        r.block = static_cast<vc::BlockId>(rnd() % 20);
+        for (auto& a : r.ao) a = static_cast<std::uint8_t>(rnd() % 4);
+        r.light = static_cast<std::uint8_t>(rnd() % 16);
+        const auto packed = vc::packRecord(r);
+        CHECK(packed.has_value());
+        const vc::QuadRecord back = vc::unpackRecord(*packed);
+        CHECK_EQ(back.x, r.x); CHECK_EQ(back.z, r.z); CHECK_EQ(back.y, r.y);
+        CHECK_EQ(back.uExt, r.uExt); CHECK_EQ(back.vExt, r.vExt);
+        CHECK_EQ(static_cast<int>(back.dir), static_cast<int>(r.dir));
+        CHECK_EQ(back.block, r.block);
+        CHECK_EQ(back.light, r.light);
+        for (int k = 0; k < 4; ++k) CHECK_EQ(back.ao[k], r.ao[k]);
+    }
+    // Rejection tests.
+    vc::QuadRecord bad = {};
+    bad.x = 16; CHECK(!vc::packRecord(bad).has_value());
+    bad = {}; bad.y = 64; CHECK(!vc::packRecord(bad).has_value());
+    bad = {}; bad.uExt = 17; CHECK(!vc::packRecord(bad).has_value());
+    bad = {}; bad.ao[2] = 4; CHECK(!vc::packRecord(bad).has_value());
+    bad = {}; bad.light = 16; CHECK(!vc::packRecord(bad).has_value());
+    // Boundary plane y=63 PosY -> plane 64; slice decode must recover 63.
+    vc::QuadRecord top; top.dir = vc::FaceDir::PosY; top.y = 63; top.uExt = 16; top.vExt = 16;
+    top.block = vc::blocks::Grass; top.light = 15;
+    const auto packedTop = vc::packRecord(top);
+    CHECK(packedTop.has_value());
+    const vc::QuadRecord topBack = vc::unpackRecord(*packedTop);
+    CHECK_EQ(topBack.y, 63);
+    CHECK_EQ(vc::planeLocal(topBack.dir, topBack), 64.0f);
+    // packQuadLocal with non-zero chunk origin (chunk 3, origin 48).
+    vc::Quad q;
+    q.dir = vc::FaceDir::PosX; q.x = 64.0f; q.y = 10.0f; q.z = 20.0f; q.u = 3.0f; q.v = 5.0f;
+    q.block = vc::blocks::Stone; q.ao = {1, 2, 3, 0}; q.light = 9;
+    const auto packed = vc::packQuadLocal(q, 48, 16);
+    CHECK(packed.has_value());
+    const vc::QuadRecord back = vc::unpackRecord(*packed);
+    CHECK_EQ(back.x, 15);  // slice 15, plane = slice + 1 = 16 (chunk-local)
+    CHECK_EQ(back.z, 4);   // 20 - 16 chunk Z origin
+    CHECK_EQ(vc::planeLocal(back.dir, back), 16.0f);
+    CHECK_EQ(back.uExt, 3);
+    CHECK_EQ(back.vExt, 5);
+    CHECK_EQ(back.light, 9);
+    CHECK_EQ(back.ao[0], 1); CHECK_EQ(back.ao[3], 0);
+}
+
 static void testMesherLightIntegration() {
     // Sealed cavity in stone: wall faces (camera inside) sample face light == 0;
     // surface-top faces sample face light == 15.
@@ -580,6 +669,7 @@ int main() {
     testTranslucentWaterDraw();
     testLightPropagation();
     testMesherLightIntegration();
+    testPackedRecordRoundtrip();
     std::fprintf(stderr, "\n%d checks, %d failures\n", g_checks, g_failures);
     return g_failures == 0 ? 0 : 1;
 }
