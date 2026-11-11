@@ -1,0 +1,179 @@
+name: Render Five Worlds Blender v3 pure 3D animations
+
+# User correction: every scene must be recreated in actual 3D with bpy; the
+# generated JPGs are visual references only and no image may exist inside any
+# .blend. Five frozen procedural scenes are built locally and committed; this
+# workflow independently audits them, renders 300 frames per scene with Cycles
+# CPU in 15 shards, assembles five 10-second MP4s and pushes them back.
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/render-five-worlds-blender-v3.yml'
+      - 'scripts/build_five_worlds_blender_v3.py'
+      - 'scripts/build_five_worlds_blender_v3_skill_review.py'
+      - 'scripts/render_five_worlds_blender_v3.py'
+      - 'scripts/audit_five_worlds_blender_v3.py'
+      - 'scripts/finalize_five_worlds_blender_v3.py'
+      - 'scripts/verify_five_worlds_blender_v3.py'
+      - 'scripts/five-worlds-blender-v3-request.txt'
+      - 'docs/FIVE_WORLDS_BLENDER_V3_MANIFEST.json'
+      - 'output/FiveWorlds_BlenderV3_*.blend'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: five-worlds-blender-v3-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SAMPLES: '4'
+  FPS: '30'
+  WIDTH: '1920'
+  HEIGHT: '1080'
+  TOTAL_FRAMES: '300'
+  FRAMES_PER_SHARD: '100'
+  SHARDS_PER_SCENE: '3'
+
+jobs:
+  audit-frozen-scenes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Blender Python module and OS libraries
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libxrender1 libxxf86vm1 libxfixes3 libxi6 libxkbcommon0 \
+            libsm6 libice6 libgl1 libglx-mesa0 libgl1-mesa-dri libegl1 libegl-mesa0
+          python -m pip install --disable-pip-version-check bpy==4.2.23 numpy==1.26.4 pillow
+      - name: Independent no-image audit of five frozen scenes
+        run: |
+          set -euo pipefail
+          python scripts/audit_five_worlds_blender_v3.py \
+            --manifest docs/FIVE_WORLDS_BLENDER_V3_MANIFEST.json \
+            --out docs/FIVE_WORLDS_BLENDER_V3_BLEND_AUDIT.json
+      - name: Upload blend audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: five-worlds-blender-v3-blend-audit
+          path: docs/FIVE_WORLDS_BLENDER_V3_BLEND_AUDIT.json
+          retention-days: 30
+          if-no-files-found: error
+
+  render-shard:
+    needs: audit-frozen-scenes
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 15
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Blender Python module and OS libraries
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libxrender1 libxxf86vm1 libxfixes3 libxi6 libxkbcommon0 \
+            libsm6 libice6 libgl1 libglx-mesa0 libgl1-mesa-dri libegl1 libegl-mesa0
+          python -m pip install --disable-pip-version-check bpy==4.2.23 numpy==1.26.4 pillow
+      - name: Audit frozen scene and render frame shard
+        shell: bash
+        run: |
+          set -euo pipefail
+          SCENE=$(( matrix_shard / shards_per_scene + 1 ))
+          LOCAL=$(( matrix_shard % shards_per_scene ))
+          START=$(( LOCAL * frames_per_shard + 1 ))
+          END=$(( START + frames_per_shard - 1 ))
+          echo "Rendering pure-3D scene $SCENE frames $START-$END at ${WIDTH}x${HEIGHT}, $SAMPLES samples"
+          python scripts/render_five_worlds_blender_v3.py \
+            --scene "$SCENE" --start "$START" --end "$END" --out frames_v3 \
+            --manifest docs/FIVE_WORLDS_BLENDER_V3_MANIFEST.json \
+            --width "$WIDTH" --height "$HEIGHT" --samples "$SAMPLES" --threads 2
+        env:
+          matrix_shard: ${{ matrix.shard }}
+          shards_per_scene: ${{ env.SHARDS_PER_SCENE }}
+          frames_per_shard: ${{ env.FRAMES_PER_SHARD }}
+      - name: Upload frame artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: five-worlds-blender-v3-frames-${{ matrix.shard }}
+          path: frames_v3/
+          retention-days: 7
+          if-no-files-found: error
+
+  assemble:
+    needs: [render-shard, audit-frozen-scenes]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Download all pure-3D frame shards
+        uses: actions/download-artifact@v4
+        with:
+          pattern: five-worlds-blender-v3-frames-*
+          merge-multiple: true
+          path: frames_v3
+      - name: Download independent blend audit report
+        uses: actions/download-artifact@v4
+        with:
+          name: five-worlds-blender-v3-blend-audit
+          path: docs/
+      - name: Install ffmpeg and Pillow
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          python -m pip install --disable-pip-version-check pillow
+      - name: Verify frames, no-image receipts, encode videos, write receipts
+        run: |
+          set -euo pipefail
+          python scripts/finalize_five_worlds_blender_v3.py
+      - name: Independent delivery verifier
+        env:
+          FW_V3_BLEND_AUDIT_REPORT: docs/FIVE_WORLDS_BLENDER_V3_BLEND_AUDIT.json
+          FW_V3_LOCAL_VALIDATION_OUT: docs/FIVE_WORLDS_BLENDER_V3_LOCAL_VALIDATION.json
+        run: |
+          set -euo pipefail
+          python scripts/verify_five_worlds_blender_v3.py
+      - name: Commit and push pure-3D Blender animations
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f output/FiveWorlds_BlenderV3_* docs/FIVE_WORLDS_BLENDER_V3_RECEIPT.json docs/FIVE_WORLDS_BLENDER_V3_VALIDATION.json docs/FIVE_WORLDS_BLENDER_V3_LOCAL_VALIDATION.json docs/FIVE_WORLDS_BLENDER_V3_BLEND_AUDIT.json assets/references/v6/00_five_worlds_blender_v3_contact.jpg
+          if ! git diff --cached --quiet; then
+            git commit -m "ci: render Five Worlds Blender v3 pure 3D 1080p30 5x10s animations"
+            git push origin HEAD:"$GITHUB_REF_NAME"
+          fi
+      - name: Upload pure-3D Blender video artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: five-worlds-blender-v3-1080p30-5x10s
+          path: |
+            output/FiveWorlds_BlenderV3_*.mp4
+            docs/FIVE_WORLDS_BLENDER_V3_RECEIPT.json
+            docs/FIVE_WORLDS_BLENDER_V3_VALIDATION.json
+            docs/FIVE_WORLDS_BLENDER_V3_LOCAL_VALIDATION.json
+            docs/FIVE_WORLDS_BLENDER_V3_BLEND_AUDIT.json
+            assets/references/v6/00_five_worlds_blender_v3_contact.jpg
+          retention-days: 30

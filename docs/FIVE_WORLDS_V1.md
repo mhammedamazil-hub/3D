@@ -1,4 +1,4 @@
-> **Superseded:** the WebGL screenshot-capture route below was rejected by the user. Use `docs/FIVE_WORLDS_BLENDER_V2.md` and the Blender/Cycles renders instead.
+> **Rejected and superseded:** the WebGL screenshot-capture route below was rejected by the user. The current delivery is the pure-3D Blender v3 rebuild documented in `docs/FIVE_WORLDS_BLENDER_V3.md`; v2 was also rejected because it embedded reference images in the `.blend` scenes.
 
 # Five Worlds v1 — five different 10-second scenes
 

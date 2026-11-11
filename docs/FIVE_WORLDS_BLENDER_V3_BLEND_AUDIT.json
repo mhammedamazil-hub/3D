@@ -1,0 +1,207 @@
+{
+  "revision": "five-worlds-blender-v3-pure-3d",
+  "audited_at_utc": "2026-11-11T16:59:27.012577+00:00",
+  "manifest": "docs/FIVE_WORLDS_BLENDER_V3_MANIFEST.json",
+  "scene_count": 5,
+  "pass": true,
+  "image_policy": {
+    "image_datablocks": 0,
+    "image_texture_nodes": 0,
+    "environment_texture_nodes": 0,
+    "packed_files": 0,
+    "reference_usage": "visual_reference_only_not_embedded"
+  },
+  "reference_usage": "visual_reference_only_not_embedded",
+  "skills": {
+    "library": "skills/blender-skills/.claude/skills",
+    "pinned_skill_count": 94,
+    "counts": {
+      "QA / exclusion lens": 45,
+      "Applied": 37,
+      "Not applicable": 7,
+      "Compatibility check": 5
+    },
+    "review_json": "docs/five_worlds_blender_v3_skill_94_review.json",
+    "review_markdown": "docs/FIVE_WORLDS_BLENDER_V3_SKILL_94_REVIEW.md",
+    "method_document": "docs/FIVE_WORLDS_BLENDER_V3.md",
+    "meta_skill": "skills/realistic-blender-production/SKILL.md"
+  },
+  "scenes": [
+    {
+      "image_datablocks": 0,
+      "image_datablock_names": [],
+      "image_texture_nodes": 0,
+      "image_texture_node_details": [],
+      "image_texture_datablocks": 0,
+      "environment_texture_nodes": 0,
+      "linked_libraries": 0,
+      "movieclips": 0,
+      "objects": 17,
+      "meshes": 14,
+      "materials": 8,
+      "lights": 1,
+      "cameras": 1,
+      "node_groups": 2,
+      "textures": 4,
+      "engine": "CYCLES",
+      "device": "CPU",
+      "resolution": [
+        1920,
+        1080
+      ],
+      "fps": 30,
+      "frame_range": [
+        1,
+        300
+      ],
+      "pass": true,
+      "index": 1,
+      "name": "Alpine Lake",
+      "blend": "output/FiveWorlds_BlenderV3_01_AlpineLake.blend",
+      "blend_sha256": "b2a43138790de2065a0cbceb9aadbe5c0cc9788fd290e93c948e36b750b2ef5f",
+      "reference": "assets/references/v6/01_alpine_lake_16x9.jpg",
+      "reference_usage": "visual_reference_only_not_embedded"
+    },
+    {
+      "image_datablocks": 0,
+      "image_datablock_names": [],
+      "image_texture_nodes": 0,
+      "image_texture_node_details": [],
+      "image_texture_datablocks": 0,
+      "environment_texture_nodes": 0,
+      "linked_libraries": 0,
+      "movieclips": 0,
+      "objects": 258,
+      "meshes": 232,
+      "materials": 20,
+      "lights": 7,
+      "cameras": 1,
+      "node_groups": 0,
+      "textures": 0,
+      "engine": "CYCLES",
+      "device": "CPU",
+      "resolution": [
+        1920,
+        1080
+      ],
+      "fps": 30,
+      "frame_range": [
+        1,
+        300
+      ],
+      "pass": true,
+      "index": 2,
+      "name": "Neon Rain Alley",
+      "blend": "output/FiveWorlds_BlenderV3_02_NeonRainAlley.blend",
+      "blend_sha256": "baa660bdf92568c87f6299d5be5e6c45e7fd1cf3ed2f37cf0c40729ce80aa5af",
+      "reference": "assets/references/v6/02_neon_rain_alley_16x9.jpg",
+      "reference_usage": "visual_reference_only_not_embedded"
+    },
+    {
+      "image_datablocks": 0,
+      "image_datablock_names": [],
+      "image_texture_nodes": 0,
+      "image_texture_node_details": [],
+      "image_texture_datablocks": 0,
+      "environment_texture_nodes": 0,
+      "linked_libraries": 0,
+      "movieclips": 0,
+      "objects": 213,
+      "meshes": 39,
+      "materials": 5,
+      "lights": 1,
+      "cameras": 1,
+      "node_groups": 1,
+      "textures": 4,
+      "engine": "CYCLES",
+      "device": "CPU",
+      "resolution": [
+        1920,
+        1080
+      ],
+      "fps": 30,
+      "frame_range": [
+        1,
+        300
+      ],
+      "pass": true,
+      "index": 3,
+      "name": "Sahara Dunes",
+      "blend": "output/FiveWorlds_BlenderV3_03_SaharaDunes.blend",
+      "blend_sha256": "d48378f662cd568a9f65b768127f6bacb501af3b11ae4c03df0a5e28363cba5e",
+      "reference": "assets/references/v6/03_sahara_dunes_16x9.jpg",
+      "reference_usage": "visual_reference_only_not_embedded"
+    },
+    {
+      "image_datablocks": 0,
+      "image_datablock_names": [],
+      "image_texture_nodes": 0,
+      "image_texture_node_details": [],
+      "image_texture_datablocks": 0,
+      "environment_texture_nodes": 0,
+      "linked_libraries": 0,
+      "movieclips": 0,
+      "objects": 261,
+      "meshes": 36,
+      "materials": 9,
+      "lights": 2,
+      "cameras": 1,
+      "node_groups": 0,
+      "textures": 0,
+      "engine": "CYCLES",
+      "device": "CPU",
+      "resolution": [
+        1920,
+        1080
+      ],
+      "fps": 30,
+      "frame_range": [
+        1,
+        300
+      ],
+      "pass": true,
+      "index": 4,
+      "name": "Iceland Aurora",
+      "blend": "output/FiveWorlds_BlenderV3_04_IcelandAurora.blend",
+      "blend_sha256": "604f61eb0e7d8f4b6d740d32600de339a7ae1a821dcb32eb3fff8e11275d5ce2",
+      "reference": "assets/references/v6/04_iceland_aurora_16x9.jpg",
+      "reference_usage": "visual_reference_only_not_embedded"
+    },
+    {
+      "image_datablocks": 0,
+      "image_datablock_names": [],
+      "image_texture_nodes": 0,
+      "image_texture_node_details": [],
+      "image_texture_datablocks": 0,
+      "environment_texture_nodes": 0,
+      "linked_libraries": 0,
+      "movieclips": 0,
+      "objects": 243,
+      "meshes": 114,
+      "materials": 14,
+      "lights": 2,
+      "cameras": 1,
+      "node_groups": 1,
+      "textures": 4,
+      "engine": "CYCLES",
+      "device": "CPU",
+      "resolution": [
+        1920,
+        1080
+      ],
+      "fps": 30,
+      "frame_range": [
+        1,
+        300
+      ],
+      "pass": true,
+      "index": 5,
+      "name": "Rainforest Temple",
+      "blend": "output/FiveWorlds_BlenderV3_05_RainforestTemple.blend",
+      "blend_sha256": "4563109c5ba1b741f06c58e852c76f4aa8d7e8424f489456788e608703ec8774",
+      "reference": "assets/references/v6/05_rainforest_temple_16x9.jpg",
+      "reference_usage": "visual_reference_only_not_embedded"
+    }
+  ],
+  "errors": []
+}

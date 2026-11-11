@@ -79,8 +79,17 @@ web/.cache/
 !output/FiveWorlds_AllScenes_720p30_50s.mp4
 
 
-# Five Worlds Blender v2 final deliverables (user-corrected Blender route)
+# Five Worlds Blender v2 final deliverables (superseded / rejected 2.5D route)
 !output/FiveWorlds_Blender_*.blend
 !output/FiveWorlds_Blender_*.mp4
 !docs/FIVE_WORLDS_BLENDER_*
 !assets/references/v6/00_five_worlds_blender_contact.jpg
+
+# Five Worlds Blender v3 pure-3D final deliverables
+!output/FiveWorlds_BlenderV3_*.blend
+!output/FiveWorlds_BlenderV3_*.mp4
+!docs/FIVE_WORLDS_BLENDER_V3_*
+!assets/references/v6/00_five_worlds_blender_v3_contact.jpg
+
+# CI shard scratch frames stay local / in the artifact, not in Git.
+frames_v3/

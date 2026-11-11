@@ -1,0 +1,12 @@
+Five Worlds Blender v3 trigger
+
+User correction: recreate EVERY scene in actual 3D with bpy. Use the generated
+images as visual references only. There must be no image inside any .blend:
+no packed references, no backplates, no image textures, no HDRI, no generated
+image masks. Build photorealistic procedural 3D worlds using the cloned
+skills/blender-skills/.claude/skills collection with all 94 pinned SKILL.md
+documents rechecked, plus the realistic-blender-production meta-skill loop.
+
+Deliver five editable .blend scenes, five 10-second 1080p30 Cycles CPU videos,
+one 50-second montage, no-image audits, manifest, receipt, validation and a
+full 94-skill review matrix. Supersedes WebGL v1 and Blender backplate v2.

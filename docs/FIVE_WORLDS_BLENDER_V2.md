@@ -1,4 +1,6 @@
-# Five Worlds Blender v2 — user-corrected Blender/Cycles renders
+> **Rejected and superseded:** this v2 Blender/Cycles route used packed photographic backplates and image-based ground/reflection textures. The user rejected it as 2.5D. Use `docs/FIVE_WORLDS_BLENDER_V3.md` instead; no image may exist inside any final `.blend`.
+
+# Five Worlds Blender v2 — rejected reference-driven 2.5D renders
 
 The earlier **Three.js/WebGL screenshot-capture version was not what was requested**. This v2 re-creates all five scenes as actual `.blend` files in **Blender 4.2.23**, then renders them as videos with **Cycles CPU** using the same sharded GitHub Actions pattern as the Kerala animation.
 

@@ -1,49 +1,36 @@
-# Monsoon Light — Kerala
+# Monsoon Light — Kerala / Five Worlds Blender v3
 
-## Current Five Worlds Blender v2 — user-corrected Blender/Cycles renders
+## Current delivery — Five Worlds Blender v3: fully modeled pure-3D worlds
 
-The user rejected the earlier WebGL screenshot-capture route. All five scenes are now **actual Blender `.blend` scenes**, rendered as videos with **Blender Cycles CPU** in a 15-shard GitHub Actions workflow like the Kerala animation.
+The user rejected the earlier WebGL screenshot-capture route **and** the v2 Blender/Cycles backplate route. Every one of the five worlds is now rebuilt from scratch with `bpy` as an editable, fully modeled 3D scene. The generated JPGs are **visual references only**: no image datablock, image texture, environment texture, photo backplate, HDRI or generated image mask exists inside any final `.blend`.
 
-- `output/FiveWorlds_Blender_01_AlpineLake.blend` … `output/FiveWorlds_Blender_05_RainforestTemple.blend` — five editable, packed Blender scenes using the generated references as real backplates and animated ground textures.
-- `output/FiveWorlds_Blender_01_AlpineLake_1080p30_10s.mp4` … `output/FiveWorlds_Blender_05_RainforestTemple_1080p30_10s.mp4` — five Blender-rendered 1920×1080, 30 fps, exactly 10 s videos.
-- `output/FiveWorlds_Blender_AllScenes_1080p30_50s.mp4` — all five back-to-back.
-- `assets/references/v6/00_five_worlds_blender_contact.jpg` — contact sheet extracted from the Blender MP4s.
-- `docs/FIVE_WORLDS_BLENDER_MANIFEST.json`, `docs/FIVE_WORLDS_BLENDER_RECEIPT.json`, `docs/FIVE_WORLDS_BLENDER_VALIDATION.json`, `docs/FIVE_WORLDS_BLENDER_V2.md` — packed-scene manifest, route/render proof, validation and method notes.
-- `scripts/build_five_worlds_blender.py`, `scripts/render_five_worlds_blender.py`, `scripts/finalize_five_worlds_blender.py`, `scripts/verify_five_worlds_blender.py` — Blender builder, shard renderer, assembler and independent verifier.
-- `.github/workflows/render-five-worlds-blender.yml` — 15-shard Cycles CPU render and commit-back.
+- `output/FiveWorlds_BlenderV3_01_AlpineLake.blend` … `output/FiveWorlds_BlenderV3_05_RainforestTemple.blend` — five frozen Blender 4.2.23 pure-procedural 3D scenes.
+- `output/FiveWorlds_BlenderV3_01_AlpineLake_1080p30_10s.mp4` … `output/FiveWorlds_BlenderV3_05_RainforestTemple_1080p30_10s.mp4` — five 1920×1080, 30 fps, exactly 10 s silent H.264 videos.
+- `output/FiveWorlds_BlenderV3_AllScenes_1080p30_50s.mp4` — all five back-to-back, exactly 50 s.
+- `assets/references/v6/00_five_worlds_blender_v3_contact.jpg` — contact sheet extracted from the final Blender MP4s by CI.
+- `docs/FIVE_WORLDS_BLENDER_V3.md`, `docs/FIVE_WORLDS_BLENDER_V3_BRIEF.md`, `docs/FIVE_WORLDS_BLENDER_V3_REFERENCE_ANALYSIS.md` — review, locked brief and reference-only analysis.
+- `docs/FIVE_WORLDS_BLENDER_V3_MANIFEST.json`, `docs/FIVE_WORLDS_BLENDER_V3_BLEND_AUDIT.json`, `docs/FIVE_WORLDS_BLENDER_V3_RECEIPT.json`, `docs/FIVE_WORLDS_BLENDER_V3_VALIDATION.json`, `docs/FIVE_WORLDS_BLENDER_V3_LOCAL_VALIDATION.json` — frozen scenes, independent zero-image audit, render receipt, CI validation and independent delivery validation.
+- `docs/five_worlds_blender_v3_skill_94_review.json` / `docs/FIVE_WORLDS_BLENDER_V3_SKILL_94_REVIEW.md` — all **94** pinned `.claude/skills` documents rechecked as production guidance, compatibility checks, N/A disciplines and QA/exclusion lenses. This is not a claim that 94 styles were mixed into one image.
+- `scripts/build_five_worlds_blender_v3.py`, `scripts/render_five_worlds_blender_v3.py`, `scripts/audit_five_worlds_blender_v3.py`, `scripts/finalize_five_worlds_blender_v3.py`, `scripts/verify_five_worlds_blender_v3.py` — pure-3D builder, zero-image shard renderer, standalone auditor, assembler and independent verifier.
+- `.github/workflows/render-five-worlds-blender-v3.yml` — independent frozen-scene audit, 15 Cycles CPU shards × 100 frames, assembly and commit-back.
 
-Reproduce/verify locally:
+Render spec: Cycles CPU, 4 samples, adaptive sampling, OpenImageDenoise `RGB_ALBEDO_NORMAL`, AgX Medium High Contrast, 1920×1080, 30 fps, 300 frames per scene, H.264/yuv420p `libx264` CRF 18. The final MP4s, contact sheet, receipt and validation are written by the CI workflow's commit-back step.
 
-```bash
-sh scripts/setup_sandbox.sh
-sh scripts/blender-py scripts/build_five_worlds_blender.py --out output --manifest docs/FIVE_WORLDS_BLENDER_MANIFEST.json
-python scripts/verify_five_worlds_blender.py
-```
-
-## Earlier Five Worlds v1 WebGL prototype — superseded
-
-Five assistant-invented, reference-driven worlds replace the Kerala/coconut/paddy/house scene. Each is a photorealistic 1280×720, 30 fps, 300-frame H.264 render lasting exactly 10 seconds; the 50-second montage joins all five.
-
-- `output/FiveWorlds_01_AlpineLake_720p30_10s.mp4` — mirror alpine lake, drifting mist, rippled reflection, golden-hour dolly.
-- `output/FiveWorlds_02_NeonRainAlley_720p30_10s.mp4` — wet neon alley, falling rain, steam, flickering signs, tracking move.
-- `output/FiveWorlds_03_SaharaDunes_720p30_10s.mp4` — sunrise dunes, heat shimmer, wind-blown sand, lateral drift.
-- `output/FiveWorlds_04_IcelandAurora_720p30_10s.mp4` — black-sand beach, animated aurora, stars, surf, tilt up.
-- `output/FiveWorlds_05_RainforestTemple_720p30_10s.mp4` — mossy temple, floating dust, canopy shade, slow dolly.
-- `output/FiveWorlds_AllScenes_720p30_50s.mp4` — all five scenes back-to-back.
-- `assets/references/v6/` — five generated reference plates, 16:9 derivatives, reference contact sheet, and final video contact sheet.
-- `docs/FIVE_WORLDS_RECEIPT.json` / `docs/FIVE_WORLDS_VALIDATION.json` — route decision, SHA-256, codec/duration/frame and full-decode proof.
-- `docs/FIVE_WORLDS_V1.md` — method, scene list and reproduction steps.
-
-Fastest route selected: in-sandbox Three.js/WebGL, Puppeteer screenshot capture, and local ffmpeg. The generated references are loaded as actual backplate and rippled-reflection textures, not kept as documentation only. Reproduce with:
+Rebuild/verify locally:
 
 ```bash
-cd web
-npm ci
-npm run render
-npm run verify
+sh scripts/blender-py scripts/build_five_worlds_blender_v3.py --out output --manifest docs/FIVE_WORLDS_BLENDER_V3_MANIFEST.json --width 1920 --height 1080 --samples 4 --fps 30 --frames 300
+sh scripts/blender-py scripts/audit_five_worlds_blender_v3.py --manifest docs/FIVE_WORLDS_BLENDER_V3_MANIFEST.json --out docs/FIVE_WORLDS_BLENDER_V3_BLEND_AUDIT.json
+python3 scripts/verify_five_worlds_blender_v3.py
 ```
 
-## Current v5.2 sunrise god-rays animation
+## Superseded / rejected routes
+
+- **v1 WebGL:** `web/`, `output/FiveWorlds_*_720p30_10s.mp4`, `docs/FIVE_WORLDS_V1.md` and the v1 receipt/validation are historical comparison artifacts only; the user rejected the browser route.
+- **v2 Blender 2.5D:** `output/FiveWorlds_Blender_*.blend`, `output/FiveWorlds_Blender_*_1080p30_10s.mp4`, `docs/FIVE_WORLDS_BLENDER_V2.md` and the v2 receipt/validation are rejected because photographic plates were packed into the scenes and used as backplates/ground/reflection textures.
+- **Kerala v5.2:** `output/Kerala_Coconut_Sunrise_GodRays_1080p30_5s.mp4` remains a completed, presented historical deliverable; it is unrelated to the Five Worlds v3 request.
+
+## Historical Kerala v5.2 sunrise god-rays animation
 
 - `output/Kerala_Coconut_Sunrise_GodRays_1080p30_5s.mp4` — 5 s, 1920×1080, 30 fps, 150 native frames; one sun rises from behind the Ghats with physically shadow-shaped crepuscular rays.
 - `docs/KERALA_ANIMATION_V52_RECEIPT.json` / `docs/KERALA_ANIMATION_V52_VALIDATION.json` — encode, ffprobe, SHA-256 and lighting-audit proof.
@@ -63,7 +50,7 @@ The full 150-frame render is produced by `.github/workflows/render-kerala-animat
 
 An actual editable Blender landscape inspired by two user-supplied paddy-field references: flooded rice rows, a curved earthen bund, coconut palms and tropical tree belt, layered Western-Ghat-inspired mountains, and an old Kerala tharavad-inspired house at the path end.
 
-## Quality-first v3 deliverables
+## Historical Kerala quality-first deliverables
 
 - `output/Kerala_Quality.blend` — editable packed Blender 4.2 quality scene (metric, named collections, live GN/collection instances, packed PBR).
 - `output/Kerala_Quality_900p.png` — 1600×900 Cycles CPU hero still from the frozen v3 scene.
