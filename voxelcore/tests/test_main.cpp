@@ -15,6 +15,7 @@
 #include "../engine/storage/zlib.hpp"
 #include "../engine/visibility/cave_culling.hpp"
 #include "../engine/rendering/software_renderer.hpp"
+#include "../engine/lighting/light_volume.hpp"
 #include <fstream>
 #include <filesystem>
 #include <cstdio>
@@ -345,6 +346,94 @@ static void testCaveCulling() {
              expectedSealedFaces);
 }
 
+static void testLightPropagation() {
+    // --- all-air region: everything sky-lit ---
+    {
+        vc::World world;
+        const vc::LightRegion region{0, 0, 0, 4, 8, 4};
+        const vc::LightVolume light = vc::LightVolume::compute(world, region);
+        for (int y = 0; y < 8; ++y)
+            for (int z = 0; z < 4; ++z)
+                for (int x = 0; x < 4; ++x)
+                    CHECK_EQ(light.skyAt(x, y, z), 15);
+        CHECK_EQ(light.skyAt(1, 100, 1), 15); // above region top = open sky
+        CHECK_EQ(light.blockAt(1, 4, 1), 0);  // no block sources
+    }
+    // --- stone slab at y=0: above lit, slab occluded ---
+    {
+        vc::World world;
+        for (int z = 0; z < 4; ++z) for (int x = 0; x < 4; ++x) world.setBlock(x, 0, z, vc::blocks::Stone);
+        const vc::LightRegion region{0, 0, 0, 4, 8, 4};
+        const vc::LightVolume light = vc::LightVolume::compute(world, region);
+        CHECK_EQ(light.skyAt(2, 0, 2), 0);   // stone cell itself
+        CHECK_EQ(light.skyAt(2, 1, 2), 15);  // open above
+        CHECK_EQ(light.skyAt(2, 7, 2), 15);
+    }
+    // --- sealed cavity: interior fully dark ---
+    {
+        vc::World world;
+        for (int y = 0; y < 16; ++y)
+            for (int z = 0; z < 16; ++z)
+                for (int x = 0; x < 16; ++x)
+                    world.setBlock(x, y, z, vc::blocks::Stone);
+        for (int y = 4; y <= 6; ++y)
+            for (int z = 4; z <= 10; ++z)
+                for (int x = 4; x <= 10; ++x)
+                    world.setBlock(x, y, z, vc::blocks::Air);
+        const vc::LightRegion region{0, 0, 0, 16, 16, 16};
+        const vc::LightVolume light = vc::LightVolume::compute(world, region);
+        for (int y = 4; y <= 6; ++y)
+            for (int z = 4; z <= 10; ++z)
+                for (int x = 4; x <= 10; ++x)
+                    CHECK_EQ(light.skyAt(x, y, z), 0); // sealed — no light anywhere inside
+    }
+    // --- shaft opened to sky: exact flood-fill falloff ---
+    {
+        vc::World world;
+        for (int y = 0; y < 16; ++y)
+            for (int z = 0; z < 16; ++z)
+                for (int x = 0; x < 16; ++x)
+                    world.setBlock(x, y, z, vc::blocks::Stone);
+        for (int y = 4; y <= 6; ++y)
+            for (int z = 4; z <= 10; ++z)
+                for (int x = 4; x <= 10; ++x)
+                    world.setBlock(x, y, z, vc::blocks::Air); // cavity
+        for (int y = 7; y <= 15; ++y) world.setBlock(7, y, 7, vc::blocks::Air); // shaft
+        const vc::LightRegion region{0, 0, 0, 16, 16, 16};
+        const vc::LightVolume light = vc::LightVolume::compute(world, region);
+        CHECK_EQ(light.skyAt(7, 12, 7), 15); // inside the shaft
+        CHECK_EQ(light.skyAt(7, 5, 7), 15);  // shaft bottom opens into the cavity (same column)
+        CHECK_EQ(light.skyAt(6, 5, 7), 14);  // 1 step away
+        CHECK_EQ(light.skyAt(5, 5, 7), 13);  // 2 steps away
+        CHECK_EQ(light.skyAt(6, 5, 6), 13);  // manhattan distance 2
+        CHECK_EQ(light.skyAt(4, 5, 4), 9);   // manhattan 6 from the shaft column -> 15 - 6
+    }
+    // --- block light: exact Manhattan falloff, blocked by stone ---
+    {
+        vc::World world; // all air
+        const vc::LightRegion region{0, 0, 0, 16, 16, 16};
+        const vc::LightVolume light = vc::LightVolume::compute(world, region, {{8, 8, 8, 15}});
+        CHECK_EQ(light.blockAt(8, 8, 8), 15);
+        CHECK_EQ(light.blockAt(9, 8, 8), 14);
+        CHECK_EQ(light.blockAt(12, 8, 8), 11);
+        CHECK_EQ(light.blockAt(8, 15, 8), 8);  // distance 7
+        CHECK_EQ(light.blockAt(1, 8, 8), 8);
+        // Wall off x=5 completely: the region left of it can no longer see the source.
+        vc::World walled;
+        for (int y = 0; y < 16; ++y) for (int z = 0; z < 16; ++z) walled.setBlock(5, y, z, vc::blocks::Stone);
+        const vc::LightVolume lw = vc::LightVolume::compute(walled, region, {{8, 8, 8, 15}});
+        CHECK_EQ(lw.blockAt(4, 8, 8), 0);    // behind the wall: dark
+        CHECK_EQ(lw.blockAt(6, 8, 8), 13);   // wall face itself (entering stone = blocked, neighbor stays 13)
+        CHECK_EQ(lw.blockAt(7, 8, 8), 14);   // source side
+        // Source occluded by stone: no emission at all.
+        vc::World occluded;
+        occluded.setBlock(8, 8, 8, vc::blocks::Stone);
+        const vc::LightVolume lo = vc::LightVolume::compute(occluded, region, {{8, 8, 8, 15}});
+        CHECK_EQ(lo.blockAt(8, 8, 8), 0);
+        CHECK_EQ(lo.blockAt(9, 8, 8), 0);
+    }
+}
+
 static void testSideBuckets() {
     vc::World world;
     for (int y = 0; y <= 8; ++y)
@@ -387,9 +476,13 @@ static void testTranslucentWaterDraw() {
     water.ao = {3, 3, 3, 3};
     renderer.drawQuads({water}, 0, 0);
     const auto& px = renderer.pixels();
+    int changed = 0;
+    for (std::uint32_t p : px) if (p != 0xFF202830u) ++changed;
     const std::uint32_t center = px[32 * 64 + 32];
+    std::fprintf(stderr, "INFO translucency: changed_pixels=%d center=0x%08X\n", changed, center);
     // Must differ from clear sky and not equal the raw water color (it is blended).
     CHECK(center != 0xFF202830u);
+    CHECK(changed > 200); // rasterizer covers ~484 px locally; loose bound for platform FP drift
     const int cr = (center >> 16) & 0xFF, cg = (center >> 8) & 0xFF, cb = center & 0xFF;
     const int sky_r = 0x20, sky_g = 0x28, sky_b = 0x30;
     const int wat_r = 0x3F, wat_g = 0x6F, wat_b = 0xD6;
@@ -441,6 +534,7 @@ int main() {
     testCaveCulling();
     testSideBuckets();
     testTranslucentWaterDraw();
+    testLightPropagation();
     std::fprintf(stderr, "\n%d checks, %d failures\n", g_checks, g_failures);
     return g_failures == 0 ? 0 : 1;
 }

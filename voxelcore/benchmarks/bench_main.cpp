@@ -6,6 +6,7 @@
 #include "../engine/world/world.hpp"
 #include "../engine/meshing/mesher.hpp"
 #include "../engine/jobs/job_system.hpp"
+#include "../engine/lighting/light_volume.hpp"
 #include <cstdio>
 #include <vector>
 #include <functional>
@@ -56,6 +57,17 @@ int main() {
         GreedyMesher mesher;
         auto r = mesher.meshWorld({0, 0}, w);
         if (r.quads.empty()) std::fprintf(stderr, "empty mesh!\n");
+    });
+    run("light_volume_16x64x16_flat", 100, [] {
+        World w;
+        for (int y = 0; y <= 20; ++y)
+            for (int z = 0; z < 16; ++z)
+                for (int x = 0; x < 16; ++x)
+                    w.setBlock(x, y, z, y == 20 ? blocks::Grass : (y >= 18 ? blocks::Dirt : blocks::Stone));
+        const LightRegion region{0, 0, 0, 16, kChunkHeight, 16};
+        const LightVolume light = LightVolume::compute(w, region);
+        std::uint64_t acc = light.skylitCells();
+        if (acc == 0) std::fprintf(stderr, "no lit cells!\n");
     });
     run("job_system_parallel_for_1M", 20, [] {
         JobSystem jobs(4);

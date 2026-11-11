@@ -28,7 +28,7 @@ jobs:
           rc=${PIPESTATUS[0]}
           set -e
           if [ "$rc" != "0" ]; then
-            grep -E 'FAIL|SKIP' /tmp/voxelcore_test_out.log | head -30 | while IFS= read -r line; do echo "::error::$line"; done
+            grep -E 'FAIL|SKIP|INFO translucency' /tmp/voxelcore_test_out.log | head -30 | while IFS= read -r line; do echo "::error::$line"; done
           fi
           exit $rc
       - name: Benchmarks (smoke)
