@@ -166,11 +166,13 @@ int main(int argc, char** argv) {
     const math::Mat4 view = math::lookAtRH(eye, target, up);
     const math::Mat4 proj = math::perspectiveVulkan(60.0f, 4.0f / 3.0f, 0.5f, 500.0f);
     const math::Mat4 mvp = math::multiply(proj, view);
+    std::uint32_t depthA = 0xdeadbeefu, depthB = 0xdeadbeefu;
     try {
         {   // Path A: expanded vertices
             vk::HeadlessRenderer renderer(1280, 960, std::string(VOXELCORE_SPV_DIR));
             renderer.init();
             renderer.renderToPpm(vertices, tris.indices, mvp, pathA.c_str());
+            depthA = renderer.depthAt(844, 300);
         }
         {   // Determinism probe: render path A a second time; report if driver is nondeterministic
             vk::HeadlessRenderer renderer(1280, 960, std::string(VOXELCORE_SPV_DIR));
@@ -251,6 +253,7 @@ int main(int argc, char** argv) {
             vk::HeadlessRenderer renderer(1280, 960, std::string(VOXELCORE_SPV_DIR));
             renderer.init();
             renderer.renderRecordsToPpm(draws, mvp, pathB.c_str());
+            depthB = renderer.depthAt(844, 300);
             vk::HeadlessRenderer renderer2(1280, 960, std::string(VOXELCORE_SPV_DIR));
             renderer2.init();
             renderer2.renderRecordsToPpm(draws, mvp, (pathB + ".2.ppm").c_str());
@@ -465,6 +468,11 @@ int main(int argc, char** argv) {
                 << ") B=(" << int(b[o]) << "," << int(b[o + 1]) << "," << int(b[o + 2]) << ")\n";
             ++printed;
         }
+    }
+    {
+        char dline[64];
+        std::snprintf(dline, sizeof(dline), "depth (844,300): A=0x%08x B=0x%08x\n", depthA, depthB);
+        rep << dline;
     }
     // Knife-edge neighborhood dump (the single mismatch pixel sits on a hairline sliver):
     // print a 13x5 patch around the differing pixel for the key images so the CI annotation

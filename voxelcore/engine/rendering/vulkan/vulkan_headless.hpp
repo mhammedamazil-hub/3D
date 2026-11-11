@@ -136,7 +136,7 @@ public:
                                   VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
                                   VK_IMAGE_ASPECT_COLOR_BIT);
         depthImage_ = createImage(VK_FORMAT_D32_SFLOAT,
-                                  VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+                                  VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
                                   VK_IMAGE_ASPECT_DEPTH_BIT);
 
         // --- render pass ---
@@ -235,6 +235,60 @@ public:
         createReadback();
         recordAndSubmitRecords(viewProj, draws);
         readBackAndWritePpm(ppmPath);
+    }
+
+    // E7 diagnostics: read back the D32 depth word of one pixel from the last rendered frame.
+    // Returns the raw uint32 stored in D32_SFLOAT (bit pattern of the depth float).
+    std::uint32_t depthAt(std::uint32_t x, std::uint32_t y) {
+        VkDeviceMemory stageMem = VK_NULL_HANDLE;
+        VkBuffer stage = createBuffer(4, VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+                                      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stageMem);
+        VkCommandBufferAllocateInfo alloc{}; alloc.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+        alloc.commandPool = commandPool_; alloc.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY; alloc.commandBufferCount = 1;
+        VkCommandBuffer cb = VK_NULL_HANDLE;
+        VC_VK_TRY(api_.AllocateCommandBuffers(device_, &alloc, &cb), "vkAllocateCommandBuffers(depth)");
+        VkCommandBufferBeginInfo beginInfo{}; beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+        VC_VK_TRY(api_.BeginCommandBuffer(cb, &beginInfo), "vkBeginCommandBuffer(depth)");
+        auto barrier = [&](VkImageLayout from, VkImageLayout to, VkAccessFlags srcAccess, VkAccessFlags dstAccess) {
+            VkImageMemoryBarrier b{}; b.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+            b.srcAccessMask = srcAccess; b.dstAccessMask = dstAccess;
+            b.oldLayout = from; b.newLayout = to;
+            b.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED; b.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+            b.image = depthImage_.image;
+            b.subresourceRange = {VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1};
+            return b;
+        };
+        VkImageMemoryBarrier toSrc = barrier(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+                                             VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT, VK_ACCESS_TRANSFER_READ_BIT);
+        api_.CmdPipelineBarrier(cb, VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
+                                0, 0, nullptr, 0, nullptr, 1, &toSrc);
+        VkBufferImageCopy region{};
+        region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+        region.imageSubresource.layerCount = 1;
+        region.imageOffset = {static_cast<std::int32_t>(x), static_cast<std::int32_t>(y), 0};
+        region.imageExtent = {1, 1, 1};
+        api_.CmdCopyImageToBuffer(cb, depthImage_.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, stage, 1, &region);
+        VkImageMemoryBarrier toAttach = barrier(VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+                                                VK_ACCESS_TRANSFER_READ_BIT, VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT);
+        api_.CmdPipelineBarrier(cb, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
+                                0, 0, nullptr, 0, nullptr, 1, &toAttach);
+        VC_VK_TRY(api_.EndCommandBuffer(cb), "vkEndCommandBuffer(depth)");
+        VkFenceCreateInfo fenceInfo{}; fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+        VkFence fence = VK_NULL_HANDLE;
+        VC_VK_TRY(api_.CreateFence(device_, &fenceInfo, nullptr, &fence), "vkCreateFence(depth)");
+        VkSubmitInfo submit{}; submit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO; submit.commandBufferCount = 1; submit.pCommandBuffers = &cb;
+        VC_VK_TRY(api_.QueueSubmit(queue_, 1, &submit, fence), "vkQueueSubmit(depth)");
+        VC_VK_TRY(api_.WaitForFences(device_, 1, &fence, VK_TRUE, UINT64_MAX), "vkWaitForFences(depth)");
+        void* data = nullptr;
+        VC_VK_TRY(api_.MapMemory(device_, stageMem, 0, 4, 0, &data), "vkMapMemory(depth)");
+        const std::uint32_t word = *static_cast<const std::uint32_t*>(data);
+        api_.UnmapMemory(device_, stageMem);
+        api_.DestroyFence(device_, fence, nullptr);
+        api_.FreeCommandBuffers(device_, commandPool_, 1, &cb);
+        api_.DestroyBuffer(device_, stage, nullptr);
+        api_.FreeMemory(device_, stageMem, nullptr);
+        return word;
     }
 
 private:
