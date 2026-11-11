@@ -4,7 +4,7 @@
 
 Status: **Stage 3–8 in progress** — working, tested engine foundation: palette-compressed world storage, deterministic terrain, an exact greedy mesher, frustum culling, heightfield LOD, a software CPU rasterizer (verification path), unit tests, benchmarks, and CI. GPU rendering (Vulkan) is designed but not yet claimed working. See `DEVELOPMENT_STATUS.md` for the honest ledger.
 
-![Headless software render of a 3×3-chunk generated world](voxelcore/sample_render.png)
+![Headless software render of a generated chunk (seed 1234)](voxelcore/sample_render.png)
 
 ## Layout
 

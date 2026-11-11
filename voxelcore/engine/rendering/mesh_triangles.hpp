@@ -37,9 +37,10 @@ inline MeshTriangles expandQuads(const std::vector<Quad>& quads) {
                 break; }
         }
         const std::uint32_t base = faceColor(q.block);
+        const float sun = faceSunFactor(q.dir);
         const std::uint32_t cornerCol[4] = {
-            shadeFace(base, q.ao[0], q.light), shadeFace(base, q.ao[1], q.light),
-            shadeFace(base, q.ao[2], q.light), shadeFace(base, q.ao[3], q.light),
+            shadeFace(base, q.ao[0], q.light, sun), shadeFace(base, q.ao[1], q.light, sun),
+            shadeFace(base, q.ao[2], q.light, sun), shadeFace(base, q.ao[3], q.light, sun),
         };
         const std::uint32_t vi = static_cast<std::uint32_t>(out.positions.size() / 3);
         for (int i = 0; i < 4; ++i) {

@@ -21,12 +21,12 @@ inline std::uint32_t faceColor(BlockId b) {
     }
 }
 
-// ao 0..3 (Minecraft corner AO), light 0..15 (Minecraft sky/block face light).
-// AO factor: 0.35..1.0. Light factor: 0.2..1.0. light=15 reproduces the AO-only result exactly.
-inline std::uint32_t shadeFace(std::uint32_t argb, std::uint8_t ao, std::uint8_t light = 15) {
+// ao 0..3 (Minecraft corner AO), light 0..15 (Minecraft sky/block face light),
+// sun = per-direction solar tint (see faceSunFactor). light=15, sun=1 reproduces the AO-only result exactly.
+inline std::uint32_t shadeFace(std::uint32_t argb, std::uint8_t ao, std::uint8_t light = 15, float sun = 1.0f) {
     const float aoK = 0.35f + 0.2167f * static_cast<float>(ao);
     const float lightK = 0.2f + 0.8f * (static_cast<float>(light) / 15.0f);
-    const float k = aoK * lightK;
+    const float k = aoK * lightK * sun;
     const std::uint32_t r = static_cast<std::uint32_t>(((argb >> 16) & 0xFF) * k);
     const std::uint32_t g = static_cast<std::uint32_t>(((argb >> 8) & 0xFF) * k);
     const std::uint32_t b = static_cast<std::uint32_t>((argb & 0xFF) * k);

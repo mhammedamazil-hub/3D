@@ -44,6 +44,18 @@ struct Quad {
 // Horizon-compatible side buckets (mesher/sides.rs): +X, +Z, other, +Y, -Z, -X, -Y.
 // Ordering mesh output by bucket keeps the eye-facing runs to ~1-2 buckets per frame.
 // "other" (index 2) is reserved for future non-cube faces (E7/E9); the loop below never emits it.
+// Solar tint per face direction (Minecraft-like): up faces full sun, side faces dimmed,
+// down faces darkest. Multiplies AO x light; exposes the classic directional contrast.
+inline float faceSunFactor(FaceDir d) {
+    switch (d) {
+        case FaceDir::PosY: return 1.0f;
+        case FaceDir::NegY: return 0.5f;
+        case FaceDir::PosZ: case FaceDir::NegZ: return 0.8f;
+        case FaceDir::PosX: case FaceDir::NegX: return 0.72f;
+    }
+    return 1.0f;
+}
+
 inline std::uint32_t sideBucket(FaceDir d) {
     switch (d) {
         case FaceDir::PosX: return 0;
