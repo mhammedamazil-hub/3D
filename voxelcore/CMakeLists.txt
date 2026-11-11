@@ -102,12 +102,14 @@ if(VOXELCORE_WITH_VULKAN)
     set(VOXELCORE_SPV_CONFIG_INC "${CMAKE_CURRENT_BINARY_DIR}")
     set(_vert "${CMAKE_CURRENT_SOURCE_DIR}/engine/rendering/vulkan/shaders/voxelcore.vert")
     set(_frag "${CMAKE_CURRENT_SOURCE_DIR}/engine/rendering/vulkan/shaders/voxelcore.frag")
+    set(_recvert "${CMAKE_CURRENT_SOURCE_DIR}/engine/rendering/vulkan/shaders/records.vert")
     if(VOXELCORE_GLSLANG)
-        add_custom_command(OUTPUT "${VOXELCORE_SPV_DIR}/voxelcore.vert.spv" "${VOXELCORE_SPV_DIR}/voxelcore.frag.spv"
+        add_custom_command(OUTPUT "${VOXELCORE_SPV_DIR}/voxelcore.vert.spv" "${VOXELCORE_SPV_DIR}/voxelcore.frag.spv" "${VOXELCORE_SPV_DIR}/records.vert.spv"
                            COMMAND "${VOXELCORE_GLSLANG}" -V "${_vert}" -o "${VOXELCORE_SPV_DIR}/voxelcore.vert.spv"
                            COMMAND "${VOXELCORE_GLSLANG}" -V "${_frag}" -o "${VOXELCORE_SPV_DIR}/voxelcore.frag.spv"
-                           DEPENDS "${_vert}" "${_frag}" VERBATIM)
-        add_custom_target(voxelcore_shaders ALL DEPENDS "${VOXELCORE_SPV_DIR}/voxelcore.vert.spv" "${VOXELCORE_SPV_DIR}/voxelcore.frag.spv")
+                           COMMAND "${VOXELCORE_GLSLANG}" -V "${_recvert}" -o "${VOXELCORE_SPV_DIR}/records.vert.spv"
+                           DEPENDS "${_vert}" "${_frag}" "${_recvert}" VERBATIM)
+        add_custom_target(voxelcore_shaders ALL DEPENDS "${VOXELCORE_SPV_DIR}/voxelcore.vert.spv" "${VOXELCORE_SPV_DIR}/voxelcore.frag.spv" "${VOXELCORE_SPV_DIR}/records.vert.spv")
     else()
         add_custom_target(voxelcore_shaders ALL COMMAND ${CMAKE_COMMAND} -E echo "voxelcore_shaders: no compiler — runtime will report shader missing")
     endif()
@@ -117,6 +119,11 @@ if(VOXELCORE_WITH_VULKAN)
     # clean skip (exit 77) instead of a configure/link failure.
     add_executable(vulkan_render tools/vulkan_render.cpp)
     add_dependencies(vulkan_render voxelcore_shaders)
+    add_executable(records_parity tools/records_parity.cpp)
+    add_dependencies(records_parity voxelcore_shaders)
+    target_compile_definitions(records_parity PRIVATE VOXELCORE_WITH_VULKAN VOXELCORE_SPV_CONFIG)
+    target_include_directories(records_parity PRIVATE "${VOXELCORE_VK_HEADERS_DIR}/include" "${VOXELCORE_SPV_CONFIG_INC}")
+    target_link_libraries(records_parity PRIVATE voxelcore_engine ${CMAKE_DL_LIBS})
     target_compile_definitions(vulkan_render PRIVATE VOXELCORE_WITH_VULKAN VOXELCORE_SPV_CONFIG)
     target_include_directories(vulkan_render PRIVATE "${VOXELCORE_VK_HEADERS_DIR}/include" "${VOXELCORE_SPV_CONFIG_INC}")
     target_link_libraries(vulkan_render PRIVATE voxelcore_engine ${CMAKE_DL_LIBS})

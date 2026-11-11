@@ -48,3 +48,11 @@ greedy_mesh_generated_chunk,20,27.125,1356.235  (no light)
 greedy_mesh_with_light,20,30.668,1533.399       (+~13%: face-light sample per cell + merge splits)
 ```
 Software water pass confirmed visually identical RGB; Vulkan translucent draw ordered far→near.
+
+## Run 8 — E7 records path upload bytes (estimate from measured quad count)
+- Date: 2026-11-11 · Commit: pending push (E7 milestone 2) · Hardware: CI runner (lavapipe) — local check SKIP (no Vulkan driver locally).
+- Scene: `tools/records_parity.cpp` world (64×64, stone/dirt/grass + 1 tree), 115 quads.
+- Expanded path upload: 115 quads × (4 verts × 28 B + 6 indices × 4 B) = 115 × 136 B = 15,640 B.
+- Records path upload: 115 × 8 B = 920 B (≈17.0× fewer bytes; ≈1,360 B/chunk at 1.3 k quads vs ≈176 KB expanded).
+- Meshing itself is unchanged (records are a post-mesh compaction); pack cost not yet benchmarked (codec is branch-light, expected <1% of greedy mesh).
+- Note: CI `Packed-records parity gate (E7)` decides whether records output is byte-identical; until green on lavapipe, unpacked remains default.

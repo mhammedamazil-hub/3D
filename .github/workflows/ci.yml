@@ -100,3 +100,23 @@ jobs:
             cat /usr/share/vulkan/icd.d/*.json 2>&1 >&2 || true
             exit "$rc"
           fi
+      - name: Packed-records parity gate (E7)
+        # Renders the same scene through the vertex-pulled packed-records pipeline and
+        # requires byte-identical output vs the CPU-expanded path (docs/design/E7_PACKED_RECORDS.md).
+        run: |
+          set +e
+          ./voxelcore/build-vk/records_parity /tmp/parity_expanded.ppm /tmp/parity_records.ppm
+          rc=$?
+          set -e
+          echo "records_parity exit code: $rc"
+          if [ "$rc" = "0" ]; then
+            python3 voxelcore/scripts/validate_ppm.py /tmp/parity_records.ppm
+          elif [ "$rc" = "77" ]; then
+            echo "::warning::records_parity skipped — no Vulkan device on this runner"
+          else
+            echo "records_parity FAILED with exit $rc (expanded vs records path diverged)" >&2
+            echo "--- diagnostics ---" >&2
+            ls -la /usr/share/vulkan/icd.d/ 2>&1 >&2 || true
+            cat /usr/share/vulkan/icd.d/*.json 2>&1 >&2 || true
+            exit "$rc"
+          fi

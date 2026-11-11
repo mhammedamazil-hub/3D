@@ -80,7 +80,15 @@ struct VulkanAPI {
     X(CmdBindIndexBuffer) \
     X(CmdPushConstants) \
     X(CmdDrawIndexed) \
-    X(CmdCopyImageToBuffer)
+    X(CmdCopyImageToBuffer) \
+    X(CmdDraw) \
+    X(CmdBindDescriptorSets) \
+    X(CreateDescriptorSetLayout) \
+    X(DestroyDescriptorSetLayout) \
+    X(CreateDescriptorPool) \
+    X(DestroyDescriptorPool) \
+    X(AllocateDescriptorSets) \
+    X(UpdateDescriptorSets)
 // clang-format on
 
 #define VC_VK_DECLARE_FN(Name) PFN_vk##Name Name = nullptr;

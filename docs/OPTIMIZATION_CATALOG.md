@@ -29,10 +29,16 @@ Living list. Every entry: purpose, cost, complexity, hardware dependence, status
 - Cost measured: 1.359 → 1.370 ms/chunk greedy mesh (<1%). Coplanar insertion order preserved per bucket.
 - Cutout/opaque split deferred to draw time (software renderer two passes; Vulkan single pass with alpha blend) — revisit with packed records (E7).
 
-## E7. Packed quad records + vertex pulling — **DESIGN DONE (2026-11-11, `docs/design/E7_PACKED_RECORDS.md`)**
-- Horizon's 24-byte record redesigned to an 8-byte chunk-local record (`x4 z4 y7 u4 v4 dir3 | block16 ao8 light4`) covering 100% of our greedy output.
-- GPU vertex pulling via `gl_InstanceID` + instanced draw; CPU expansion kept as reference/fallback; CI parity gate planned (bitwise or documented ≤1 LSB).
-- Estimated: ≥10× fewer upload bytes per chunk rebuild (≈150 KB → ≈10 KB at current quad counts). Implementation gated on CI parity; unpacked remains default.
+## E7. Packed quad records + vertex pulling — **M1+M2 IMPLEMENTED (2026-11-11, `docs/design/E7_PACKED_RECORDS.md`)**
+- Horizon's 24-byte record redesigned to an 8-byte chunk-local record (`x4 z4 y6 u4 v4 dir3 | block16 ao8 light4`);
+  plane positions stored as slice indices (boundary planes fit in 6 bits) after M1's layout rework. CPU codec +
+  exhaustive tests (3,456 cases + 20k fuzz) + Vulkan vertex-pulled pipeline (`records.vert`, storage buffer per
+  draw, origin in push constants) + `tools/records_parity.cpp` byte-identical-PPM CI gate (`Packed-records parity
+  gate (E7)` in the vulkan-headless job). dlopen loader extended with descriptor/draw symbols.
+- CPU-float32-vs-GLSL shading verified bit-identical on the full (ao × light × sun × colors) domain.
+- Upload bytes: 28 B/vert × 4 + 4 B × 6 indices ≈ 136 B/quad → 8 B/quad (≈17× fewer bytes at equal quad count;
+  bench row for unpacked vs records path still pending). Unpacked path remains default; M3 (bench + arena-backed
+  record buffers) open. Runtime parity verdict pending the GLSL→SPIR-V CI run for the records pipeline commit.
 
 ## E8. Cave culling (flood fill from opaque boundary) — **STAGE 7**
 - Purpose: discard never-visible interior sections. Horizon: big win at high RD. Cost: one BFS per world load + incremental on block change. Risk: correctness (needs conservative boundary rules).

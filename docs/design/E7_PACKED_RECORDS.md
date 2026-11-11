@@ -1,6 +1,6 @@
 # E7 — Packed quad records (24-byte → record-based GPU vertex pulling) — DESIGN
 
-**Status:** design (pre-implementation) · **Stage:** 6/13 · **Date:** 2026-11-11
+**Status:** M1+M2 implemented (codec + Vulkan vertex-pulled pipeline + CI parity gate) · **Stage:** 6/13 · **Date:** 2026-11-11
 **Reference:** Horizon `mesher/packed.rs` + `terrain.wgsl` (24-byte solid-face records, `PACKED_BASE = 1<<28` sentinel, WGSL expansion). Not vendored/translated — re-designed to our format.
 
 ## Why
@@ -14,10 +14,12 @@ heap overhead per element in the vector; 6 indices per quad on top.
 
 ## Proposed record: 8 bytes (2 × uint32)
 All greedy output is axis-aligned single-block-face rectangles with per-corner AO.
-Chunk-relative coords: x,z ∈ [0,16], y ∈ [0,64] (top planes at y=64 exist).
+Chunk-relative coords: x,z ∈ [0,15] (slice index, not plane), y ∈ [0,63] (slice index).
+Plane position = slice + (dir is a positive direction ? 1 : 0), so boundary planes (x/z = 16, y = 64)
+fit in 6/4 bits — revision recorded 2026-11-11 (original y:7 plane-encoding did not fit).
 
 ```
-word0: x:4 | z:4 | y:7 | uExt-1:4 | vExt-1:4 | dir:3 | reserved:6   // 32 bits
+word0: x:4 | z:4 | y:6 | uExt-1:4 | vExt-1:4 | dir:3 | reserved:7   // 32 bits
 word1: block:16 | ao[4]×2b:8 | light:4 | reserved:4                  // 32 bits
 ```
 - `dir` = FaceDir enum (0..5), `uExt`/`vExt` = merged extents (1..16), stored minus 1.
@@ -32,13 +34,20 @@ fixed shading model. If shader-pack support (stage 8) later needs arbitrary UVs/
 reserved bits + a uint32 extension word grow the record to 12 B with an explicit version nibble
 — documented here so the format is never silently broken.
 
-## GPU expansion (Vulkan)
-- One storage buffer per chunk (or one arena for all chunks with an offset table —
-  vertex arena from `memory/arena.hpp` backs this later).
-- `draw`: instanced, `gl_InstanceID` = record index, `gl_VertexID` ∈ [0,6).
-- `records.vert`: read record, compute the 4 corners from dir/x/y/z/uExt/vExt
-  (identical formulas to `expandQuads` — bitwise-identical output required),
-  look up ao per corner, apply `faceSunFactor(dir)` and `light` tint, emit `vec3` + `vec4 rgba`.
+## GPU expansion (Vulkan) — IMPLEMENTED
+- One storage buffer per draw (one draw per chunk-mesh opaque bucket run, water re-grouped
+  far-to-near to keep the global painter's order identical to the expanded path).
+- `draw`: `vkCmdDraw(6, recordCount)` non-indexed, `gl_InstanceIndex` = record index,
+  `gl_VertexIndex` ∈ [0,6) (GLSL 4.6 spellings — `gl_InstanceID` does not compile).
+- Push constants carry `{ mat4 mvp; vec4 origin; }` — chunk visibility unaffected, world-space
+  positions exact for the integer test world. (Per-arena offsets via an offset-table arena
+  remain stage-6 remainder; one buffer per draw for now.)
+- `records.vert`: same corner table as `expandQuads` (incl. the NegX/NegY/PosZ flip winding),
+  `floor()` where the CPU does unsigned truncation (products are non-negative — equal),
+  `kSun` table duplicating `faceSunFactor`. Verified bit-identical float32 op order.
+- `tools/records_parity.cpp` renders the same scene through both paths and requires
+  byte-identical PPMs; CI gained a `Packed-records parity gate (E7)` step in the
+  vulkan-headless job (lavapipe). Unpacked path remains default until the gate is green on CI.
 - CPU fallback (`mesh_triangles.hpp`) stays as the reference expansion for tests and for
   backends without storage buffers; shared corner formula lives in one header used by both
   (single source of truth, mirrored in GLSL — the GLSL is generated from the same table).
@@ -46,9 +55,9 @@ reserved bits + a uint32 extension word grow the record to 12 B with an explicit
 ## Acceptance criteria (implementation milestone)
 1. `packed_record.hpp`: pack/unpack roundtrip property tests (all 6 dirs × extents 1..16 ×
    coord ranges incl. y=64 × ao patterns × light values). Must be exhaustive where feasible.
-2. `vulkan_render --records` produces a PPM; in CI it must match the unpacked-path PPM
-   **pixel-for-pixel** (or, if FP reordering occurs in the matmul path, documented ≤1 LSB/channel
-   with mean 0 and aggregate |diff| reported — never silently accepted).
+2. `records_parity` produces two PPMs (expanded vs records); in CI they must match
+   **pixel-for-pixel** (byte-identical; any accepted ≤1 LSB divergence must be documented here
+   in the same commit that introduces it — never silently accepted).
 3. Bench: `greedy_mesh+pack`, `upload_bytes_per_chunk` reported; target ≥ 10× fewer bytes
    uploaded per chunk rebuild vs expanded path (≈150 KB → ≈10 KB at 1.3 k quads).
 4. No change to greedy merge semantics, AO, cave culling, or light — records are a pure

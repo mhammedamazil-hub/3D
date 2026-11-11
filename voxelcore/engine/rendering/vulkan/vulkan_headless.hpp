@@ -217,6 +217,26 @@ public:
         readBackAndWritePpm(ppmPath);
     }
 
+    struct RecordDraw {
+        float originX = 0.0f, originZ = 0.0f;             // chunk origin in absolute voxels
+        const std::uint32_t* words = nullptr;             // 2 words per record (word0, word1)
+        std::size_t recordCount = 0;
+    };
+
+    // E7: vertex-pulled draw of chunk-local packed records (8 bytes each).
+    // Each draw = one (contiguous run of) chunk(s); `origin` rides push constants so
+    // world-space positions are exact for integer coordinates. Draws are recorded in
+    // vector order (caller owns global draw ordering incl. the water two-pass rule).
+    void renderRecordsToPpm(const std::vector<RecordDraw>& draws, const math::Mat4& viewProj, const char* ppmPath) {
+        std::size_t totalRecords = 0;
+        for (const RecordDraw& d : draws) totalRecords += d.recordCount;
+        if (totalRecords == 0) throw VulkanError("nothing to draw (0 records)");
+        createRecordsPipelineAndDescriptors(draws);
+        createReadback();
+        recordAndSubmitRecords(viewProj, draws);
+        readBackAndWritePpm(ppmPath);
+    }
+
 private:
     struct ImageBundle { VkImage image = VK_NULL_HANDLE; VkDeviceMemory memory = VK_NULL_HANDLE; VkImageView view = VK_NULL_HANDLE; };
 
@@ -290,7 +310,11 @@ private:
         VC_VK_TRY(api_.MapMemory(device_, indexMemory_, 0, indices.size() * sizeof(std::uint32_t), 0, &data), "api_.MapMemory(index)");
         std::memcpy(data, indices.data(), indices.size() * sizeof(std::uint32_t));
         api_.UnmapMemory(device_, indexMemory_);
-        // Readback buffer.
+        createReadback();
+    }
+
+    void createReadback() {
+        if (readbackBuffer_) return;
         readbackBuffer_ = createBuffer(static_cast<VkDeviceSize>(width_) * height_ * 4, VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, readbackMemory_);
     }
@@ -407,6 +431,55 @@ private:
         return module;
     }
 
+    void recordAndSubmitRecords(const math::Mat4& viewProj, const std::vector<RecordDraw>& draws) {
+        VC_VK_TRY(api_.WaitForFences(device_, 1, &fence_, VK_TRUE, UINT64_MAX), "vkWaitForFences");
+        VC_VK_TRY(api_.ResetFences(device_, 1, &fence_), "vkResetFences");
+        VC_VK_TRY(api_.ResetCommandBuffer(commandBuffer_, 0), "vkResetCommandBuffer");
+
+        VkCommandBufferBeginInfo beginInfo{}; beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+        VC_VK_TRY(api_.BeginCommandBuffer(commandBuffer_, &beginInfo), "vkBeginCommandBuffer");
+
+        VkClearValue clearValues[2]{};
+        clearValues[0].color = {{0.35f, 0.55f, 0.85f, 1.0f}}; // sky
+        clearValues[1].depthStencil = {1.0f, 0};
+        VkRenderPassBeginInfo rpBegin{}; rpBegin.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        rpBegin.renderPass = renderPass_;
+        rpBegin.framebuffer = framebuffer_;
+        rpBegin.renderArea.extent = {width_, height_};
+        rpBegin.clearValueCount = 2;
+        rpBegin.pClearValues = clearValues;
+        api_.CmdBeginRenderPass(commandBuffer_, &rpBegin, VK_SUBPASS_CONTENTS_INLINE);
+        api_.CmdBindPipeline(commandBuffer_, VK_PIPELINE_BIND_POINT_GRAPHICS, recordsPipeline_);
+        for (std::size_t i = 0; i < draws.size(); ++i) {
+            if (draws[i].recordCount == 0) continue;
+            api_.CmdBindDescriptorSets(commandBuffer_, VK_PIPELINE_BIND_POINT_GRAPHICS, recordsLayout_, 0, 1, &recordsSets_[i], 0, nullptr);
+            const float push[20] = { viewProj.data()[0], viewProj.data()[1], viewProj.data()[2], viewProj.data()[3],
+                                     viewProj.data()[4], viewProj.data()[5], viewProj.data()[6], viewProj.data()[7],
+                                     viewProj.data()[8], viewProj.data()[9], viewProj.data()[10], viewProj.data()[11],
+                                     viewProj.data()[12], viewProj.data()[13], viewProj.data()[14], viewProj.data()[15],
+                                     draws[i].originX, 0.0f, draws[i].originZ, 0.0f };
+            api_.CmdPushConstants(commandBuffer_, recordsLayout_, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(push), push);
+            api_.CmdDraw(commandBuffer_, 6, static_cast<uint32_t>(draws[i].recordCount), 0, 0);
+        }
+        api_.CmdEndRenderPass(commandBuffer_);
+
+        VkBufferImageCopy region{};
+        region.bufferRowLength = width_;
+        region.bufferImageHeight = height_;
+        region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        region.imageSubresource.layerCount = 1;
+        region.imageExtent = {width_, height_, 1};
+        api_.CmdCopyImageToBuffer(commandBuffer_, colorImage_.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, readbackBuffer_, 1, &region);
+
+        VC_VK_TRY(api_.EndCommandBuffer(commandBuffer_), "vkEndCommandBuffer");
+        VkSubmitInfo submit{}; submit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submit.commandBufferCount = 1;
+        submit.pCommandBuffers = &commandBuffer_;
+        VC_VK_TRY(api_.QueueSubmit(queue_, 1, &submit, fence_), "vkQueueSubmit");
+        VC_VK_TRY(api_.WaitForFences(device_, 1, &fence_, VK_TRUE, UINT64_MAX), "api_.QueueSubmit(wait)");
+    }
+
     void recordAndSubmit(const math::Mat4& viewProj, std::size_t indexCount) {
         // Wait for any previous frame.
         VC_VK_TRY(api_.WaitForFences(device_, 1, &fence_, VK_TRUE, UINT64_MAX), "vkWaitForFences");
@@ -468,6 +541,153 @@ private:
         api_.UnmapMemory(device_, readbackMemory_);
     }
 
+    void createRecordsPipelineAndDescriptors(const std::vector<RecordDraw>& draws) {
+        destroyRecordsResources();
+        // --- set layout: one storage buffer (binding 0), vertex stage ---
+        VkDescriptorSetLayoutBinding binding{};
+        binding.binding = 0;
+        binding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+        binding.descriptorCount = 1;
+        binding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+        VkDescriptorSetLayoutCreateInfo setInfo{}; setInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+        setInfo.bindingCount = 1;
+        setInfo.pBindings = &binding;
+        VC_VK_TRY(api_.CreateDescriptorSetLayout(device_, &setInfo, nullptr, &recordsSetLayout_), "vkCreateDescriptorSetLayout");
+        // --- pool: one set per draw ---
+        const uint32_t nSets = static_cast<uint32_t>(draws.size());
+        VkDescriptorPoolSize poolSize{VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, nSets};
+        VkDescriptorPoolCreateInfo poolInfo{}; poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+        poolInfo.maxSets = nSets;
+        poolInfo.poolSizeCount = 1;
+        poolInfo.pPoolSizes = &poolSize;
+        VC_VK_TRY(api_.CreateDescriptorPool(device_, &poolInfo, nullptr, &recordsPool_), "vkCreateDescriptorPool");
+        // --- pipeline layout: descriptor set + push constants { mat4 mvp; vec4 origin; } ---
+        VkPushConstantRange pushRange{};
+        pushRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+        pushRange.offset = 0;
+        pushRange.size = sizeof(float) * 20;
+        VkPipelineLayoutCreateInfo layoutInfo{}; layoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+        layoutInfo.setLayoutCount = 1;
+        layoutInfo.pSetLayouts = &recordsSetLayout_;
+        layoutInfo.pushConstantRangeCount = 1;
+        layoutInfo.pPushConstantRanges = &pushRange;
+        VC_VK_TRY(api_.CreatePipelineLayout(device_, &layoutInfo, nullptr, &recordsLayout_), "vkCreatePipelineLayout(records)");
+        // --- pipeline: no vertex input, records.vert + voxelcore.frag ---
+        const auto vert = readSpv(spvDir_ + "/records.vert.spv");
+        const auto frag = readSpv(spvDir_ + "/voxelcore.frag.spv");
+        VkShaderModule vertModule = createShaderModule(vert);
+        VkShaderModule fragModule = createShaderModule(frag);
+        VkPipelineShaderStageCreateInfo stages[2]{};
+        stages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        stages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
+        stages[0].module = vertModule;
+        stages[0].pName = "main";
+        stages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        stages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+        stages[1].module = fragModule;
+        stages[1].pName = "main";
+        VkPipelineVertexInputStateCreateInfo vertexInput{}; vertexInput.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+        vertexInput.vertexBindingDescriptionCount = 0;
+        vertexInput.pVertexBindingDescriptions = nullptr;
+        vertexInput.vertexAttributeDescriptionCount = 0;
+        vertexInput.pVertexAttributeDescriptions = nullptr;
+
+        VkPipelineInputAssemblyStateCreateInfo inputAssembly{}; inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+        inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+
+        VkViewport viewport{0, 0, static_cast<float>(width_), static_cast<float>(height_), 0.0f, 1.0f};
+        VkRect2D scissor{{0, 0}, {width_, height_}};
+        VkPipelineViewportStateCreateInfo viewportState{}; viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+        viewportState.viewportCount = 1;
+        viewportState.pViewports = &viewport;
+        viewportState.scissorCount = 1;
+        viewportState.pScissors = &scissor;
+
+        VkPipelineRasterizationStateCreateInfo raster{}; raster.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+        raster.polygonMode = VK_POLYGON_MODE_FILL;
+        raster.cullMode = VK_CULL_MODE_NONE;
+        raster.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+        raster.lineWidth = 1.0f;
+
+        VkPipelineMultisampleStateCreateInfo multisample{}; multisample.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+        multisample.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+
+        VkPipelineDepthStencilStateCreateInfo depthStencil{}; depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+        depthStencil.depthTestEnable = VK_TRUE;
+        depthStencil.depthWriteEnable = VK_TRUE;
+        depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+
+        VkPipelineColorBlendAttachmentState blendAttachment{};
+        blendAttachment.blendEnable = VK_TRUE;
+        blendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+        blendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+        blendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+        blendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+        blendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+        blendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+        blendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+        VkPipelineColorBlendStateCreateInfo colorBlend{}; colorBlend.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+        colorBlend.attachmentCount = 1;
+        colorBlend.pAttachments = &blendAttachment;
+
+        VkGraphicsPipelineCreateInfo pipelineInfo{}; pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+        pipelineInfo.stageCount = 2;
+        pipelineInfo.pStages = stages;
+        pipelineInfo.pVertexInputState = &vertexInput;
+        pipelineInfo.pInputAssemblyState = &inputAssembly;
+        pipelineInfo.pViewportState = &viewportState;
+        pipelineInfo.pRasterizationState = &raster;
+        pipelineInfo.pMultisampleState = &multisample;
+        pipelineInfo.pDepthStencilState = &depthStencil;
+        pipelineInfo.pColorBlendState = &colorBlend;
+        pipelineInfo.layout = recordsLayout_;
+        pipelineInfo.renderPass = renderPass_;
+        pipelineInfo.subpass = 0;
+        VC_VK_TRY(api_.CreateGraphicsPipelines(device_, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &recordsPipeline_), "vkCreateGraphicsPipelines(records)");
+        api_.DestroyShaderModule(device_, vertModule, nullptr);
+        api_.DestroyShaderModule(device_, fragModule, nullptr);
+        // --- one storage buffer + descriptor set per draw ---
+        recordsBuffers_.assign(draws.size(), VK_NULL_HANDLE);
+        recordsMemories_.assign(draws.size(), VK_NULL_HANDLE);
+        recordsSets_.assign(draws.size(), VK_NULL_HANDLE);
+        std::vector<VkDescriptorSetLayout> layouts(draws.size(), recordsSetLayout_);
+        VkDescriptorSetAllocateInfo dsInfo{}; dsInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        dsInfo.descriptorPool = recordsPool_;
+        dsInfo.descriptorSetCount = nSets;
+        dsInfo.pSetLayouts = layouts.data();
+        VC_VK_TRY(api_.AllocateDescriptorSets(device_, &dsInfo, recordsSets_.data()), "vkAllocateDescriptorSets");
+        for (std::size_t i = 0; i < draws.size(); ++i) {
+            const VkDeviceSize bytes = static_cast<VkDeviceSize>(draws[i].recordCount) * sizeof(std::uint32_t) * 2;
+            VkBuffer buf = createBuffer(bytes, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+                                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                                        recordsMemories_[i]);
+            recordsBuffers_[i] = buf;
+            void* data = nullptr;
+            VC_VK_TRY(api_.MapMemory(device_, recordsMemories_[i], 0, bytes, 0, &data), "api_.MapMemory(records)");
+            std::memcpy(data, draws[i].words, static_cast<std::size_t>(bytes));
+            api_.UnmapMemory(device_, recordsMemories_[i]);
+            VkDescriptorBufferInfo bufInfo{buf, 0, bytes};
+            VkWriteDescriptorSet write{}; write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            write.dstSet = recordsSets_[i];
+            write.dstBinding = 0;
+            write.descriptorCount = 1;
+            write.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+            write.pBufferInfo = &bufInfo;
+            api_.UpdateDescriptorSets(device_, 1, &write, 0, nullptr);
+        }
+    }
+
+    void destroyRecordsResources() {
+        for (auto b : recordsBuffers_) if (b) api_.DestroyBuffer(device_, b, nullptr);
+        for (auto m : recordsMemories_) if (m) api_.FreeMemory(device_, m, nullptr);
+        recordsBuffers_.clear(); recordsMemories_.clear(); recordsSets_.clear();
+        if (recordsPool_) api_.DestroyDescriptorPool(device_, recordsPool_, nullptr);
+        if (recordsLayout_) api_.DestroyPipelineLayout(device_, recordsLayout_, nullptr);
+        if (recordsSetLayout_) api_.DestroyDescriptorSetLayout(device_, recordsSetLayout_, nullptr);
+        if (recordsPipeline_) api_.DestroyPipeline(device_, recordsPipeline_, nullptr);
+        recordsPool_ = VK_NULL_HANDLE; recordsLayout_ = VK_NULL_HANDLE; recordsSetLayout_ = VK_NULL_HANDLE; recordsPipeline_ = VK_NULL_HANDLE;
+    }
+
     void destroyBuffers() {
         if (indexBuffer_) api_.DestroyBuffer(device_, indexBuffer_, nullptr);
         if (indexMemory_) api_.FreeMemory(device_, indexMemory_, nullptr);
@@ -483,6 +703,7 @@ private:
         if (!device_) return;
         api_.DeviceWaitIdle(device_);
         destroyBuffers();
+        destroyRecordsResources();
         if (fence_) api_.DestroyFence(device_, fence_, nullptr);
         if (commandBuffer_) api_.FreeCommandBuffers(device_, commandPool_, 1, &commandBuffer_);
         if (framebuffer_) api_.DestroyFramebuffer(device_, framebuffer_, nullptr);
@@ -518,6 +739,13 @@ private:
     VkFramebuffer framebuffer_ = VK_NULL_HANDLE;
     VkPipelineLayout pipelineLayout_ = VK_NULL_HANDLE;
     VkPipeline pipeline_ = VK_NULL_HANDLE;
+    VkDescriptorSetLayout recordsSetLayout_ = VK_NULL_HANDLE;
+    VkDescriptorPool recordsPool_ = VK_NULL_HANDLE;
+    VkPipelineLayout recordsLayout_ = VK_NULL_HANDLE;
+    VkPipeline recordsPipeline_ = VK_NULL_HANDLE;
+    std::vector<VkBuffer> recordsBuffers_;
+    std::vector<VkDeviceMemory> recordsMemories_;
+    std::vector<VkDescriptorSet> recordsSets_;
     VkBuffer vertexBuffer_ = VK_NULL_HANDLE, indexBuffer_ = VK_NULL_HANDLE, readbackBuffer_ = VK_NULL_HANDLE;
     VkDeviceMemory vertexMemory_ = VK_NULL_HANDLE, indexMemory_ = VK_NULL_HANDLE, readbackMemory_ = VK_NULL_HANDLE;
 };

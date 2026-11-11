@@ -30,7 +30,7 @@ struct PackedRecord { std::uint32_t w0 = 0, w1 = 0; };
     if (r.uExt < 1 || r.uExt > 16 || r.vExt < 1 || r.vExt > 16) return std::nullopt;
     const std::uint32_t dir = static_cast<std::uint32_t>(r.dir);
     if (dir > 5) return std::nullopt;
-    if (r.block > 0xFFFF) return std::nullopt;
+    // BlockId is 16-bit; no range check needed beyond the cast.
     for (std::uint8_t a : r.ao) if (a > 3) return std::nullopt;
     if (r.light > 15) return std::nullopt;
     std::uint32_t w0 = 0;
