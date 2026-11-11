@@ -466,6 +466,41 @@ int main(int argc, char** argv) {
             ++printed;
         }
     }
+    // Knife-edge neighborhood dump (the single mismatch pixel sits on a hairline sliver):
+    // print a 13x5 patch around the differing pixel for the key images so the CI annotation
+    // shows WHICH sliver line covers the pixel in each render.
+    {
+        auto dumpPatch = [&](const char* label, const std::string& f, int cx, int cy) {
+            uint32_t w2 = 0, h2 = 0;
+            const auto img = readPpm(f, w2, h2);
+            if (img.empty()) { rep << "patch " << label << ": unreadable\n"; return; }
+            rep << "patch " << label << " (" << cx << "," << cy << "):\n";
+            for (int y = cy - 2; y <= cy + 2; ++y) {
+                rep << "  y=" << y << " ";
+                for (int x = cx - 6; x <= cx + 6; ++x) {
+                    if (x < 0 || y < 0 || static_cast<uint32_t>(x) >= w2 || static_cast<uint32_t>(y) >= h2) { rep << "...... "; continue; }
+                    const std::size_t o = (static_cast<std::size_t>(y) * w2 + x) * 3;
+                    char bfr[8];
+                    std::snprintf(bfr, sizeof(bfr), "%02x%02x%02x ", img[o], img[o + 1], img[o + 2]);
+                    rep << bfr;
+                }
+                rep << "\n";
+            }
+        };
+        if (minX != wa) { // at least one differing pixel
+            const int cx = minX, cy = minY;
+            dumpPatch("A", pathA, cx, cy);
+            dumpPatch("B", pathB, cx, cy);
+            dumpPatch("chunk30", pathB + ".chunk30.ppm", cx, cy);
+            dumpPatch("noeast", pathB + ".noc30_noeast.ppm", cx, cy);
+            dumpPatch("east", pathB + ".east.ppm", cx, cy);
+            dumpPatch("e_grass", pathB + ".east_grass.ppm", cx, cy);
+            dumpPatch("e_dirt", pathB + ".east_dirt.ppm", cx, cy);
+            dumpPatch("e_stone16", pathB + ".east_stone16.ppm", cx, cy);
+            dumpPatch("stone", pathB + ".stone.ppm", cx, cy);
+            dumpPatch("posy", pathB + ".posy.ppm", cx, cy);
+        }
+    }
     rep << skylineDump;
     rep << "determinism: " << determinism << "\n";
     {
