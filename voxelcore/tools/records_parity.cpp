@@ -292,6 +292,34 @@ int main(int argc, char** argv) {
             keepOnly([](float ox, float oz, std::uint32_t w0, std::uint32_t) {
                 return ox == 48.0f && oz == 0.0f && ((w0 >> 22) & 0x7u) == 0u;
             }, (pathB + ".east.ppm").c_str());
+            // per-record east probes: y==20 (grass), y==18 (dirt), y==16 (stone), y==0 (stone)
+            keepOnly([](float ox, float oz, std::uint32_t w0, std::uint32_t) {
+                return ox == 48.0f && oz == 0.0f && ((w0 >> 22) & 0x7u) == 0u && ((w0 >> 8) & 0x3Fu) == 20u;
+            }, (pathB + ".east_grass.ppm").c_str());
+            keepOnly([](float ox, float oz, std::uint32_t w0, std::uint32_t) {
+                return ox == 48.0f && oz == 0.0f && ((w0 >> 22) & 0x7u) == 0u && ((w0 >> 8) & 0x3Fu) == 18u;
+            }, (pathB + ".east_dirt.ppm").c_str());
+            keepOnly([](float ox, float oz, std::uint32_t w0, std::uint32_t) {
+                return ox == 48.0f && oz == 0.0f && ((w0 >> 22) & 0x7u) == 0u && ((w0 >> 8) & 0x3Fu) == 16u;
+            }, (pathB + ".east_stone16.ppm").c_str());
+            keepOnly([](float ox, float oz, std::uint32_t w0, std::uint32_t) {
+                return ox == 48.0f && oz == 0.0f && ((w0 >> 22) & 0x7u) == 0u && ((w0 >> 8) & 0x3Fu) == 0u;
+            }, (pathB + ".east_stone0.ppm").c_str());
+            // full packed-words dump of every east record in chunk (48,0)
+            for (const auto& d : draws) {
+                if (d.originX != 48.0f || d.originZ != 0.0f) continue;
+                for (std::size_t r = 0; r < d.recordCount; ++r) {
+                    const std::uint32_t w0 = d.words[r * 2], w1 = d.words[r * 2 + 1];
+                    if (((w0 >> 22) & 0x7u) != 0u) continue; // east only
+                    char buf[256];
+                    std::snprintf(buf, sizeof(buf),
+                        "eastrec w0=%08x w1=%08x dir=%u y=%u z=%u x=%u uE=%u vE=%u block=%u ao=%u,%u,%u,%u light=%u\n",
+                        w0, w1, (w0 >> 22) & 0x7u, (w0 >> 8) & 0x3Fu, (w0 >> 4) & 0xFu, w0 & 0xFu,
+                        ((w0 >> 14) & 0xFu) + 1u, ((w0 >> 18) & 0xFu) + 1u, w1 & 0xFFFFu,
+                        (w1 >> 16) & 0x3u, (w1 >> 18) & 0x3u, (w1 >> 20) & 0x3u, (w1 >> 22) & 0x3u, (w1 >> 24) & 0xFu);
+                    skylineDump += buf;
+                }
+            }
             // chunk (48,0) ONLY, opaque records only (no water in that chunk anyway)
             keepOnly([](float ox, float oz, std::uint32_t, std::uint32_t) {
                 return ox == 48.0f && oz == 0.0f;
@@ -465,6 +493,10 @@ int main(int argc, char** argv) {
         << " chunk30=" << dumpPixel(pathB + ".chunk30.ppm")
         << " noc30=" << dumpPixel(pathB + ".noc30.ppm")
         << " noc30_noeast=" << dumpPixel(pathB + ".noc30_noeast.ppm") << "\n";
+    rep << "eastrec (844,300): grass=" << dumpPixel(pathB + ".east_grass.ppm")
+        << " dirt=" << dumpPixel(pathB + ".east_dirt.ppm")
+        << " stone16=" << dumpPixel(pathB + ".east_stone16.ppm")
+        << " stone0=" << dumpPixel(pathB + ".east_stone0.ppm") << "\n";
     rep << "bbox: x[" << minX << "," << maxX << "] y[" << minY << "," << maxY << "]\n";
     // CPU-side coverage analysis for the first differing pixel: project every quad's triangles
     // with the same matrices used for the renders and list which cover the pixel center.
