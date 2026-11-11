@@ -1,0 +1,19 @@
+{
+  "name": "five-worlds-web-capture",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fast photorealistic 2.5D Three.js scene capture for five 10-second worlds",
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "1.1.0",
+    "@sparticuz/chromium": "153.0.0",
+    "puppeteer-core": "25.17.0",
+    "sharp": "0.35.5",
+    "three": "0.187.0"
+  },
+  "scripts": {
+    "preview": "node preview.cjs",
+    "capture": "node capture.cjs",
+    "render": "node render.cjs",
+    "verify": "python3 ../scripts/verify_five_worlds.py"
+  }
+}

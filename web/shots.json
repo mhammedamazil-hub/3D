@@ -1,0 +1,47 @@
+[
+  {
+    "index": 1,
+    "name": "Alpine Lake",
+    "slug": "AlpineLake",
+    "reference": "assets/references/v6/01_alpine_lake_16x9.jpg",
+    "reference_original": "assets/references/v6/01_alpine_lake.jpg",
+    "mp4": "output/FiveWorlds_01_AlpineLake_720p30_10s.mp4",
+    "motion": "mist drift, rippled lake reflection, warm sun bloom, slow dolly"
+  },
+  {
+    "index": 2,
+    "name": "Neon Rain Alley",
+    "slug": "NeonRainAlley",
+    "reference": "assets/references/v6/02_neon_rain_alley_16x9.jpg",
+    "reference_original": "assets/references/v6/02_neon_rain_alley.jpg",
+    "mp4": "output/FiveWorlds_02_NeonRainAlley_720p30_10s.mp4",
+    "motion": "falling rain, wet neon reflections, steam, flickering signs, tracking move"
+  },
+  {
+    "index": 3,
+    "name": "Sahara Dunes",
+    "slug": "SaharaDunes",
+    "reference": "assets/references/v6/03_sahara_dunes_16x9.jpg",
+    "reference_original": "assets/references/v6/03_sahara_dunes.jpg",
+    "mp4": "output/FiveWorlds_03_SaharaDunes_720p30_10s.mp4",
+    "motion": "heat shimmer, wind-blown sand, warm dune ripples, lateral drift"
+  },
+  {
+    "index": 4,
+    "name": "Iceland Aurora",
+    "slug": "IcelandAurora",
+    "reference": "assets/references/v6/04_iceland_aurora_16x9.jpg",
+    "reference_original": "assets/references/v6/04_iceland_aurora.jpg",
+    "mp4": "output/FiveWorlds_04_IcelandAurora_720p30_10s.mp4",
+    "motion": "animated aurora curtain, stars, surf foam, soft basalt-cliff foreground shade, tilt up"
+  },
+  {
+    "index": 5,
+    "name": "Rainforest Temple",
+    "slug": "RainforestTemple",
+    "reference": "assets/references/v6/05_rainforest_temple_16x9.jpg",
+    "reference_original": "assets/references/v6/05_rainforest_temple.jpg",
+    "mp4": "output/FiveWorlds_05_RainforestTemple_720p30_10s.mp4",
+    "motion": "floating dust, canopy shade, warm haze, slow dolly into temple"
+  }
+]

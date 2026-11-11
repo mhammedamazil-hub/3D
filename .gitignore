@@ -63,3 +63,17 @@ assets/quality/
 
 # v5.2 sunrise god-rays deliverable
 !output/Kerala_Coconut_Sunrise_GodRays_1080p30_5s.mp4
+
+# Web capture prototype: dependencies and generated frame scratch stay local.
+web/node_modules/
+web/frames/
+web/.cache/
+
+
+# Five Worlds v1 reference-driven 10-second renders
+!output/FiveWorlds_01_AlpineLake_720p30_10s.mp4
+!output/FiveWorlds_02_NeonRainAlley_720p30_10s.mp4
+!output/FiveWorlds_03_SaharaDunes_720p30_10s.mp4
+!output/FiveWorlds_04_IcelandAurora_720p30_10s.mp4
+!output/FiveWorlds_05_RainforestTemple_720p30_10s.mp4
+!output/FiveWorlds_AllScenes_720p30_50s.mp4

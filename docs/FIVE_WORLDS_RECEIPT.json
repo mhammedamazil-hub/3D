@@ -1,0 +1,120 @@
+{
+  "revision": "five-worlds-v1-reference-driven-webgl",
+  "generated_at_utc": "2026-11-11T04:15:21.018Z",
+  "route": {
+    "selected": "in-sandbox Three.js/WebGL + Puppeteer screenshot capture + local ffmpeg",
+    "why_fastest": "No GitHub Actions queue; no Blender/Python environment rebuild; 1500 deterministic 720p WebGL frames render and encode locally on two workers.",
+    "alternatives": {
+      "github_actions": "Rejected: prior 15-shard CPU render took roughly 78 minutes.",
+      "blender_in_sandbox": "Rejected: Blender Python environment was absent after workspace refresh; Cycles is CPU-only and slower."
+    }
+  },
+  "spec": {
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "frames_per_scene": 300,
+    "duration_seconds": 10,
+    "scenes": 5,
+    "total_duration_seconds": 50,
+    "codec": "H.264 / yuv420p",
+    "encoder": "libx264 CRF 19"
+  },
+  "toolchain": {
+    "node": "v22.22.3",
+    "three": "0.187.0",
+    "puppeteer_core": "25.17.0",
+    "chromium": "153.0.0",
+    "sharp": "0.35.5",
+    "ffmpeg": "20181210-g0e8eb07980"
+  },
+  "capture": {
+    "workers": 2,
+    "wall_clock_seconds": 162.96,
+    "total_wall_clock_seconds": 180.97,
+    "frame_root": "web/frames (ignored, regenerable)",
+    "method": "window.setTime(t) + gl.finish() + Puppeteer JPEG screenshot"
+  },
+  "reference_usage": "Each 1280x720 generated reference is loaded as the actual Three.js backplate texture and again as a rippled reflection plane; references are also shimmered with a scene-specific UV shader.",
+  "contact_sheet": "assets/references/v6/00_five_worlds_video_contact.jpg",
+  "combined_mp4": "output/FiveWorlds_AllScenes_720p30_50s.mp4",
+  "combined_bytes": 18693872,
+  "combined_sha256": "65aa1c4ada3bb4ef75b7c8e1d1e1873120298133b5249ad05f5bab1f8ffb5ac2",
+  "scenes": [
+    {
+      "index": 1,
+      "name": "Alpine Lake",
+      "slug": "AlpineLake",
+      "reference": "assets/references/v6/01_alpine_lake_16x9.jpg",
+      "reference_original": "assets/references/v6/01_alpine_lake.jpg",
+      "reference_sha256": "83c7fff4eea79537300490fa4e236ce38d119280a7d12e3cbd751885ced2f166",
+      "motion": "mist drift, rippled lake reflection, warm sun bloom, slow dolly",
+      "mp4": "output/FiveWorlds_01_AlpineLake_720p30_10s.mp4",
+      "bytes": 1937490,
+      "sha256": "1825868b05198f10fabdc13fc9b56c1cdea123bf02fe897845dbf4abc37674a2",
+      "frames": 300,
+      "fps": 30,
+      "duration_seconds": 10
+    },
+    {
+      "index": 2,
+      "name": "Neon Rain Alley",
+      "slug": "NeonRainAlley",
+      "reference": "assets/references/v6/02_neon_rain_alley_16x9.jpg",
+      "reference_original": "assets/references/v6/02_neon_rain_alley.jpg",
+      "reference_sha256": "5cb272967e8fe084d3f0ed2377e2ab7c3d917d93cb21a3be11f8867b43aa1c88",
+      "motion": "falling rain, wet neon reflections, steam, flickering signs, tracking move",
+      "mp4": "output/FiveWorlds_02_NeonRainAlley_720p30_10s.mp4",
+      "bytes": 8873809,
+      "sha256": "03f04290e90f6030846b3ff583d142400abcba317aea306f6c89f2e9cc1d67d6",
+      "frames": 300,
+      "fps": 30,
+      "duration_seconds": 10
+    },
+    {
+      "index": 3,
+      "name": "Sahara Dunes",
+      "slug": "SaharaDunes",
+      "reference": "assets/references/v6/03_sahara_dunes_16x9.jpg",
+      "reference_original": "assets/references/v6/03_sahara_dunes.jpg",
+      "reference_sha256": "8a8980e2728f9ca60039cce9a2e38496218acca09567d24d6228a3ba4aa51fc8",
+      "motion": "heat shimmer, wind-blown sand, warm dune ripples, lateral drift",
+      "mp4": "output/FiveWorlds_03_SaharaDunes_720p30_10s.mp4",
+      "bytes": 1172802,
+      "sha256": "f5016ae039559a3d0992295e46111fc9a82eabaa9d75fb487afcfc07ffbf7161",
+      "frames": 300,
+      "fps": 30,
+      "duration_seconds": 10
+    },
+    {
+      "index": 4,
+      "name": "Iceland Aurora",
+      "slug": "IcelandAurora",
+      "reference": "assets/references/v6/04_iceland_aurora_16x9.jpg",
+      "reference_original": "assets/references/v6/04_iceland_aurora.jpg",
+      "reference_sha256": "fbd472200536ffa86207c9a4a0ae9da3a0a1882e9bcaf3e394dd0f75ad82d88c",
+      "motion": "animated aurora curtain, stars, surf foam, soft basalt-cliff foreground shade, tilt up",
+      "mp4": "output/FiveWorlds_04_IcelandAurora_720p30_10s.mp4",
+      "bytes": 2764771,
+      "sha256": "9fd9288d25c147475a822ad9cac347d3d047c4cf91defe736ca5ea3bfd8cffab",
+      "frames": 300,
+      "fps": 30,
+      "duration_seconds": 10
+    },
+    {
+      "index": 5,
+      "name": "Rainforest Temple",
+      "slug": "RainforestTemple",
+      "reference": "assets/references/v6/05_rainforest_temple_16x9.jpg",
+      "reference_original": "assets/references/v6/05_rainforest_temple.jpg",
+      "reference_sha256": "f84cd3f4e35fc73e4b194d5e2753fab339889cd49dae5ae1d1cdb04759c526e9",
+      "motion": "floating dust, canopy shade, warm haze, slow dolly into temple",
+      "mp4": "output/FiveWorlds_05_RainforestTemple_720p30_10s.mp4",
+      "bytes": 3948790,
+      "sha256": "92ce7028b78cead550394c086870c7473df187106022d451eede5a27fd4c2f57",
+      "frames": 300,
+      "fps": 30,
+      "duration_seconds": 10
+    }
+  ]
+}

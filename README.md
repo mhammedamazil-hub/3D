@@ -1,5 +1,28 @@
 # Monsoon Light — Kerala
 
+## Current Five Worlds v1 — five different 10-second scenes
+
+Five assistant-invented, reference-driven worlds replace the Kerala/coconut/paddy/house scene. Each is a photorealistic 1280×720, 30 fps, 300-frame H.264 render lasting exactly 10 seconds; the 50-second montage joins all five.
+
+- `output/FiveWorlds_01_AlpineLake_720p30_10s.mp4` — mirror alpine lake, drifting mist, rippled reflection, golden-hour dolly.
+- `output/FiveWorlds_02_NeonRainAlley_720p30_10s.mp4` — wet neon alley, falling rain, steam, flickering signs, tracking move.
+- `output/FiveWorlds_03_SaharaDunes_720p30_10s.mp4` — sunrise dunes, heat shimmer, wind-blown sand, lateral drift.
+- `output/FiveWorlds_04_IcelandAurora_720p30_10s.mp4` — black-sand beach, animated aurora, stars, surf, tilt up.
+- `output/FiveWorlds_05_RainforestTemple_720p30_10s.mp4` — mossy temple, floating dust, canopy shade, slow dolly.
+- `output/FiveWorlds_AllScenes_720p30_50s.mp4` — all five scenes back-to-back.
+- `assets/references/v6/` — five generated reference plates, 16:9 derivatives, reference contact sheet, and final video contact sheet.
+- `docs/FIVE_WORLDS_RECEIPT.json` / `docs/FIVE_WORLDS_VALIDATION.json` — route decision, SHA-256, codec/duration/frame and full-decode proof.
+- `docs/FIVE_WORLDS_V1.md` — method, scene list and reproduction steps.
+
+Fastest route selected: in-sandbox Three.js/WebGL, Puppeteer screenshot capture, and local ffmpeg. The generated references are loaded as actual backplate and rippled-reflection textures, not kept as documentation only. Reproduce with:
+
+```bash
+cd web
+npm ci
+npm run render
+npm run verify
+```
+
 ## Current v5.2 sunrise god-rays animation
 
 - `output/Kerala_Coconut_Sunrise_GodRays_1080p30_5s.mp4` — 5 s, 1920×1080, 30 fps, 150 native frames; one sun rises from behind the Ghats with physically shadow-shaped crepuscular rays.
