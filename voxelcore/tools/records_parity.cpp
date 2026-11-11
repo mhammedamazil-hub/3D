@@ -427,6 +427,39 @@ int main(int argc, char** argv) {
                 }
             }
         }
+        // Coverage list with the (now fixed) projection: EVERY triangle containing the pixel center.
+        std::size_t covCount = 0;
+        rep << "containing triangles:\n";
+        qi = 0;
+        for (const auto& [pos, quads] : chunkMeshes) { (void)pos;
+            for (const Quad& q : quads) {
+                ++qi;
+                std::vector<Quad> variants{q};
+                const bool side = (q.dir == FaceDir::PosX || q.dir == FaceDir::NegX || q.dir == FaceDir::PosZ || q.dir == FaceDir::NegZ);
+                if (side && q.v > 16.0f) {
+                    variants.clear();
+                    int remaining = static_cast<int>(q.v);
+                    float y = q.y;
+                    while (remaining > 16) { Quad sub = q; sub.y = y; sub.v = 16.0f; variants.push_back(sub); remaining -= 16; y += 16.0f; }
+                    Quad sub = q; sub.y = y; sub.v = static_cast<float>(remaining); variants.push_back(sub);
+                }
+                for (const Quad& v : variants) {
+                    std::vector<std::array<std::array<float,3>,3>> tris;
+                    emitTris(v, tris);
+                    for (std::size_t ti = 0; ti < tris.size(); ++ti) {
+                        if (covers(tris[ti])) {
+                            rep << "  cover quad#" << qi << " tri" << ti << " dir=" << int(v.dir)
+                                << " block=" << unsigned(v.block) << " x=" << v.x << " y=" << v.y << " z=" << v.z
+                                << " u=" << v.u << " v=" << v.v
+                                << " ao=[" << int(v.ao[0]) << ',' << int(v.ao[1]) << ',' << int(v.ao[2]) << ',' << int(v.ao[3]) << ']'
+                                << " light=" << int(v.light) << "\n";
+                            ++covCount;
+                        }
+                    }
+                }
+            }
+        }
+        rep << "containing triangles: " << covCount << "\n";
         std::sort(cands.begin(), cands.end(), [](const EdgeCand& a, const EdgeCand& b) { return a.dist < b.dist; });
         rep << "nearest-edge triangles (dist px):\n";
         for (std::size_t k = 0; k < cands.size() && k < 10; ++k) {
