@@ -157,7 +157,7 @@ public:
         depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
         depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-        depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        depthAttachment.finalLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL; // E7 diagnostics: depthAt() copies a depth pixel post-frame
         VkAttachmentReference colorRef{0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
         VkAttachmentReference depthRef{1, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL};
         VkSubpassDescription subpass{};
@@ -238,7 +238,7 @@ public:
     }
 
     // E7 diagnostics: read back the D32 depth word of one pixel from the last rendered frame.
-    // Returns the raw uint32 stored in D32_SFLOAT (bit pattern of the depth float).
+    // Requires: depthAttachment.finalLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL (render pass transitions it).
     std::uint32_t depthAt(std::uint32_t x, std::uint32_t y) {
         VkDeviceMemory stageMem = VK_NULL_HANDLE;
         VkBuffer stage = createBuffer(4, VK_BUFFER_USAGE_TRANSFER_DST_BIT,
@@ -250,29 +250,12 @@ public:
         VkCommandBufferBeginInfo beginInfo{}; beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
         VC_VK_TRY(api_.BeginCommandBuffer(cb, &beginInfo), "vkBeginCommandBuffer(depth)");
-        auto barrier = [&](VkImageLayout from, VkImageLayout to, VkAccessFlags srcAccess, VkAccessFlags dstAccess) {
-            VkImageMemoryBarrier b{}; b.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-            b.srcAccessMask = srcAccess; b.dstAccessMask = dstAccess;
-            b.oldLayout = from; b.newLayout = to;
-            b.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED; b.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-            b.image = depthImage_.image;
-            b.subresourceRange = {VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1};
-            return b;
-        };
-        VkImageMemoryBarrier toSrc = barrier(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-                                             VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT, VK_ACCESS_TRANSFER_READ_BIT);
-        api_.CmdPipelineBarrier(cb, VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
-                                0, 0, nullptr, 0, nullptr, 1, &toSrc);
         VkBufferImageCopy region{};
         region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
         region.imageSubresource.layerCount = 1;
         region.imageOffset = {static_cast<std::int32_t>(x), static_cast<std::int32_t>(y), 0};
         region.imageExtent = {1, 1, 1};
         api_.CmdCopyImageToBuffer(cb, depthImage_.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, stage, 1, &region);
-        VkImageMemoryBarrier toAttach = barrier(VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-                                                VK_ACCESS_TRANSFER_READ_BIT, VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT);
-        api_.CmdPipelineBarrier(cb, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
-                                0, 0, nullptr, 0, nullptr, 1, &toAttach);
         VC_VK_TRY(api_.EndCommandBuffer(cb), "vkEndCommandBuffer(depth)");
         VkFenceCreateInfo fenceInfo{}; fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
         VkFence fence = VK_NULL_HANDLE;
