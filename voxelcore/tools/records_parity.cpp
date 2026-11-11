@@ -523,6 +523,15 @@ int main(int argc, char** argv) {
             ++printed;
         }
     }
+    auto dumpPixel = [&](const std::string& f) {
+        uint32_t w2 = 0, h2 = 0;
+        const auto img = readPpm(f, w2, h2);
+        if (img.empty()) return std::string("unreadable");
+        const std::size_t o = (static_cast<std::size_t>(300) * w2 + 844) * 3;
+        char buf[32];
+        std::snprintf(buf, sizeof(buf), "(%d,%d,%d)", img[o], img[o + 1], img[o + 2]);
+        return std::string(buf);
+    };
     {
         char dline[64];
         std::snprintf(dline, sizeof(dline), "depth (844,300): A=0x%08x B=0x%08x\n", depthA, depthB);
@@ -582,15 +591,6 @@ int main(int argc, char** argv) {
         for (int i = 0; i < 16; ++i) off += std::snprintf(mhex + off, sizeof(mhex) - off, "%s%08x", i ? "," : "", (int)__builtin_bit_cast(std::uint32_t, mvp.data()[i]));
         rep << "mvp_bits: " << mhex << "\n";
     }
-    auto dumpPixel = [&](const std::string& f) {
-        uint32_t w2 = 0, h2 = 0;
-        const auto img = readPpm(f, w2, h2);
-        if (img.empty()) return std::string("unreadable");
-        const std::size_t o = (static_cast<std::size_t>(300) * w2 + 844) * 3;
-        char buf[32];
-        std::snprintf(buf, sizeof(buf), "(%d,%d,%d)", img[o], img[o + 1], img[o + 2]);
-        return std::string(buf);
-    };
     rep << "bisect (844,300): posy=" << dumpPixel(pathB + ".posy.ppm")
         << " notposy=" << dumpPixel(pathB + ".notposy.ppm") << "\n";
     rep << "rev (844,300): A2A=" << dumpPixel(pathA + ".rev.ppm") << " B2B=" << dumpPixel(pathB + ".rev.ppm") << "\n";
