@@ -112,7 +112,9 @@ int main(int argc, char** argv) {
         for (const Quad& q : allQuads) {
             const bool eastSky  = (q.dir == FaceDir::PosX && q.x == 64.0f && q.y == 20.0f && q.z == 0.0f && q.u == 16.0f);
             const bool topSky   = (q.dir == FaceDir::PosY && q.y == 21.0f && q.x == 48.0f && q.z == 0.0f && q.u == 16.0f && q.v == 16.0f);
-            if (!eastSky && !topSky) continue;
+            const bool eastStone16 = (q.dir == FaceDir::PosX && q.x == 64.0f && q.y == 16.0f && q.z == 0.0f);
+            const bool eastDirt    = (q.dir == FaceDir::PosX && q.x == 64.0f && q.y == 18.0f && q.z == 0.0f);
+            if (!eastSky && !topSky && !eastStone16 && !eastDirt) continue;
             dumpLine("quad dir=%d x=%.1f y=%.1f z=%.1f u=%.1f v=%.1f hex x=%s y=%s z=%s u=%s v=%s",
                          static_cast<int>(q.dir), q.x, q.y, q.z, q.u, q.v, hex(q.x).c_str(), hex(q.y).c_str(), hex(q.z).c_str(), hex(q.u).c_str(), hex(q.v).c_str());
             // expanded path positions
@@ -167,6 +169,8 @@ int main(int argc, char** argv) {
     const math::Mat4 proj = math::perspectiveVulkan(60.0f, 4.0f / 3.0f, 0.5f, 500.0f);
     const math::Mat4 mvp = math::multiply(proj, view);
     std::uint32_t depthA = 0xdeadbeefu, depthB = 0xdeadbeefu;
+    std::uint32_t soloDepthAStone16 = 0xdeadbeefu, soloDepthBStone16 = 0xdeadbeefu;
+    std::uint32_t soloDepthADirt = 0xdeadbeefu, soloDepthBDirt = 0xdeadbeefu;
     try {
         {   // Path A: expanded vertices
             vk::HeadlessRenderer renderer(1280, 960, std::string(VOXELCORE_SPV_DIR));
@@ -346,6 +350,56 @@ int main(int argc, char** argv) {
                              (stoneNegZ3 >> 16) & 0xFF, (stoneNegZ3 >> 8) & 0xFF, stoneNegZ3 & 0xFF,
                              (stoneNegZ2 >> 16) & 0xFF, (stoneNegZ2 >> 8) & 0xFF, stoneNegZ2 & 0xFF);
             }
+            // --- Solo probes: render ONLY the deciding east quad in each pipeline ---
+            // (ULP-knife sliver; measures whether identical vertex bits rasterize identically)
+            {
+                auto findQuad = [&](auto&& pred) -> int {
+                    for (std::size_t i = 0; i < allQuads.size(); ++i)
+                        if (pred(allQuads[i])) return static_cast<int>(i);
+                    return -1;
+                };
+                struct SoloJob { const char* label; std::uint32_t yRec; int qi; };
+                const SoloJob jobs[] = {
+                    {"stone16", 16u, findQuad([](const Quad& q) { return q.dir == FaceDir::PosX && q.x == 64.0f && q.y == 16.0f && q.z == 0.0f && q.block == 1; })},
+                    {"dirt",    18u, findQuad([](const Quad& q) { return q.dir == FaceDir::PosX && q.x == 64.0f && q.y == 18.0f && q.z == 0.0f && q.block == 2; })},
+                };
+                for (const SoloJob& job : jobs) {
+                    std::fprintf(stderr, "records_parity: solo %s quad index=%d\n", job.label, job.qi);
+                    if (job.qi < 0) continue;
+                    const std::size_t triOff = static_cast<std::size_t>(job.qi) * 6;
+                    auto sidx = std::vector<std::uint32_t>(tris.indices.begin() + triOff, tris.indices.begin() + triOff + 6);
+                    {
+                        vk::HeadlessRenderer rs(1280, 960, std::string(VOXELCORE_SPV_DIR));
+                        rs.init();
+                        rs.renderToPpm(vertices, sidx, mvp, (pathA + ".solo_" + job.label + ".ppm").c_str());
+                        const std::uint32_t d = rs.depthAt(844, 300);
+                        if (job.yRec == 16u) soloDepthAStone16 = d; else soloDepthADirt = d;
+                    }
+                    {
+                        std::vector<std::vector<std::uint32_t>> keep;
+                        std::vector<vk::HeadlessRenderer::RecordDraw> fdraws;
+                        for (const auto& d : draws) {
+                            if (!(d.originX == 48.0f && d.originZ == 0.0f)) continue;
+                            std::vector<std::uint32_t> words;
+                            for (std::size_t r = 0; r < d.recordCount; ++r) {
+                                const std::uint32_t w0 = d.words[r * 2], w1 = d.words[r * 2 + 1];
+                                const std::uint32_t dir = (w0 >> 22) & 0x7u, y = (w0 >> 8) & 0x3Fu;
+                                if (dir == 0u && y == job.yRec) { words.push_back(w0); words.push_back(w1); }
+                            }
+                            if (!words.empty()) {
+                                keep.push_back(std::move(words));
+                                const auto& w = keep.back();
+                                fdraws.push_back({d.originX, d.originZ, w.data(), w.size() / 2});
+                            }
+                        }
+                        vk::HeadlessRenderer rs2(1280, 960, std::string(VOXELCORE_SPV_DIR));
+                        rs2.init();
+                        rs2.renderRecordsToPpm(fdraws, mvp, (pathB + ".solo_" + job.label + ".ppm").c_str());
+                        const std::uint32_t d = rs2.depthAt(844, 300);
+                        if (job.yRec == 16u) soloDepthBStone16 = d; else soloDepthBDirt = d;
+                    }
+                }
+            }
             // Bisect: render with ONLY PosY (grass tops) and ONLY non-PosY records,
             // dump pixel (844,300) RGB from each to the report.
             try {
@@ -473,6 +527,17 @@ int main(int argc, char** argv) {
         char dline[64];
         std::snprintf(dline, sizeof(dline), "depth (844,300): A=0x%08x B=0x%08x\n", depthA, depthB);
         rep << dline;
+    }
+    {
+        char sline[256];
+        std::snprintf(sline, sizeof(sline), "solo stone16: A_pix=%s A_depth=0x%08x B_pix=%s B_depth=0x%08x\n",
+                      dumpPixel(pathA + ".solo_stone16.ppm").c_str(), soloDepthAStone16,
+                      dumpPixel(pathB + ".solo_stone16.ppm").c_str(), soloDepthBStone16);
+        rep << sline;
+        std::snprintf(sline, sizeof(sline), "solo dirt: A_pix=%s A_depth=0x%08x B_pix=%s B_depth=0x%08x\n",
+                      dumpPixel(pathA + ".solo_dirt.ppm").c_str(), soloDepthADirt,
+                      dumpPixel(pathB + ".solo_dirt.ppm").c_str(), soloDepthBDirt);
+        rep << sline;
     }
     // Knife-edge neighborhood dump (the single mismatch pixel sits on a hairline sliver):
     // print a 13x5 patch around the differing pixel for the key images so the CI annotation
