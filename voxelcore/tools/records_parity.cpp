@@ -7,6 +7,8 @@
 #include "../engine/world/world.hpp"
 #include "../engine/world/block_reader.hpp"
 #include "../engine/meshing/mesher.hpp"
+#include "../engine/rendering/face_colors.hpp"
+#include "../engine/rendering/packed_record.hpp"
 #include "../engine/rendering/mesh_triangles.hpp"
 #include "../engine/rendering/packed_record.hpp"
 #include <cstdio>
@@ -193,6 +195,51 @@ int main(int argc, char** argv) {
             vk::HeadlessRenderer renderer2(1280, 960, std::string(VOXELCORE_SPV_DIR));
             renderer2.init();
             renderer2.renderRecordsToPpm(draws, mvp, (pathB + ".2.ppm").c_str());
+            // Targeted probes: keep ONLY the grass-top record(s) of the skyline chunk, or ONLY the stone backwall.
+            auto keepOnly = [&](auto&& pred, const char* suffix) {
+                std::vector<std::vector<std::uint32_t>> keep;
+                std::vector<vk::HeadlessRenderer::RecordDraw> fdraws;
+                for (const auto& d : draws) {
+                    std::vector<std::uint32_t> words;
+                    for (std::size_t r = 0; r < d.recordCount; ++r) {
+                        const std::uint32_t w0 = d.words[r * 2], w1 = d.words[r * 2 + 1];
+                        if (pred(d.originX, d.originZ, w0, w1)) { words.push_back(w0); words.push_back(w1); }
+                    }
+                    if (!words.empty()) {
+                        keep.push_back(std::move(words));
+                        const auto& w = keep.back();
+                        fdraws.push_back({d.originX, d.originZ, w.data(), w.size() / 2});
+                    }
+                }
+                if (fdraws.empty()) { std::fprintf(stderr, "records_parity: filter %s matched nothing\n", suffix); return; }
+                vk::HeadlessRenderer fr(1280, 960, std::string(VOXELCORE_SPV_DIR));
+                fr.init();
+                fr.renderRecordsToPpm(fdraws, mvp, suffix);
+            };
+            // grass top rect: chunk origin (48,0), PosY (dir=2), local x=0 z=0 y=20, u=16 v=16
+            keepOnly([](float ox, float oz, std::uint32_t w0, std::uint32_t w1) {
+                return ox == 48.0f && oz == 0.0f && ((w0 >> 22) & 0x7u) == 2u && ((w0 >> 8) & 0x3Fu) == 20u;
+            }, (pathB + ".top.ppm").c_str());
+            // stone backwall rect: chunk origin (48,0), NegZ (dir=5), local y=16, block=1
+            keepOnly([](float ox, float oz, std::uint32_t w0, std::uint32_t w1) {
+                return ox == 48.0f && oz == 0.0f && ((w0 >> 22) & 0x7u) == 5u && ((w0 >> 8) & 0x3Fu) == 16u && (w1 & 0xFFFFu) == 1u;
+            }, (pathB + ".stone.ppm").c_str());
+            // both together
+            keepOnly([](float ox, float oz, std::uint32_t w0, std::uint32_t w1) {
+                const std::uint32_t dir = (w0 >> 22) & 0x7u, y = (w0 >> 8) & 0x3Fu;
+                return ox == 48.0f && oz == 0.0f && ((dir == 2u && y == 20u) || (dir == 5u && y == 16u && (w1 & 0xFFFFu) == 1u));
+            }, (pathB + ".topstone.ppm").c_str());
+            // corner shaded colors of the two quads, computed with the CPU shadeFace formula
+            // (vertex colors the expanded path uploaded; records derives them identically in GLSL)
+            {
+                const std::uint32_t grassTop = shadeFace(faceColor(blocks::Grass), 3, 15, 1.0f);
+                const std::uint32_t stoneNegZ3 = shadeFace(faceColor(blocks::Stone), 3, 15, 0.8f);
+                const std::uint32_t stoneNegZ2 = shadeFace(faceColor(blocks::Stone), 2, 15, 0.8f);
+                std::fprintf(stderr, "records_parity: CPU shades grassTop=%02x%02x%02x stoneNegZ(ao3)=%02x%02x%02x stoneNegZ(ao2)=%02x%02x%02x\n",
+                             (grassTop >> 16) & 0xFF, (grassTop >> 8) & 0xFF, grassTop & 0xFF,
+                             (stoneNegZ3 >> 16) & 0xFF, (stoneNegZ3 >> 8) & 0xFF, stoneNegZ3 & 0xFF,
+                             (stoneNegZ2 >> 16) & 0xFF, (stoneNegZ2 >> 8) & 0xFF, stoneNegZ2 & 0xFF);
+            }
             // Bisect: render with ONLY PosY (grass tops) and ONLY non-PosY records,
             // dump pixel (844,300) RGB from each to the report.
             try {
@@ -335,6 +382,9 @@ int main(int argc, char** argv) {
     rep << "bisect (844,300): posy=" << dumpPixel(pathB + ".posy.ppm")
         << " notposy=" << dumpPixel(pathB + ".notposy.ppm") << "\n";
     rep << "rev (844,300): A2A=" << dumpPixel(pathA + ".rev.ppm") << " B2B=" << dumpPixel(pathB + ".rev.ppm") << "\n";
+    rep << "targeted (844,300): top=" << dumpPixel(pathB + ".top.ppm")
+        << " stone=" << dumpPixel(pathB + ".stone.ppm")
+        << " topstone=" << dumpPixel(pathB + ".topstone.ppm") << "\n";
     rep << "bbox: x[" << minX << "," << maxX << "] y[" << minY << "," << maxY << "]\n";
     // CPU-side coverage analysis for the first differing pixel: project every quad's triangles
     // with the same matrices used for the renders and list which cover the pixel center.
