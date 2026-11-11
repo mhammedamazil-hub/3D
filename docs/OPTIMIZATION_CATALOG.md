@@ -66,3 +66,7 @@ Living list. Every entry: purpose, cost, complexity, hardware dependence, status
 
 ## Reversal log
 - 2026-11-11: software-raster color interpolation uses affine weighting — acceptable for verification, rejected for shipping quality (marked as such in `software_renderer.hpp`).
+
+## Light propagation (Stage 9 M1) — **DONE (2026-11-11)**
+- Column sky seeding + BFS boundary-relaxation flood fill; opacity precomputed per cell (1 byte); initial queue contains only lit/unlit boundary cells (O(boundary), not O(region)); no world lookups inside the flood loop.
+- `light_volume_16x64x16_flat`: 1,110 → ~250–430 µs per compute (4-5×). Correctness: sealed caves fully dark; exact Manhattan falloff from seeds; occluded block sources emit nothing; above-region reads as open sky.
