@@ -71,6 +71,7 @@ public:
     }
 
     const std::vector<std::uint64_t>& rawWords() const { return words_; }
+    std::vector<std::uint64_t>& rawWordsMutable() { return words_; }
 
 private:
     std::uint8_t bits_ = 0;

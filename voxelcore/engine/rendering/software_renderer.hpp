@@ -35,9 +35,23 @@ public:
         std::fill(depth_.begin(), depth_.end(), std::numeric_limits<float>::infinity());
     }
 
-    // Draw the quads of one chunk mesh. ao14: 8-bit ARGB shading per-vertex from AO.
+    // Draw the quads of one chunk mesh with per-corner AO shading.
+    // Opaque quads facing away from the camera are skipped (backface culling);
+    // cutout/translucent quads draw both sides.
     void drawQuads(const std::vector<Quad>& quads, float originX, float originZ) {
+        const float fwdX = camera.targetX - camera.eyeX, fwdY = camera.targetY - camera.eyeY, fwdZ = camera.targetZ - camera.eyeZ;
         for (const Quad& q : quads) {
+            const bool open = (q.block == blocks::Leaves || q.block == blocks::Water);
+            if (!open) {
+                float nx = 0, ny = 0, nz = 0;
+                switch (q.dir) {
+                    case FaceDir::PosX: nx = 1; break; case FaceDir::NegX: nx = -1; break;
+                    case FaceDir::PosY: ny = 1; break; case FaceDir::NegY: ny = -1; break;
+                    case FaceDir::PosZ: nz = 1; break; case FaceDir::NegZ: nz = -1; break;
+                }
+                // Skip if the face normal points away from the camera.
+                if (nx * fwdX + ny * fwdY + nz * fwdZ >= 0.0f) continue;
+            }
             // 4 corners of the rect in absolute coords.
             float c[4][3];
             quadCorners(q, originX, originZ, c);

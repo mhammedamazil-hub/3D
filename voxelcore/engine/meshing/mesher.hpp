@@ -15,6 +15,7 @@
 #include "../chunks/block_ids.hpp"
 #include "../chunks/chunk.hpp"
 #include "../world/world.hpp"
+#include "../world/block_reader.hpp"
 #include <cstdint>
 #include <functional>
 #include <vector>
@@ -64,7 +65,8 @@ public:
 
     // Convenience: mesh a chunk of `world`, reading absolute coordinates from the world.
     Result meshWorld(const ChunkPos pos, const World& world) const {
-        return meshTyped(pos, [&world](int x, int y, int z) -> BlockId { return world.getBlock(x, y, z); });
+        const CachedBlockReader reader(world);
+        return meshTyped(pos, reader);
     }
 
 private:

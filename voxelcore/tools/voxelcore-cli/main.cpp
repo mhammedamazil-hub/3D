@@ -10,6 +10,8 @@
 #include "../../engine/rendering/software_renderer.hpp"
 #include "../../engine/jobs/job_system.hpp"
 #include "../../engine/core/timing.hpp"
+#include "../../engine/storage/chunk_io.hpp"
+#include <filesystem>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -28,7 +30,7 @@ static World generateWorld(std::uint64_t seed, int radiusChunks) {
 }
 
 int main(int argc, char** argv) {
-    if (argc < 2) { std::fprintf(stderr, "usage: voxelcore <gen|mesh|render|lod> ...\n"); return 2; }
+    if (argc < 2) { std::fprintf(stderr, "usage: voxelcore <gen|mesh|render|lod|saveload> ...\n"); return 2; }
     const char* cmd = argv[1];
     const std::uint64_t seed = (argc > 3) ? std::strtoull(argv[3], nullptr, 10) : 1337;
     const int chunks = (argc > 4) ? std::atoi(argv[4]) : 1; // radius in chunks for gen/mesh/lod; ignored by render's px arg
@@ -82,6 +84,29 @@ int main(int argc, char** argv) {
         r.writePPM(out);
         std::fprintf(stderr, "wrote %s in %.1f ms total\n", out, sw.millis());
         return 0;
+    }
+    if (std::strcmp(cmd, "saveload") == 0) {
+        const char* out = (argc > 2) ? argv[2] : "/tmp/voxelcore_cli_region";
+        std::filesystem::create_directories(out);
+        const std::string path = std::string(out) + "/r.0.0.mca";
+        std::filesystem::remove(path);
+        TerrainConfig cfg; cfg.seed = seed; TerrainGenerator gen(cfg);
+        Chunk chunk({0, 0}); gen.generate(chunk);
+        anvil::RegionFile region(path, true);
+        if (!chunk_io::saveChunk(region, chunk, 0, 0)) { std::fprintf(stderr, "save failed\n"); return 1; }
+        region.flush(1700000000u);
+        anvil::RegionFile regionBack(path, false);
+        auto back = chunk_io::loadChunk(regionBack, 0, 0);
+        if (!back) { std::fprintf(stderr, "load failed\n"); return 1; }
+        bool identical = true;
+        for (int y = 0; y < kChunkHeight; ++y)
+            for (int z = 0; z < 16; ++z)
+                for (int x = 0; x < 16; ++x)
+                    if (chunk.getBlock(x, y, z) != back->getBlock(x, y, z)) identical = false;
+        const auto sz = std::filesystem::file_size(path);
+        std::printf("saved+reloaded chunk of seed %llu: %s (region %llu bytes)\n",
+                    (unsigned long long)seed, identical ? "IDENTICAL" : "MISMATCH", (unsigned long long)sz);
+        return identical ? 0 : 1;
     }
     if (std::strcmp(cmd, "lod") == 0) {
         World w = generateWorld(seed, chunks ? chunks : 1);

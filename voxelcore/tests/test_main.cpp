@@ -10,6 +10,11 @@
 #include "../engine/meshing/mesher.hpp"
 #include "../engine/visibility/frustum.hpp"
 #include "../engine/lod/heightfield_lod.hpp"
+#include "../engine/storage/nbt.hpp"
+#include "../engine/storage/chunk_io.hpp"
+#include "../engine/storage/zlib.hpp"
+#include <fstream>
+#include <filesystem>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -197,6 +202,99 @@ static void testLodBake() {
     CHECK(mesh.positions.size() == 17u * 17u * 3u);
 }
 
+static void testNbtRoundtrip() {
+    vc::nbt::Value root = vc::nbt::Value::compound();
+    vc::nbt::NbtCompound& c = std::get<vc::nbt::NbtCompound>(root.data);
+    c.emplace_back("name", vc::nbt::Value(std::string("voxelcore")));
+    c.emplace_back("count", vc::nbt::Value(static_cast<std::int32_t>(-42)));
+    c.emplace_back("big", vc::nbt::Value(static_cast<std::int64_t>(0x0102030405060708ll)));
+    c.emplace_back("ratio", vc::nbt::Value(static_cast<double>(2.5)));
+    vc::nbt::NbtList list;
+    list.push_back(vc::nbt::Value(static_cast<std::int32_t>(1)));
+    list.push_back(vc::nbt::Value(static_cast<std::int32_t>(2)));
+    list.push_back(vc::nbt::Value(static_cast<std::int32_t>(3)));
+    c.emplace_back("ints", vc::nbt::Value(vc::nbt::List, std::move(list)));
+    vc::nbt::Writer w;
+    w.writeNamedRoot("test", root);
+    vc::nbt::Reader r(w.bytes().data(), w.bytes().size());
+    auto [nm, back] = r.readNamedRoot();
+    CHECK_EQ(nm, std::string("test"));
+    const vc::nbt::Value* nmV = back.find("name");
+    CHECK(nmV != nullptr);
+    CHECK_EQ(std::get<std::string>(nmV->data), std::string("voxelcore"));
+    const vc::nbt::Value* cnt = back.find("count");
+    CHECK_EQ(std::get<std::int32_t>(cnt->data), -42);
+    const vc::nbt::Value* bigv = back.find("big");
+    CHECK_EQ(std::get<std::int64_t>(bigv->data), static_cast<std::int64_t>(0x0102030405060708ll));
+    const vc::nbt::Value* ints = back.find("ints");
+    const auto* lst = ints->asList();
+    CHECK(lst != nullptr);
+    CHECK_EQ(lst->size(), 3u);
+    CHECK_EQ(std::get<std::int32_t>((*lst)[2].data), 3);
+}
+
+static void testChunkSaveLoadRoundtrip() {
+    const std::string dir = "/tmp/voxelcore_test_region";
+    std::filesystem::create_directories(dir);
+    const std::string path = dir + "/r.0.0.mca";
+    std::filesystem::remove(path);
+
+    vc::TerrainConfig cfg; cfg.seed = 4242; cfg.trees = true;
+    vc::TerrainGenerator gen(cfg);
+    vc::Chunk chunk({0, 0});
+    gen.generate(chunk);
+
+    {
+        vc::anvil::RegionFile region(path, true);
+        CHECK(vc::chunk_io::saveChunk(region, chunk, 0, 0));
+        region.flush(12345);
+    }
+    {
+        vc::anvil::RegionFile region(path, false);
+        CHECK(region.hasChunk(0, 0));
+        auto back = vc::chunk_io::loadChunk(region, 0, 0);
+        CHECK(back != nullptr);
+        CHECK_EQ(back->pos().x, 0);
+        CHECK_EQ(back->pos().z, 0);
+        bool identical = true;
+        for (int y = 0; y < vc::kChunkHeight; ++y)
+            for (int z = 0; z < 16; ++z)
+                for (int x = 0; x < 16; ++x)
+                    if (chunk.getBlock(x, y, z) != back->getBlock(x, y, z)) identical = false;
+        CHECK(identical);
+    }
+    std::filesystem::remove(path);
+}
+
+static void testMesherFuzz() {
+    // Random block soup: the greedy-merge conservation law (faceArea == naiveFaces) must hold.
+    std::uint64_t seed = 0x123456789ULL;
+    auto rnd = [&]() { seed = seed * 6364136223846793005ULL + 1442695040888963407ULL; return seed >> 33; };
+    for (int iteration = 0; iteration < 60; ++iteration) {
+        vc::World world;
+        // Random sparse fill in a 8x16x8 box to keep sections non-trivial.
+        for (int i = 0; i < 140; ++i) {
+            const int x = static_cast<int>(rnd() % 8) + 4;
+            const int y = static_cast<int>(rnd() % 12) + 4;
+            const int z = static_cast<int>(rnd() % 8) + 4;
+            const vc::BlockId b = static_cast<vc::BlockId>(1 + rnd() % 9);
+            world.setBlock(x, y, z, b);
+        }
+        vc::GreedyMesher mesher;
+        auto r = mesher.meshWorld({0, 0}, world);
+        if (r.stats.faceArea != r.stats.naiveFaces) {
+            ++g_failures;
+            std::fprintf(stderr, "FAIL mesher fuzz iteration %d: faceArea=%llu naive=%llu\n",
+                         iteration, (unsigned long long)r.stats.faceArea, (unsigned long long)r.stats.naiveFaces);
+        }
+        ++g_checks;
+        for (const auto& q : r.quads) for (int k = 0; k < 4; ++k) {
+            ++g_checks;
+            if (q.ao[k] > 3) { ++g_failures; std::fprintf(stderr, "FAIL fuzz AO bounds\n"); }
+        }
+    }
+}
+
 static void testChunkMemory() {
     vc::Chunk c({0, 0});
     const std::size_t airBytes = c.approxBytes();
@@ -223,6 +321,9 @@ int main() {
     testFrustumCulling();
     testLodBake();
     testChunkMemory();
+    testNbtRoundtrip();
+    testChunkSaveLoadRoundtrip();
+    testMesherFuzz();
     std::fprintf(stderr, "\n%d checks, %d failures\n", g_checks, g_failures);
     return g_failures == 0 ? 0 : 1;
 }

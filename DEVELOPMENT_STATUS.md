@@ -31,12 +31,14 @@ Working, tested C++23 engine foundation:
 
 ## Measured results (this machine, gcc 12.2 -O3, 2026-11-11)
 
-- Unit tests: **33435 checks, 0 failures.**
-- `terrain_gen_chunk`: ~176 µs/chunk. `greedy_mesh_generated_chunk`: ~2.0 ms/chunk (world-reader hash lookups dominate; thread-local chunk cache is backlogged).
+- Unit tests: **193,825 checks, 0 failures** (includes 60 random-soup mesher fuzz iterations + NBT/region roundtrips). ASan/UBSan build: 0 failures.
+- `terrain_gen_chunk`: ~176 µs/chunk. `greedy_mesh_generated_chunk`: **~1.35 ms/chunk after E5** (cached block reader; was 2.0–2.3 ms).
+- 9-chunk world mesh: 20.1 → **9.8 ms** (E5). Headless software frame: 32 → **21.9 ms** (backface culling).
 - 9-chunk world (r=1): gen 1.5 ms, mesh 20.1 ms; 11,636 naive faces → 1,296 quads (**11.1% of naive**), `faceArea == naiveFaces` PASS.
 - Flat-platform greedy merge: 704 → **6 quads**. `packed_storage_set_4096`: ~6.5 µs.
 - LOD bake level 2 (4 m cells): 0.8 ms; 512-triangle grid mesh.
-- Headless render: `gen 1.5 ms`, full frame 32–42 ms (software raster, 640×360).
+- **Stage 5 landed**: NBT reader/writer, Anvil `.mca` region I/O (zlib, sector allocation, full rewrite-on-flush), chunk↔NBT roundtrip — generated chunk saves and reloads byte-identically (`voxelcore saveload`).
+- **Fuzz**: greedy-merge conservation law (`faceArea == naiveFaces`) holds on 60 random voxel soups.
 
 ## Honest gaps / blockers
 
@@ -49,9 +51,9 @@ Working, tested C++23 engine foundation:
 
 ## Next concrete tasks
 
-1. Anvil region read/write (NBT) for world persistence; load/save roundtrip tests.
-2. Vulkan backend bring-up behind a thin `rendering/backend.hpp` interface (device/queue/swapchain/pipeline); keep software renderer as fallback + CI path.
-3. Heightfield-informed mesher reader (chunk heightmap short-circuits buried cells).
-4. Thread-local block-reader cache; benchmark before/after.
-5. Greedy-meshed water/leaves cutout pass ordering; correct translucency.
-6. First GitHub push + CI green.
+1. Vulkan backend bring-up behind `rendering/backend.hpp`; keep software renderer as fallback + CI path.
+2. Heightfield-informed mesher reader (chunk heightmap short-circuits buried cells).
+3. Water/leaves translucent pass ordering; correct translucency.
+4. Sky/block light propagation (stage 9 first milestone).
+5. Side-bucket draw ordering (E6) + packed 24-byte records (E7 design).
+6. First GitHub push + CI green (already pushed; CI green pending first run).

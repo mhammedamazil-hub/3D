@@ -19,3 +19,11 @@ greedy_mesh_generated_chunk,20,40.884,2044.218
 job_system_parallel_for_1M,20,489.365,24468.254
 ```
 Notes: container noise ±5–10% on this shared machine; E4 gain on meshing ≈ 11% (real but small); E5 (thread-local chunk cache) is the next lever.
+## 2026-11-11 — run 3 (after E5 cached block reader)
+```
+greedy_mesh_generated_chunk: 2044 -> 1349 us (-34%)
+job_system_parallel_for_1M: 24468 -> 23657 us
+9-chunk mesh: 20.1 -> 9.8 ms
+```
+## 2026-11-11 — run 4 (software renderer backface culling)
+Headless 640x360 frame: ~32 -> ~22 ms (opaque quads only).

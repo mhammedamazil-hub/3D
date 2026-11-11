@@ -72,6 +72,12 @@ public:
     std::size_t approxBytes() const { return storage_.bytes() + palette_.size() * sizeof(BlockId); }
     const std::vector<BlockId>& palette() const { return palette_; }
 
+    // Raw palette index of cell i (0 for uniform sections). O(1); exposed for I/O fast paths.
+    std::size_t rawPaletteIndex(std::size_t i) const {
+        if (i >= kSectionVolume) throw std::out_of_range("PalettedSection::rawPaletteIndex");
+        return nonUniform_ ? static_cast<std::size_t>(storage_.get(i)) : 0;
+    }
+
     // Recount the used palette entries and rebuild a tight palette (shrinks bits).
     void trim() {
         if (!nonUniform_) return;
