@@ -135,5 +135,6 @@ jobs:
             /tmp/parity_records.ppm
             /tmp/parity_expanded.ppm
             /tmp/parity_expanded.ppm.2.ppm
+            /tmp/parity_records.ppm.2.ppm
             /tmp/parity_records.ppm.report.txt
           retention-days: 3

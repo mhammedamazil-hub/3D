@@ -174,6 +174,9 @@ int main(int argc, char** argv) {
             vk::HeadlessRenderer renderer(1280, 960, std::string(VOXELCORE_SPV_DIR));
             renderer.init();
             renderer.renderRecordsToPpm(draws, mvp, pathB.c_str());
+            vk::HeadlessRenderer renderer2(1280, 960, std::string(VOXELCORE_SPV_DIR));
+            renderer2.init();
+            renderer2.renderRecordsToPpm(draws, mvp, (pathB + ".2.ppm").c_str());
         }
     } catch (const vk::VulkanError& e) {
         std::fprintf(stderr, "records_parity: skipped — %s\n", e.what());
@@ -194,9 +197,17 @@ int main(int argc, char** argv) {
         if (!a2.empty() && a2.size() == a.size()) {
             std::size_t same = 0;
             for (std::size_t i = 0; i < a.size(); ++i) same += (a[i] == a2[i]) ? 1 : 0;
-            determinism = "A-vs-A2: " + std::to_string(same) + "/" + std::to_string(a.size()) + " bytes identical";
+            determinism = "A-vs-A2: " + std::to_string(same) + "/" + std::to_string(a.size());
         } else {
-            determinism = "A second render unreadable";
+            determinism = "A2-unreadable";
+        }
+        const auto b2 = readPpm(pathB + ".2.ppm", w2, h2);
+        if (!b2.empty() && b2.size() == b.size()) {
+            std::size_t same = 0;
+            for (std::size_t i = 0; i < b.size(); ++i) same += (b[i] == b2[i]) ? 1 : 0;
+            determinism += " | B-vs-B2: " + std::to_string(same) + "/" + std::to_string(b.size());
+        } else {
+            determinism += " | B2-unreadable";
         }
         std::fprintf(stderr, "records_parity: %s\n", determinism.c_str());
     }
