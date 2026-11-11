@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 #if defined(VOXELCORE_WITH_VULKAN)
 #if defined(VOXELCORE_SPV_CONFIG)
@@ -37,9 +38,30 @@ int main(int argc, char** argv) {
     std::vector<Quad> allQuads;
     for (const auto& [pos, chunk] : world.chunks()) { (void)chunk;
         const auto mesh = mesher.meshWorld(pos, world);
-        // (Side-bucket order is preserved per chunk; the Vulkan path draws in bucket order.)
         allQuads.insert(allQuads.end(), mesh.quads.begin(), mesh.quads.end());
     }
+    // Two-pass draw order on the GPU path too: opaque+cutout first (bucket order preserved),
+    // then translucent water far-to-near (painter's algorithm; the pipeline blends SRC_ALPHA).
+    const math::Vec3 eye{64.0f, 42.0f, 90.0f};
+    auto centroidDistSq = [&eye](const Quad& q) {
+        float cx = q.x, cy = q.y, cz = q.z;
+        switch (q.dir) {
+            case FaceDir::PosX: case FaceDir::NegX: cy += q.v * 0.5f; cz += q.u * 0.5f; break;
+            case FaceDir::PosY: case FaceDir::NegY: cx += q.u * 0.5f; cz += q.v * 0.5f; break;
+            case FaceDir::PosZ: case FaceDir::NegZ: cx += q.u * 0.5f; cy += q.v * 0.5f; break;
+        }
+        const float dx = cx - eye.x, dy = cy - eye.y, dz = cz - eye.z;
+        return dx * dx + dy * dy + dz * dz;
+    };
+    std::vector<Quad> opaquePart, waterPart;
+    opaquePart.reserve(allQuads.size());
+    for (const Quad& q : allQuads) {
+        if (q.block == blocks::Water) waterPart.push_back(q); else opaquePart.push_back(q);
+    }
+    std::stable_sort(waterPart.begin(), waterPart.end(),
+                     [&centroidDistSq](const Quad& a, const Quad& b) { return centroidDistSq(a) > centroidDistSq(b); });
+    opaquePart.insert(opaquePart.end(), waterPart.begin(), waterPart.end());
+    allQuads = std::move(opaquePart);
     const MeshTriangles tris = expandQuads(allQuads);
     std::fprintf(stderr, "vulkan_render: quads=%zu vertices=%zu triangles=%zu\n",
                  allQuads.size(), tris.positions.size() / 3, tris.indices.size() / 3);
@@ -54,7 +76,7 @@ int main(int argc, char** argv) {
         vertices.push_back({tris.positions[i * 3 + 0], tris.positions[i * 3 + 1], tris.positions[i * 3 + 2],
                             tris.colors[i * 4 + 0], tris.colors[i * 4 + 1], tris.colors[i * 4 + 2], tris.colors[i * 4 + 3]});
     }
-    const math::Vec3 eye{64.0f, 42.0f, 90.0f}, target{54.0f, 20.0f, 50.0f}, up{0.0f, 1.0f, 0.0f};
+    const math::Vec3 target{54.0f, 20.0f, 50.0f}, up{0.0f, 1.0f, 0.0f};
     const math::Mat4 view = math::lookAtRH(eye, target, up);
     const math::Mat4 proj = math::perspectiveVulkan(60.0f, 4.0f / 3.0f, 0.5f, 500.0f);
     const math::Mat4 mvp = math::multiply(proj, view);

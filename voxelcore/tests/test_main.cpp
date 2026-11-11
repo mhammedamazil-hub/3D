@@ -478,20 +478,23 @@ static void testTranslucentWaterDraw() {
     const auto& px = renderer.pixels();
     int changed = 0;
     for (std::uint32_t p : px) if (p != 0xFF202830u) ++changed;
-    const std::uint32_t center = px[32 * 64 + 32];
-    std::fprintf(stderr, "INFO translucency: changed_pixels=%d center=0x%08X\n", changed, center);
-    // Must differ from clear sky and not equal the raw water color (it is blended).
-    CHECK(center != 0xFF202830u);
-    CHECK(changed > 200); // rasterizer covers ~484 px locally; loose bound for platform FP drift
-    const int cr = (center >> 16) & 0xFF, cg = (center >> 8) & 0xFF, cb = center & 0xFF;
-    const int sky_r = 0x20, sky_g = 0x28, sky_b = 0x30;
-    const int wat_r = 0x3F, wat_g = 0x6F, wat_b = 0xD6;
-    const int lo_r = std::min(sky_r, wat_r) - 1, hi_r = std::max(sky_r, wat_r) + 1;
-    const int lo_g = std::min(sky_g, wat_g) - 1, hi_g = std::max(sky_g, wat_g) + 1;
-    const int lo_b = std::min(sky_b, wat_b) - 1, hi_b = std::max(sky_b, wat_b) + 1;
-    CHECK(cr >= lo_r && cr <= hi_r);
-    CHECK(cg >= lo_g && cg <= hi_g);
-    CHECK(cb >= lo_b && cb <= hi_b);
+    // NOTE: pixel (32,32) lies exactly on the quad's triangulation diagonal (camera is on the
+    // quad's y=x symmetry axis), and exact-zero barycentric weights on a shared edge are
+    // dropped or kept depending on libm's tanf rounding — CI vs local disagreed there.
+    // Probe two pixels safely off the diagonal, one in each sub-triangle instead.
+    const std::uint32_t probeA = px[38 * 64 + 28]; // upper-left sub-triangle
+    const std::uint32_t probeB = px[28 * 64 + 38]; // lower-right sub-triangle
+    std::fprintf(stderr, "INFO translucency: changed_pixels=%d probeA=0x%08X probeB=0x%08X\n", changed, probeA, probeB);
+    CHECK(probeA != 0xFF202830u);
+    CHECK(probeB != 0xFF202830u);
+    CHECK(changed > 400); // ~484 locally, ~480 on CI; far from either
+    // Average of the two probes must be a sky/water blend (each channel between the two).
+    const int cr = (((probeA >> 16) & 0xFF) + ((probeB >> 16) & 0xFF)) / 2;
+    const int cg = (((probeA >> 8) & 0xFF) + ((probeB >> 8) & 0xFF)) / 2;
+    const int cb = (((probeA) & 0xFF) + ((probeB) & 0xFF)) / 2;
+    CHECK(cr >= 0x1F && cr <= 0x40);
+    CHECK(cg >= 0x28 && cg <= 0x70);
+    CHECK(cb >= 0x30 && cb <= 0xD7);
     // Blend sanity: blendOver(src over dst) matches manual alpha composite.
     const std::uint32_t src = 0xFF000000u | (0x10u << 16) | (0x20u << 8) | 0x30u; // opaque red-ish src alpha handled below
     const std::uint32_t blended = vc::SoftwareRenderer::blendOver(0x80102030u, 0xFF405060u);
