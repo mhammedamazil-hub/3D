@@ -111,6 +111,11 @@ int main(int argc, char** argv) {
             renderer.init();
             renderer.renderToPpm(vertices, tris.indices, mvp, pathA.c_str());
         }
+        {   // Determinism probe: render path A a second time; report if driver is nondeterministic
+            vk::HeadlessRenderer renderer(1280, 960, std::string(VOXELCORE_SPV_DIR));
+            renderer.init();
+            renderer.renderToPpm(vertices, tris.indices, mvp, (pathA + ".2.ppm").c_str());
+        }
         std::fprintf(stderr, "records_parity: path A (expanded) wrote %s (%zu quads)\n", pathA.c_str(), expandCount);
         {   // Path B: chunk-local packed records, same global draw order
             // Pass 1 (opaque, mesher bucket order within chunks, chunk map order).
@@ -181,6 +186,20 @@ int main(int argc, char** argv) {
         std::fprintf(stderr, "records_parity: FAIL — could not read one of the PPMs\n");
         return 1;
     }
+    // Determinism cross-check (path A rendered twice)
+    std::string determinism;
+    {
+        uint32_t w2 = 0, h2 = 0;
+        const auto a2 = readPpm(pathA + ".2.ppm", w2, h2);
+        if (!a2.empty() && a2.size() == a.size()) {
+            std::size_t same = 0;
+            for (std::size_t i = 0; i < a.size(); ++i) same += (a[i] == a2[i]) ? 1 : 0;
+            determinism = "A-vs-A2: " + std::to_string(same) + "/" + std::to_string(a.size()) + " bytes identical";
+        } else {
+            determinism = "A second render unreadable";
+        }
+        std::fprintf(stderr, "records_parity: %s\n", determinism.c_str());
+    }
     std::size_t diffBytes = 0, diffPixels = 0;
     int maxDelta = 0;
     for (std::size_t i = 0; i < a.size(); ++i) {
@@ -220,6 +239,7 @@ int main(int argc, char** argv) {
             ++printed;
         }
     }
+    rep << "determinism: " << determinism << "\n";
     rep << "bbox: x[" << minX << "," << maxX << "] y[" << minY << "," << maxY << "]\n";
     // CPU-side coverage analysis for the first differing pixel: project every quad's triangles
     // with the same matrices used for the renders and list which cover the pixel center.
