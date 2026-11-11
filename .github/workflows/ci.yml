@@ -115,6 +115,11 @@ jobs:
             echo "::warning::records_parity skipped — no Vulkan device on this runner"
           else
             echo "records_parity FAILED with exit $rc (expanded vs records path diverged)" >&2
+            if [ -f /tmp/parity_records.ppm.report.txt ]; then
+              echo "::error::records_parity report: $(cat /tmp/parity_records.ppm.report.txt)"
+            else
+              echo "::error::records_parity exited $rc without a report file (readPpm/launch failure?)"
+            fi
             echo "--- diagnostics ---" >&2
             ls -la /usr/share/vulkan/icd.d/ 2>&1 >&2 || true
             cat /usr/share/vulkan/icd.d/*.json 2>&1 >&2 || true
