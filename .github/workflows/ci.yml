@@ -143,5 +143,9 @@ jobs:
             /tmp/parity_records.ppm.top.ppm
             /tmp/parity_records.ppm.stone.ppm
             /tmp/parity_records.ppm.topstone.ppm
+            /tmp/parity_records.ppm.east.ppm
+            /tmp/parity_records.ppm.chunk30.ppm
+            /tmp/parity_records.ppm.noc30.ppm
+            /tmp/parity_records.ppm.noc30_noeast.ppm
             /tmp/parity_records.ppm.report.txt
           retention-days: 3

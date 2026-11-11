@@ -229,6 +229,22 @@ int main(int argc, char** argv) {
                 const std::uint32_t dir = (w0 >> 22) & 0x7u, y = (w0 >> 8) & 0x3Fu;
                 return ox == 48.0f && oz == 0.0f && ((dir == 2u && y == 20u) || (dir == 5u && y == 16u && (w1 & 0xFFFFu) == 1u));
             }, (pathB + ".topstone.ppm").c_str());
+            // ONLY the east wall rect records of chunk origin (48,0): PosX (dir=0) faces at the chunk's far edge
+            keepOnly([](float ox, float oz, std::uint32_t w0, std::uint32_t) {
+                return ox == 48.0f && oz == 0.0f && ((w0 >> 22) & 0x7u) == 0u;
+            }, (pathB + ".east.ppm").c_str());
+            // chunk (48,0) ONLY, opaque records only (no water in that chunk anyway)
+            keepOnly([](float ox, float oz, std::uint32_t, std::uint32_t) {
+                return ox == 48.0f && oz == 0.0f;
+            }, (pathB + ".chunk30.ppm").c_str());
+            // ALL opaque chunks EXCEPT origin (48,0)
+            keepOnly([](float ox, float oz, std::uint32_t, std::uint32_t) {
+                return !(ox == 48.0f && oz == 0.0f);
+            }, (pathB + ".noc30.ppm").c_str());
+            // chunk (48,0) minus dir==0 (east wall) records
+            keepOnly([](float ox, float oz, std::uint32_t w0, std::uint32_t) {
+                return ox == 48.0f && oz == 0.0f && ((w0 >> 22) & 0x7u) != 0u;
+            }, (pathB + ".noc30_noeast.ppm").c_str());
             // corner shaded colors of the two quads, computed with the CPU shadeFace formula
             // (vertex colors the expanded path uploaded; records derives them identically in GLSL)
             {
@@ -385,6 +401,10 @@ int main(int argc, char** argv) {
     rep << "targeted (844,300): top=" << dumpPixel(pathB + ".top.ppm")
         << " stone=" << dumpPixel(pathB + ".stone.ppm")
         << " topstone=" << dumpPixel(pathB + ".topstone.ppm") << "\n";
+    rep << "surgical (844,300): east=" << dumpPixel(pathB + ".east.ppm")
+        << " chunk30=" << dumpPixel(pathB + ".chunk30.ppm")
+        << " noc30=" << dumpPixel(pathB + ".noc30.ppm")
+        << " noc30_noeast=" << dumpPixel(pathB + ".noc30_noeast.ppm") << "\n";
     rep << "bbox: x[" << minX << "," << maxX << "] y[" << minY << "," << maxY << "]\n";
     // CPU-side coverage analysis for the first differing pixel: project every quad's triangles
     // with the same matrices used for the renders and list which cover the pixel center.
