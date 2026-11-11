@@ -177,6 +177,56 @@ int main(int argc, char** argv) {
             vk::HeadlessRenderer renderer2(1280, 960, std::string(VOXELCORE_SPV_DIR));
             renderer2.init();
             renderer2.renderRecordsToPpm(draws, mvp, (pathB + ".2.ppm").c_str());
+            // Bisect: render with ONLY PosY (grass tops) and ONLY non-PosY records,
+            // dump pixel (844,300) RGB from each to the report.
+            try {
+                // PosY-only
+                {
+                    std::vector<std::vector<std::uint32_t>> keep;
+                    std::vector<vk::HeadlessRenderer::RecordDraw> fdraws;
+                    for (const auto& d : draws) {
+                        std::vector<std::uint32_t> words;
+                        for (std::size_t r = 0; r < d.recordCount; ++r) {
+                            const std::uint32_t w0 = d.words[r * 2];
+                            if (((w0 >> 22) & 0x7u) == 2u) { words.push_back(w0); words.push_back(d.words[r * 2 + 1]); }
+                        }
+                        if (!words.empty()) {
+                            keep.push_back(std::move(words));
+                            const auto& w = keep.back();
+                            fdraws.push_back({d.originX, d.originZ, w.data(), w.size() / 2});
+                        }
+                    }
+                    if (!fdraws.empty()) {
+                        vk::HeadlessRenderer fr(1280, 960, std::string(VOXELCORE_SPV_DIR));
+                        fr.init();
+                        fr.renderRecordsToPpm(fdraws, mvp, (pathB + ".posy.ppm").c_str());
+                    }
+                }
+                // non-PosY only
+                {
+                    std::vector<std::vector<std::uint32_t>> keep;
+                    std::vector<vk::HeadlessRenderer::RecordDraw> fdraws;
+                    for (const auto& d : draws) {
+                        std::vector<std::uint32_t> words;
+                        for (std::size_t r = 0; r < d.recordCount; ++r) {
+                            const std::uint32_t w0 = d.words[r * 2];
+                            if (((w0 >> 22) & 0x7u) != 2u) { words.push_back(w0); words.push_back(d.words[r * 2 + 1]); }
+                        }
+                        if (!words.empty()) {
+                            keep.push_back(std::move(words));
+                            const auto& w = keep.back();
+                            fdraws.push_back({d.originX, d.originZ, w.data(), w.size() / 2});
+                        }
+                    }
+                    if (!fdraws.empty()) {
+                        vk::HeadlessRenderer fr(1280, 960, std::string(VOXELCORE_SPV_DIR));
+                        fr.init();
+                        fr.renderRecordsToPpm(fdraws, mvp, (pathB + ".notposy.ppm").c_str());
+                    }
+                }
+            } catch (const vk::VulkanError& e) {
+                std::fprintf(stderr, "records_parity: bisect render skipped — %s\n", e.what());
+            }
         }
     } catch (const vk::VulkanError& e) {
         std::fprintf(stderr, "records_parity: skipped — %s\n", e.what());
@@ -251,6 +301,17 @@ int main(int argc, char** argv) {
         }
     }
     rep << "determinism: " << determinism << "\n";
+    auto dumpPixel = [&](const std::string& f) {
+        uint32_t w2 = 0, h2 = 0;
+        const auto img = readPpm(f, w2, h2);
+        if (img.empty()) return std::string("unreadable");
+        const std::size_t o = (static_cast<std::size_t>(300) * w2 + 844) * 3;
+        char buf[32];
+        std::snprintf(buf, sizeof(buf), "(%d,%d,%d)", img[o], img[o + 1], img[o + 2]);
+        return std::string(buf);
+    };
+    rep << "bisect (844,300): posy=" << dumpPixel(pathB + ".posy.ppm")
+        << " notposy=" << dumpPixel(pathB + ".notposy.ppm") << "\n";
     rep << "bbox: x[" << minX << "," << maxX << "] y[" << minY << "," << maxY << "]\n";
     // CPU-side coverage analysis for the first differing pixel: project every quad's triangles
     // with the same matrices used for the renders and list which cover the pixel center.
