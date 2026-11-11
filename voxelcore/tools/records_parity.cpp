@@ -73,7 +73,10 @@ int main(int argc, char** argv) {
     }
     // Two-pass draw order identical to vulkan_render: opaque in mesher bucket order,
     // then water far-to-near (painter's algorithm).
-    const math::Vec3 eye{64.0f, 42.0f, 90.0f};
+    // NOTE: camera x must differ from the east wall plane (64). With eye.x == 64 the wall is
+    // exactly edge-on, its projected area is zero, and its coverage of any pixel is a ULP coin-flip
+    // — see docs/E7_PARITY_STATUS.md. 58 keeps the grazing view but yields stable coverage.
+    const math::Vec3 eye{58.0f, 42.0f, 90.0f};
     auto centroidDistSq = [&eye](const Quad& q) {
         float cx = q.x, cy = q.y, cz = q.z;
         switch (q.dir) {
@@ -176,13 +179,13 @@ int main(int argc, char** argv) {
     std::uint32_t depthA = 0xdeadbeefu, depthB = 0xdeadbeefu;
     std::uint32_t soloDepthAStone16 = 0xdeadbeefu, soloDepthBStone16 = 0xdeadbeefu;
     std::uint32_t soloDepthADirt = 0xdeadbeefu, soloDepthBDirt = 0xdeadbeefu;
+    int probeX = 844, probeY = 300;
     std::string soloCandDump;
     try {
         {   // Path A: expanded vertices
             vk::HeadlessRenderer renderer(1280, 960, std::string(VOXELCORE_SPV_DIR));
             renderer.init();
             renderer.renderToPpm(vertices, tris.indices, mvp, pathA.c_str());
-            depthA = renderer.depthAt(844, 300);
         }
         {   // Determinism probe: render path A a second time; report if driver is nondeterministic
             vk::HeadlessRenderer renderer(1280, 960, std::string(VOXELCORE_SPV_DIR));
@@ -263,7 +266,32 @@ int main(int argc, char** argv) {
             vk::HeadlessRenderer renderer(1280, 960, std::string(VOXELCORE_SPV_DIR));
             renderer.init();
             renderer.renderRecordsToPpm(draws, mvp, pathB.c_str());
-            depthB = renderer.depthAt(844, 300);
+            // E7 diagnostics: locate the first differing pixel now that both PPMs exist;
+            // all pixel-anchored diagnostics below use it instead of hard-coded coords.
+            {
+                uint32_t wa2 = 0, ha2 = 0;
+                const auto ia = readPpm(pathA, wa2, ha2);
+                const auto ib = readPpm(pathB, wa2, ha2);
+                bool found = false;
+                if (!ia.empty() && ia.size() == ib.size()) {
+                    for (std::uint32_t p = 0; p < wa2 * ha2; ++p) {
+                        const std::size_t o = static_cast<std::size_t>(p) * 3;
+                        if (ia[o] != ib[o] || ia[o + 1] != ib[o + 1] || ia[o + 2] != ib[o + 2]) {
+                            probeX = static_cast<int>(p % wa2); probeY = static_cast<int>(p / wa2); found = true; break;
+                        }
+                    }
+                } else {
+                    std::fprintf(stderr, "records_parity: probe scan images unreadable/mismatched size\n");
+                }
+                std::fprintf(stderr, "records_parity: probe pixel = (%d,%d) diff_found=%d\n", probeX, probeY, found ? 1 : 0);
+            }
+            depthB = renderer.depthAt(static_cast<std::uint32_t>(probeX), static_cast<std::uint32_t>(probeY));
+            {
+                vk::HeadlessRenderer ra(1280, 960, std::string(VOXELCORE_SPV_DIR));
+                ra.init();
+                ra.renderToPpm(vertices, tris.indices, mvp, pathA.c_str());
+                depthA = ra.depthAt(static_cast<std::uint32_t>(probeX), static_cast<std::uint32_t>(probeY));
+            }
             vk::HeadlessRenderer renderer2(1280, 960, std::string(VOXELCORE_SPV_DIR));
             renderer2.init();
             renderer2.renderRecordsToPpm(draws, mvp, (pathB + ".2.ppm").c_str());
@@ -404,7 +432,7 @@ int main(int argc, char** argv) {
                         vk::HeadlessRenderer rs(1280, 960, std::string(VOXELCORE_SPV_DIR));
                         rs.init();
                         rs.renderToPpm(svertices, st.indices, mvp, (pathA + ".solo_" + job.label + ".ppm").c_str());
-                        const std::uint32_t d = rs.depthAt(844, 300);
+                        const std::uint32_t d = rs.depthAt(static_cast<std::uint32_t>(probeX), static_cast<std::uint32_t>(probeY));
                         if (job.yRec == 16u) soloDepthAStone16 = d; else soloDepthADirt = d;
                     }
                     {
@@ -427,7 +455,7 @@ int main(int argc, char** argv) {
                         vk::HeadlessRenderer rs2(1280, 960, std::string(VOXELCORE_SPV_DIR));
                         rs2.init();
                         rs2.renderRecordsToPpm(fdraws, mvp, (pathB + ".solo_" + job.label + ".ppm").c_str());
-                        const std::uint32_t d = rs2.depthAt(844, 300);
+                        const std::uint32_t d = rs2.depthAt(static_cast<std::uint32_t>(probeX), static_cast<std::uint32_t>(probeY));
                         if (job.yRec == 16u) soloDepthBStone16 = d; else soloDepthBDirt = d;
                     }
                 }
@@ -450,7 +478,7 @@ int main(int argc, char** argv) {
                         vk::HeadlessRenderer ga(1280, 960, std::string(VOXELCORE_SPV_DIR));
                         ga.init();
                         ga.renderToPpm(gv, gt.indices, mvp, (pathA + ".posy.ppm").c_str());
-                        std::fprintf(stderr, "records_parity: A posy depth=0x%08x\n", ga.depthAt(844, 300));
+                        std::fprintf(stderr, "records_parity: A posy depth=0x%08x\n", ga.depthAt(static_cast<std::uint32_t>(probeX), static_cast<std::uint32_t>(probeY)));
                     }
                 }
                 // PosY-only
@@ -577,14 +605,14 @@ int main(int argc, char** argv) {
         uint32_t w2 = 0, h2 = 0;
         const auto img = readPpm(f, w2, h2);
         if (img.empty()) return std::string("unreadable");
-        const std::size_t o = (static_cast<std::size_t>(300) * w2 + 844) * 3;
+        const std::size_t o = (static_cast<std::size_t>(probeY) * w2 + static_cast<std::size_t>(probeX)) * 3;
         char buf[32];
         std::snprintf(buf, sizeof(buf), "(%d,%d,%d)", img[o], img[o + 1], img[o + 2]);
         return std::string(buf);
     };
     {
         char dline[64];
-        std::snprintf(dline, sizeof(dline), "depth (844,300): A=0x%08x B=0x%08x\n", depthA, depthB);
+        std::snprintf(dline, sizeof(dline), "depth (%d,%d): A=0x%08x B=0x%08x\n", probeX, probeY, depthA, depthB);
         rep << dline;
     }
     {
@@ -607,8 +635,8 @@ int main(int argc, char** argv) {
         for (int i = 0; i < 16; ++i) off += std::snprintf(mhex + off, sizeof(mhex) - off, "%s%08x", i ? "," : "", (int)__builtin_bit_cast(std::uint32_t, mvp.data()[i]));
         rep << "mvp_bits: " << mhex << "\n";
     }
-    rep << "posy (844,300): B=" << dumpPixel(pathB + ".posy.ppm") << " A=" << dumpPixel(pathA + ".posy.ppm") << "\n";
-    rep << "eastrec (844,300): grass=" << dumpPixel(pathB + ".east_grass.ppm")
+    rep << "posy (" << probeX << "," << probeY << "): B=" << dumpPixel(pathB + ".posy.ppm") << " A=" << dumpPixel(pathA + ".posy.ppm") << "\n";
+    rep << "eastrec (" << probeX << "," << probeY << "): grass=" << dumpPixel(pathB + ".east_grass.ppm")
         << " dirt=" << dumpPixel(pathB + ".east_dirt.ppm")
         << " stone16=" << dumpPixel(pathB + ".east_stone16.ppm")
         << " stone0=" << dumpPixel(pathB + ".east_stone0.ppm") << "\n";
