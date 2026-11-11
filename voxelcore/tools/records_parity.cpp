@@ -110,14 +110,19 @@ int main(int argc, char** argv) {
     };
     dumpLine("skyline bytes dump:");
         for (const Quad& q : allQuads) {
-            const bool eastStone16 = (q.dir == FaceDir::PosX && q.x == 64.0f && q.block == 1 && q.y <= 16.0f && 16.0f < q.y + q.v);
-            const bool eastDirt    = (q.dir == FaceDir::PosX && q.x == 64.0f && q.block == 2 && q.y <= 18.0f && 18.0f < q.y + q.v);
-            if (!eastStone16 && !eastDirt) continue;
-            Quad sq = q; const float stayY = eastStone16 ? 16.0f : 18.0f;
-            sq.y = stayY; sq.v = std::min(1.0f, q.y + q.v - stayY);
+            const bool eastStone16 = (q.dir == FaceDir::PosX && q.x == 64.0f && q.z == 0.0f && q.block == 1 && q.y <= 16.0f && 16.0f < q.y + q.v);
+            const bool eastDirt    = (q.dir == FaceDir::PosX && q.x == 64.0f && q.z == 0.0f && q.block == 2 && q.y <= 18.0f && 18.0f < q.y + q.v);
+            const bool topSky = (q.dir == FaceDir::PosY && q.y == 21.0f && q.x == 48.0f && q.z == 0.0f && q.block == 3);
+            if (!eastStone16 && !eastDirt && !topSky) continue;
+            Quad sq = q;
+            if (eastStone16 || eastDirt) {
+                const float stayY = eastStone16 ? 16.0f : 18.0f;
+                sq.y = stayY; sq.v = std::min(1.0f, q.y + q.v - stayY);
+            }
             dumpLine("quad dir=%d x=%.1f y=%.1f z=%.1f u=%.1f v=%.1f hex x=%s y=%s z=%s u=%s v=%s",
                          static_cast<int>(q.dir), q.x, q.y, q.z, q.u, q.v, hex(q.x).c_str(), hex(q.y).c_str(), hex(q.z).c_str(), hex(q.u).c_str(), hex(q.v).c_str());
-            dumpLine("  solo variant: y=%.1f v=%.1f (merged y=%.1f v=%.1f)", sq.y, sq.v, q.y, q.v);
+            if (eastStone16 || eastDirt)
+                dumpLine("  solo variant: y=%.1f v=%.1f (merged y=%.1f v=%.1f)", sq.y, sq.v, q.y, q.v);
             // expanded path positions
             const MeshTriangles et = expandQuads(std::vector<Quad>{sq});
             dumpLine("  expanded verts:");
@@ -129,7 +134,7 @@ int main(int argc, char** argv) {
             dumpLine("");
             // records path reconstruction (mirror of records.vert math, ints -> floats)
             const int ix0 = static_cast<int>(sq.x) - 48, iz0 = static_cast<int>(sq.z) - 0;
-            const int iy = static_cast<int>(sq.y);
+            const int iy = (sq.dir == FaceDir::PosY) ? static_cast<int>(sq.y) - 1 : static_cast<int>(sq.y);
             const int recX = (sq.dir == FaceDir::PosX) ? ix0 - 1 : ix0;
             const int recZ = (sq.dir == FaceDir::PosZ) ? iz0 - 1 : iz0;
             dumpLine("  record decode: rx=%d rz=%d ry=%d uE=%d vE=%d dir=%d block=%u ao=%u,%u,%u,%u light=%u",
@@ -357,7 +362,7 @@ int main(int argc, char** argv) {
                 auto findContaining = [&](std::uint16_t block, std::uint32_t yAbs) -> int {
                     for (std::size_t i = 0; i < allQuads.size(); ++i) {
                         const Quad& q = allQuads[i];
-                        if (q.dir == FaceDir::PosX && q.block == block && q.x == 64.0f &&
+                        if (q.dir == FaceDir::PosX && q.block == block && q.x == 64.0f && q.z == 0.0f &&
                             q.y <= static_cast<float>(yAbs) && static_cast<float>(yAbs) < q.y + q.v)
                             return static_cast<int>(i);
                     }
@@ -430,6 +435,24 @@ int main(int argc, char** argv) {
             // Bisect: render with ONLY PosY (grass tops) and ONLY non-PosY records,
             // dump pixel (844,300) RGB from each to the report.
             try {
+                // A-side: expand ONLY the PosY quads (expanded pipeline)
+                {
+                    std::vector<Quad> gy;
+                    for (const Quad& q : allQuads) if (q.dir == FaceDir::PosY) gy.push_back(q);
+                    const MeshTriangles gt = expandQuads(gy);
+                    std::vector<vk::Vertex> gv;
+                    const std::size_t gn = gt.positions.size() / 3;
+                    gv.reserve(gn);
+                    for (std::size_t i = 0; i < gn; ++i)
+                        gv.push_back({gt.positions[i * 3 + 0], gt.positions[i * 3 + 1], gt.positions[i * 3 + 2],
+                                      gt.colors[i * 4 + 0], gt.colors[i * 4 + 1], gt.colors[i * 4 + 2], gt.colors[i * 4 + 3]});
+                    if (!gv.empty()) {
+                        vk::HeadlessRenderer ga(1280, 960, std::string(VOXELCORE_SPV_DIR));
+                        ga.init();
+                        ga.renderToPpm(gv, gt.indices, mvp, (pathA + ".posy.ppm").c_str());
+                        std::fprintf(stderr, "records_parity: A posy depth=0x%08x\n", ga.depthAt(844, 300));
+                    }
+                }
                 // PosY-only
                 {
                     std::vector<std::vector<std::uint32_t>> keep;
@@ -584,6 +607,7 @@ int main(int argc, char** argv) {
         for (int i = 0; i < 16; ++i) off += std::snprintf(mhex + off, sizeof(mhex) - off, "%s%08x", i ? "," : "", (int)__builtin_bit_cast(std::uint32_t, mvp.data()[i]));
         rep << "mvp_bits: " << mhex << "\n";
     }
+    rep << "posy (844,300): B=" << dumpPixel(pathB + ".posy.ppm") << " A=" << dumpPixel(pathA + ".posy.ppm") << "\n";
     rep << "eastrec (844,300): grass=" << dumpPixel(pathB + ".east_grass.ppm")
         << " dirt=" << dumpPixel(pathB + ".east_dirt.ppm")
         << " stone16=" << dumpPixel(pathB + ".east_stone16.ppm")
