@@ -36,3 +36,9 @@ greedy_mesh_generated_chunk,20,27.410,1370.517
 Notes: E6 partition (O(n) cursor scatter, one temp vector) costs ≈ +0.8% vs 1359 us pre-E6.
 An earlier `std::stable_sort` implementation measured +7.5% (1460-1514 us) and was replaced.
 ASan/UBSan: 193,870 checks, 0 failures.
+## 2026-11-11 — run 6 (stage 9 M1 light, boundary-seeded flood)
+```
+light_volume_16x64x16_flat,100,27.539,275.391   (best of 3; naive version: 1,110)
+greedy_mesh_generated_chunk,20,28.428,1421.385   (unchanged; light not yet wired into mesher)
+```
+ASan/UBSan: 194,168 checks, 0 failures.
