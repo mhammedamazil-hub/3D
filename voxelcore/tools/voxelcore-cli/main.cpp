@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
         const char* out = (argc > 2) ? argv[2] : "voxelcore.ppm";
         const int px = (argc > 5) ? std::atoi(argv[5]) : 640;
         Stopwatch sw; sw.reset();
-        World w = generateWorld(seed, 1);
+        World w = generateWorld(seed, chunks);
         std::fprintf(stderr, "gen %.1f ms\n", sw.millis());
         GreedyMesher mesher;
         std::vector<std::pair<ChunkPos, GreedyMesher::Result>> meshes;
