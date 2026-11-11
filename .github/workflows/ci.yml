@@ -116,7 +116,7 @@ jobs:
           else
             echo "records_parity FAILED with exit $rc (expanded vs records path diverged)" >&2
             if [ -f /tmp/parity_records.ppm.report.txt ]; then
-              echo "::error::records_parity report: $(cat /tmp/parity_records.ppm.report.txt)"
+              echo "::error::records_parity report: $(tr '\n' '~' < /tmp/parity_records.ppm.report.txt)"
             else
               echo "::error::records_parity exited $rc without a report file (readPpm/launch failure?)"
             fi
