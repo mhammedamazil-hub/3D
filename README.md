@@ -14,7 +14,7 @@ The user rejected the earlier WebGL screenshot-capture route **and** the v2 Blen
 - `scripts/build_five_worlds_blender_v3.py`, `scripts/render_five_worlds_blender_v3.py`, `scripts/audit_five_worlds_blender_v3.py`, `scripts/finalize_five_worlds_blender_v3.py`, `scripts/verify_five_worlds_blender_v3.py` — pure-3D builder, zero-image shard renderer, standalone auditor, assembler and independent verifier.
 - `.github/workflows/render-five-worlds-blender-v3.yml` — independent frozen-scene audit, 15 Cycles CPU shards × 100 frames, assembly and commit-back.
 
-Render spec: Cycles CPU, 4 samples, adaptive sampling, OpenImageDenoise `RGB_ALBEDO_NORMAL`, AgX Medium High Contrast, 1920×1080, 30 fps, 300 frames per scene, H.264/yuv420p `libx264` CRF 18. The final MP4s, contact sheet, receipt and validation are written by the CI workflow's commit-back step.
+Render spec: Cycles CPU, 4 samples, adaptive sampling, OpenImageDenoise `RGB_ALBEDO_NORMAL`, AgX Medium High Contrast, 1920×1080, 30 fps, 300 frames per scene, H.264/yuv420p `libx264` CRF 18. The final MP4s, contact sheet, receipt and validation are written by the CI workflow's commit-back step. CI run `43064656588` succeeded with 15/15 no-image shard receipts; the receipt, CI validation, CI blend audit and independent local validation all report `pass:true` with no errors.
 
 Rebuild/verify locally:
 

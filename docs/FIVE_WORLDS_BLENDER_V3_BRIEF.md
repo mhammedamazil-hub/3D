@@ -6,7 +6,7 @@ The v1 WebGL capture and v2 Blender/Cycles backplate scenes are **superseded**. 
 
 ## Implementation status
 
-All six pipeline pieces named below now exist: the `bpy` builder, shard renderer, standalone no-image auditor, finalizer, independent verifier and 15-shard CI workflow. Five production `.blend` files were rebuilt at 1920×1080/30 fps/300 frames and independently audited with **zero image datablocks, zero image-texture nodes, zero environment-texture nodes, zero linked libraries and zero movieclips** across all five scenes. Ten low-resolution look-development proof passes and a 1080p single-frame proof were reviewed. The frozen-scene manifest is `docs/FIVE_WORLDS_BLENDER_V3_MANIFEST.json`; the 1,500 final frames and five MP4s are produced by the CI workflow and committed back with the receipt and validation.
+All six pipeline pieces named below now exist: the `bpy` builder, shard renderer, standalone no-image auditor, finalizer, independent verifier and 15-shard CI workflow. Five production `.blend` files were rebuilt at 1920×1080/30 fps/300 frames and independently audited with **zero image datablocks, zero image-texture nodes, zero environment-texture nodes, zero linked libraries and zero movieclips** across all five scenes. Ten low-resolution look-development proof passes and a 1080p single-frame proof were reviewed. The frozen-scene manifest is `docs/FIVE_WORLDS_BLENDER_V3_MANIFEST.json`. CI run `43064656588` produced the 1,500 final frames, five MP4s, 50 s montage, contact sheet, receipt and validation, and committed them back at `4bf7b7324932d8dce33ad1ee84de7a72ff19bb43`; CI validation, CI blend audit and the post-pull local verifier all passed.
 
 ## Locked acceptance contract
 
